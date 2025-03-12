@@ -90,4 +90,15 @@ export default [
     },
     plugins,
   },
+  {
+    onwarn: function(warning, superOnWarn) {
+      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
+      superOnWarn(warning);
+    },
+    input: "src/definition-batch-modify.tsx",
+    output: {
+      file: "definition-batch-modify.js",
+    },
+    plugins,
+  },
 ];

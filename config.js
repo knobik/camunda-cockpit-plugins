@@ -27,8 +27,9 @@ export default {
   //   // 'my-custom-script/customScript'
           'scripts/definition-historic-activities.js',
           'scripts/instance-historic-activities.js',
-          'scripts/instance-route-history.js'
-       // 'scripts/instance-tab-modify.js'
+          'scripts/instance-route-history.js',
+          'scripts/instance-tab-modify.js',
+          'scripts/definition-batch-modify.js',
      ],
   // requireJsConfig: {
   //   // AngularJS module names
