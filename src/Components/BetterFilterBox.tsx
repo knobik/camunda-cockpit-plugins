@@ -1,5 +1,4 @@
-import './react-filter-box.scss';
-import './react-datepicker.scss';
+import './better-filter-box.scss';
 
 import React, { useEffect, useState } from 'react';
 

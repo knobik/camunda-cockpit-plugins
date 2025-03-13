@@ -1,15 +1,33 @@
+import './Components/definition-batch-modify-table.scss';
+
 import { Activity } from 'bpmn-moddle';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Field, Form } from 'react-final-form';
 import ReactModal from 'react-modal';
 
+import BetterFilterBox from './Components/BetterFilterBox';
 import { DefinitionPluginParams } from './types';
 import { get, post } from './utils/api';
-import BetterFilterBox from './Components/BetterFilterBox';
 
 const initialState: Record<string, any> = {
-  instructions: [],
+  instructions: [
+    // {
+    //   "activityId": "prepareBankTransfer",
+    //   "name": "Prepare Bank Transfer",
+    //   "type": "cancel"
+    // },
+    // {
+    //   "activityId": "approveInvoice",
+    //   "name": "Approve Invoice",
+    //   "type": "startBeforeActivity"
+    // },
+    // {
+    //   "activityId": "assignApprover",
+    //   "name": "Assign Approver Group",
+    //   "type": "startAfterActivity"
+    // }
+  ],
   viewer: null,
   event: null,
 };
@@ -37,11 +55,12 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     setInstructions(instructions.filter((instruction: any) => instruction.activityId !== activityId));
   }
 
-  function addInstruction(activityId: string, instruction: string) {
+  function addInstruction(activityId: string, name: string, instruction: string) {
     setInstructions([
       ...instructions,
       {
         activityId: activityId,
+        name: name,
         type: instruction,
       },
     ]);
@@ -63,6 +82,22 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     }
   }
 
+  function moveItemUp(index: number) {
+    const updatedInstructions = [...instructions];
+    const temp = updatedInstructions[index - 1];
+    updatedInstructions[index - 1] = updatedInstructions[index];
+    updatedInstructions[index] = temp;
+    setInstructions(updatedInstructions);
+  }
+
+  function moveItemDown(index: number) {
+    const updatedInstructions = [...instructions];
+    const temp = updatedInstructions[index + 1];
+    updatedInstructions[index + 1] = updatedInstructions[index];
+    updatedInstructions[index] = temp;
+    setInstructions(updatedInstructions);
+  }
+
   useEffect(() => {
     if (viewer) {
       const elementRegistry = viewer.get('elementRegistry');
@@ -70,23 +105,25 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         let badgeId: string | null = badgeIds[flowElement.id] || null;
         const instruction = instructions.find((instruction: any) => instruction.activityId === flowElement.id);
         if (instruction) {
-          if (!badgeId) {
-            let position: any = {
-              left: -10,
+          if (badgeId) {
+            viewer.get('overlays').remove(badgeId);
+          }
+
+          let position: any = {
+            left: -10,
+            top: -10,
+          };
+          if (instruction.type === 'startAfterActivity') {
+            position = {
+              right: 10,
               top: -10,
             };
-            if (instruction.type === 'startAfterActivity') {
-              position = {
-                right: 10,
-                top: -10,
-              };
-            }
-
-            badgeId = viewer.get('overlays').add(flowElement, 'BADGE', {
-              position,
-              html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
-            });
           }
+
+          badgeId = viewer.get('overlays').add(flowElement, 'BADGE', {
+            position,
+            html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
+          });
 
           badgeIds[flowElement.id] = badgeId as string;
         } else if (badgeId) {
@@ -125,9 +162,9 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
       createRoot(button!).render(
         <React.StrictMode>
           <select
-            onChange={(event: any) => {
-              addInstruction(currentElement.id, event.target.value);
-            }}
+            onChange={(event: any) =>
+              addInstruction(currentElement.id, currentElement.businessObject.name, event.target.value)
+            }
           >
             <option>-- Modify</option>
             <option value="cancel">cancel</option>
@@ -149,39 +186,53 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
 
   return (
     <div>
-      <BetterFilterBox />
-      <table className="cam-table">
+      <table className="cam-table modification-table">
         <thead>
           <tr>
             <th>Remove</th>
-            <th>Activity ID</th>
+            <th>Order</th>
             <th>Instruction</th>
           </tr>
         </thead>
         <tbody>
           {instructions.map((instruction: any, index: number) => (
             <tr key={index}>
-              <td>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => {
-                    deleteInstruction(instruction.activityId);
-                  }}
-                >
-                  X
-                </button>
+              <td className="remove">
+                <div>
+                  <button className="btn btn-danger" onClick={() => deleteInstruction(instruction.activityId)}>
+                    <span className="glyphicon glyphicon-trash"></span>
+                  </button>
+                </div>
               </td>
-              <td>{instruction.activityId}</td>
-              <td>
-                <select
-                  className="form-control"
-                  value={instruction.type}
-                  onChange={(event: any) => changeInstructionType(index, event)}
-                >
-                  <option value="cancel">cancel</option>
-                  <option value="startBeforeActivity">start before</option>
-                  <option value="startAfterActivity">start after</option>
-                </select>
+              <td className="order">
+                {index > 0 && (
+                  <button className="btn btn-sm btn-default arrow-up" onClick={() => moveItemUp(index)}>
+                    <span className="glyphicon glyphicon-arrow-up"></span>
+                  </button>
+                )}
+                {index < instructions.length - 1 && (
+                  <button className="btn btn-sm btn-default arrow-down" onClick={() => moveItemDown(index)}>
+                    <span className="glyphicon glyphicon-arrow-down"></span>
+                  </button>
+                )}
+              </td>
+              <td className={`instruction ${instruction.type === 'cancel' ? 'color-cancel' : 'color-move'}`}>
+                <div className="color-bar"></div>
+                <div className="instruction-container">
+                  <div className="instruction-container-row">
+                    <select
+                      className="form-control"
+                      style={{ width: '200px' }}
+                      value={instruction.type}
+                      onChange={(event: any) => changeInstructionType(index, event)}
+                    >
+                      <option value="cancel">cancel</option>
+                      <option value="startBeforeActivity">start before</option>
+                      <option value="startAfterActivity">start after</option>
+                    </select>
+                    <span>{instruction.name}</span>
+                  </div>
+                </div>
               </td>
             </tr>
           ))}
@@ -248,7 +299,11 @@ export default [
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
+      // console.log(viewer.get('eventBus'));
       viewer.get('eventBus').on('element.hover', (event: any) => hooks.setEvent(event));
+      viewer.get('eventBus').on('*', (event: any) => {
+        console.log('Event:', event);
+      });
     },
   },
   {

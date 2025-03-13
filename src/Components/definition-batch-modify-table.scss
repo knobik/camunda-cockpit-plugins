@@ -1,0 +1,76 @@
+.modification-table {
+  td {
+    &.instruction {
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 0;
+
+      .color-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 15px;
+        display: inline-block;
+      }
+
+      &.color-cancel {
+        border-top: 1px solid #db8b73;
+        .color-bar {
+          background-color: #db8b73;
+        }
+      }
+
+      &.color-move {
+        border-top: 1px solid #3e71df;
+        .color-bar {
+          background-color: #3e71df;
+        }
+      }
+
+      .instruction-container {
+        padding-left: 30px;
+        padding-top: 5px;
+        height: 100px;
+
+        .instruction-container-row {
+          display: flex;
+          align-items: center;
+
+          span {
+            margin-left: 20px;
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    &.remove {
+      padding: 0;
+
+      div {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    &.order {
+      position: relative;
+
+      .arrow-up {
+        position: absolute;
+        top: 10px;
+        left: 0;
+      }
+
+      .arrow-down {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+      }
+    }
+  }
+}
