@@ -6,6 +6,7 @@ import ReactModal from 'react-modal';
 
 import { DefinitionPluginParams } from './types';
 import { get, post } from './utils/api';
+import BetterFilterBox from './Components/BetterFilterBox';
 
 const initialState: Record<string, any> = {
   instructions: [],
@@ -33,19 +34,27 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   hooks.setEvent = setEvent;
 
   function deleteInstruction(activityId: string) {
-    setInstructions((oldInstructions: []) =>
-      oldInstructions.filter((instruction: any) => instruction.activityId !== activityId)
-    );
+    setInstructions(instructions.filter((instruction: any) => instruction.activityId !== activityId));
   }
 
   function addInstruction(activityId: string, instruction: string) {
-    setInstructions((oldInstructions: []) => [
-      ...oldInstructions,
+    setInstructions([
+      ...instructions,
       {
         activityId: activityId,
         type: instruction,
       },
     ]);
+  }
+
+  function changeInstructionType(index: number, event: any) {
+    const updatedInstructions = instructions.map((instruction: any, i: number) => {
+      if (i === index) {
+        instruction.type = event.target.value;
+      }
+      return instruction;
+    });
+    setInstructions(updatedInstructions);
   }
 
   function hideButton() {
@@ -75,7 +84,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
 
             badgeId = viewer.get('overlays').add(flowElement, 'BADGE', {
               position,
-              html: `<span class="badge badge-sm badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
+              html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
             });
           }
 
@@ -140,6 +149,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
 
   return (
     <div>
+      <BetterFilterBox />
       <table className="cam-table">
         <thead>
           <tr>
@@ -162,7 +172,17 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
                 </button>
               </td>
               <td>{instruction.activityId}</td>
-              <td>{instruction.type}</td>
+              <td>
+                <select
+                  className="form-control"
+                  value={instruction.type}
+                  onChange={(event: any) => changeInstructionType(index, event)}
+                >
+                  <option value="cancel">cancel</option>
+                  <option value="startBeforeActivity">start before</option>
+                  <option value="startAfterActivity">start after</option>
+                </select>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -199,7 +219,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
           }}
         >
           <div className="modal-header">
-            <h3>asdasdasdasdad</h3>
+            <h3>Select Instances to Modify</h3>
           </div>
           <div className="modal-body">asddddddddddd</div>
           <div
