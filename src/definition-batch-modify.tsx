@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import ReactModal from 'react-modal';
-import { DefinitionPluginParams, ModificationInstruction } from './types';
+
 import ModificationTable from './Components/ModificationTable';
+import Portal from './Components/Portal';
+import { DefinitionPluginParams, ModificationInstruction } from './types';
 
 const initialState: Record<string, any> = {
   instructions: [
@@ -23,24 +25,28 @@ const initialState: Record<string, any> = {
     // }
   ],
   viewer: null,
+  tabNode: null,
   event: null,
 };
 
 const hooks: Record<string, any> = {
   setViewer: (viewer: any) => (initialState.viewer = viewer),
+  setTabNode: (node: Element) => (initialState.tabNode = node),
   setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
   setEvent: (event: any) => (initialState.event = event),
 };
 
-const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
+const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processDefinitionId }) => {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
+  const [tabNode, setTabNode] = useState(initialState.tabNode);
   const [event, setEvent] = useState(initialState.event);
   const [badgeIds, setBadgeIds] = useState([] as string[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
 
   hooks.setViewer = setViewer;
+  hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
   hooks.setEvent = setEvent;
 
@@ -65,7 +71,6 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
       const overlays = viewer.get('overlays');
       const update: string[] = [];
       instructions.map((instruction: ModificationInstruction) => {
-
         let position: any = {
           left: -10,
           top: -10,
@@ -118,7 +123,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         <React.StrictMode>
           <select
             onChange={(changeEvent: any) => {
-              addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value)
+              addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value);
             }}
           >
             <option>-- Modify</option>
@@ -141,67 +146,69 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     }
   }, [event, viewer]);
 
-  return (
-    <div>
-      <ModificationTable instructions={instructions} setInstructions={setInstructions} />
-      <div
-        style={{
-          height: '4em',
-          paddingRight: '1em',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
-          Select Instances
-        </button>
-      </div>
-      <ReactModal
-        className="modal-dialog"
-        isOpen={showInstanceModal}
-        style={{
-          content: {},
-          overlay: {
-            zIndex: 2000,
-          },
-        }}
-        ariaHideApp={false}
-      >
+  return tabNode ? (
+    <Portal node={tabNode}>
+      <div>
+        <ModificationTable instructions={instructions} setInstructions={setInstructions} />
         <div
-          className="modal-content"
           style={{
+            height: '4em',
+            paddingRight: '1em',
             display: 'flex',
-            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
           }}
         >
-          <div className="modal-header">
-            <h3>Select Instances to Modify</h3>
-          </div>
-          <div className="modal-body">asddddddddddd</div>
+          <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
+            Select Instances
+          </button>
+        </div>
+        <ReactModal
+          className="modal-dialog"
+          isOpen={showInstanceModal}
+          style={{
+            content: {},
+            overlay: {
+              zIndex: 2000,
+            },
+          }}
+          ariaHideApp={false}
+        >
           <div
-            className="model-footer"
+            className="modal-content"
             style={{
-              height: '4em',
-              paddingRight: '1em',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
+              flexDirection: 'column',
             }}
           >
-            <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
-              Close
-            </button>
+            <div className="modal-header">
+              <h3>Select Instances to Modify</h3>
+            </div>
+            <div className="modal-body">asddddddddddd</div>
+            <div
+              className="model-footer"
+              style={{
+                height: '4em',
+                paddingRight: '1em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
+                Close
+              </button>
+            </div>
           </div>
-        </div>
-      </ReactModal>
-    </div>
-  );
+        </ReactModal>
+      </div>
+    </Portal>
+  ) : null;
 };
 
 export default [
   {
-    id: 'instanceTabModifyDiagram',
+    id: 'batchModifyDiagram',
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
@@ -209,19 +216,22 @@ export default [
     },
   },
   {
-    id: 'instanceTabModify',
+    id: 'batchModifyTab',
     pluginPoint: 'cockpit.processDefinition.runtime.tab',
     properties: {
       label: 'Modify',
     },
+    render: (node: Element) => hooks.setTabNode(node),
+  },
+  {
+    id: 'batchModifyPlugin',
+    pluginPoint: 'cockpit.processDefinition.runtime.action',
     render: (node: Element, { api, processDefinitionId }: DefinitionPluginParams) => {
-      (async () => {
-        createRoot(node!).render(
-          <React.StrictMode>
-            <BatchModifyForm api={api} processDefinitionId={processDefinitionId} root={node} />
-          </React.StrictMode>
-        );
-      })();
+      createRoot(node!).render(
+        <React.StrictMode>
+          <BatchModifyForm root={node} api={api} processDefinitionId={processDefinitionId} />
+        </React.StrictMode>
+      );
     },
   },
 ];
