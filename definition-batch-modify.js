@@ -36273,6 +36273,7 @@ var BatchModifyForm = function (_a) {
         updatedInstructions[index] = temp;
         setInstructions(updatedInstructions);
     }
+    // badges
     reactExports.useEffect(function () {
         if (viewer) {
             var elementRegistry = viewer.get('elementRegistry');
@@ -36306,6 +36307,7 @@ var BatchModifyForm = function (_a) {
             });
         }
     }, [instructions, viewer]);
+    // wrench
     reactExports.useEffect(function () {
         if (viewer && event) {
             var hoverActivities = [

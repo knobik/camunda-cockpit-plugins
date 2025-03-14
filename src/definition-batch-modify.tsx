@@ -7,8 +7,10 @@ import { Field, Form } from 'react-final-form';
 import ReactModal from 'react-modal';
 
 import BetterFilterBox from './Components/BetterFilterBox';
-import { DefinitionPluginParams } from './types';
+import { DefinitionPluginParams, ModificationInstruction } from './types';
 import { get, post } from './utils/api';
+
+
 
 const initialState: Record<string, any> = {
   instructions: [
@@ -34,7 +36,7 @@ const initialState: Record<string, any> = {
 
 const hooks: Record<string, any> = {
   setViewer: (viewer: any) => (initialState.viewer = viewer),
-  setInstructions: (instructions: []) => (initialState.instructions = instructions),
+  setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
   setEvent: (event: any) => (initialState.event = event),
 };
 
@@ -62,7 +64,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         activityId: activityId,
         name: name,
         type: instruction,
-      },
+      } as ModificationInstruction,
     ]);
   }
 
@@ -98,6 +100,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     setInstructions(updatedInstructions);
   }
 
+  // badges
   useEffect(() => {
     if (viewer) {
       const elementRegistry = viewer.get('elementRegistry');
@@ -134,6 +137,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     }
   }, [instructions, viewer]);
 
+  // wrench
   useEffect(() => {
     if (viewer && event) {
       const hoverActivities = [
@@ -195,7 +199,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
           </tr>
         </thead>
         <tbody>
-          {instructions.map((instruction: any, index: number) => (
+          {instructions.map((instruction: ModificationInstruction, index: number) => (
             <tr key={index}>
               <td className="remove">
                 <div>
