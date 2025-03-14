@@ -1,0 +1,12 @@
+.dropdown-item {
+  display: block;
+  padding: 3px 5px;
+  margin-left: 1px;
+  font-size: 14px;
+  color: #333;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    border-left-color: #3853AD;
+  }
+}

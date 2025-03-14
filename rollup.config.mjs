@@ -11,6 +11,8 @@ const plugins = [
   replace({
     preventAssignment: true,
     "process.env.NODE_ENV": process.env.NODE_ENV === "production" ? JSON.stringify("production") : null,
+    '"use client";': '',
+    "'use client';": ''
   }),
   alias({
     entries: [{ find: "inherits", replacement: "inherits/inherits_browser" }],

@@ -1,4 +1,7 @@
+import './bootstrap.scss';
+
 import React, { useEffect, useState } from 'react';
+import Dropdown from 'react-bootstrap/Dropdown';
 import { createRoot } from 'react-dom/client';
 import ReactModal from 'react-modal';
 
@@ -26,14 +29,14 @@ const initialState: Record<string, any> = {
   ],
   viewer: null,
   tabNode: null,
-  hoverEvent: null,
+  elementEvent: null,
 };
 
 const hooks: Record<string, any> = {
   setViewer: (viewer: any) => (initialState.viewer = viewer),
   setTabNode: (node: Element) => (initialState.tabNode = node),
   setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
-  setHoverEvent: (hoverEvent: any) => (initialState.hoverEvent = hoverEvent),
+  setElementEvent: (elementEvent: any) => (initialState.elementEvent = elementEvent),
 };
 
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
@@ -41,14 +44,15 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
-  const [hoverEvent, setHoverEvent] = useState(initialState.hoverEvent);
+  const [elementEvent, setElementEvent] = useState(initialState.elementEvent);
   const [badgeIds, setBadgeIds] = useState([] as string[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
+  const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
 
   hooks.setViewer = setViewer;
   hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
-  hooks.setHoverEvent = setHoverEvent;
+  hooks.setElementEvent = setElementEvent;
 
   function addInstruction(activityId: string, name: string, type: string) {
     const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
@@ -102,7 +106,11 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
 
   // wrench
   useEffect(() => {
-    if (viewer && hoverEvent) {
+    if (viewer && elementEvent) {
+      if (wrenchDropdownVisible) {
+        return;
+      }
+
       const hoverActivities = [
         'bpmn:CallActivity',
         'bpmn:ExclusiveGateway',
@@ -117,56 +125,71 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         viewer.get('overlays').remove(wrenchOverlayId);
       }
 
-      if (!hoverActivities.includes(hoverEvent.element.type)) {
+      if (!hoverActivities.includes(elementEvent.element.type)) {
         return;
       }
 
       let button = document.createElement('div');
       createRoot(button!).render(
         <React.StrictMode>
-          <select
-            onChange={(event: any) => {
-              addInstruction(hoverEvent.element.id, hoverEvent.element.businessObject.name, event.target.value);
-            }}
+          <Dropdown
+            onSelect={(eventKey: string | null) =>
+              addInstruction(elementEvent.element.id, elementEvent.element.businessObject.name, eventKey as string)
+            }
+            onToggle={isOpen => setWrenchDropdownVisible(isOpen)}
           >
-            <option>-- Modify</option>
-            <option value="cancel">cancel</option>
-            <option value="startBeforeActivity">start before</option>
-            <option value="startAfterActivity">start after</option>
-          </select>
+            <Dropdown.Toggle variant="default" size="sm">
+              <span className="glyphicon glyphicon-wrench" />
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item eventKey="cancel">Cancel</Dropdown.Item>
+              <Dropdown.Item eventKey="startBeforeActivity">Start Before</Dropdown.Item>
+              <Dropdown.Item eventKey="startAfterActivity">Start After</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </React.StrictMode>
       );
 
-      const overlayId: string = viewer.get('overlays').add(hoverEvent.element, {
+      const overlayId: string = viewer.get('overlays').add(elementEvent.element, {
         position: {
-          right: 10,
-          bottom: 10,
+          right: 20,
+          bottom: 20,
         },
         html: button,
       });
 
       setWrenchOverlayId(overlayId);
     }
-  }, [hoverEvent, viewer]);
+  }, [elementEvent, viewer]);
 
   return (
     <>
       {tabNode && (
         <Portal node={tabNode}>
-          <ModificationTable instructions={instructions} setInstructions={setInstructions} />
-          <div
-            style={{
-              height: '4em',
-              paddingRight: '1em',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
-              Select Instances
-            </button>
-          </div>
+          {instructions.length === 0 ? (
+            <div style={{ textAlign: 'center' }}>
+              <span className="glyphicon glyphicon-wrench" style={{ marginRight: '10px' }}></span>
+              Modify the process instance state with the wrench button in the process diagram above.
+            </div>
+          ) : (
+            <div>
+              <ModificationTable instructions={instructions} setInstructions={setInstructions} />
+              <div
+                style={{
+                  height: '4em',
+                  paddingRight: '1em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
+                  Select Instances
+                </button>
+              </div>
+            </div>
+          )}
         </Portal>
       )}
       <ReactModal
@@ -217,7 +240,11 @@ export default [
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
-      viewer.get('eventBus').on('element.hover', (event: any) => hooks.setHoverEvent(event));
+      viewer.get('eventBus').on('element.hover', (event: any) => hooks.setElementEvent(event));
+
+      // viewer.get('eventBus').on('element.hover', (event: any) => console.log('hover', event.element.id));
+      // viewer.get('eventBus').on('element.out', (event: any) => console.log('out', event.element.id));
+
       hooks.setInstructions([]); // reset instructions when switching diagrams
     },
   },
