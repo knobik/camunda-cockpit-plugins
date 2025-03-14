@@ -79,8 +79,6 @@ function __spreadArray(to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 }
 
-___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
-
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
@@ -36195,6 +36193,63 @@ Modal$1.default = Modal;
 var libExports = lib.exports;
 var ReactModal = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
+___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
+
+var ModificationTable = function (_a) {
+    var instructions = _a.instructions, setInstructions = _a.setInstructions;
+    function deleteInstruction(activityId) {
+        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
+    }
+    function changeInstructionType(index, event) {
+        var updatedInstructions = instructions.map(function (instruction, i) {
+            if (i === index) {
+                instruction.type = event.target.value;
+            }
+            return instruction;
+        });
+        setInstructions(updatedInstructions);
+    }
+    function moveItemUp(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index - 1];
+        updatedInstructions[index - 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    function moveItemDown(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index + 1];
+        updatedInstructions[index + 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    return (React.createElement("table", { className: "cam-table modification-table" },
+        React.createElement("thead", null,
+            React.createElement("tr", null,
+                React.createElement("th", null, "Remove"),
+                React.createElement("th", null, "Order"),
+                React.createElement("th", null, "Instruction"))),
+        React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
+            React.createElement("td", { className: "remove" },
+                React.createElement("div", null,
+                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return deleteInstruction(instruction.activityId); } },
+                        React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
+            React.createElement("td", { className: "order" },
+                index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
+                index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
+            React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
+                React.createElement("div", { className: "color-bar" }),
+                React.createElement("div", { className: "instruction-container" },
+                    React.createElement("div", { className: "instruction-container-row" },
+                        React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
+                            React.createElement("option", { value: "cancel" }, "cancel"),
+                            React.createElement("option", { value: "startBeforeActivity" }, "start before"),
+                            React.createElement("option", { value: "startAfterActivity" }, "start after")),
+                        React.createElement("span", null, instruction.name)))))); }))));
+};
+
 var initialState = {
     instructions: [
     // {
@@ -36225,7 +36280,7 @@ var badgeIds = {};
 var currentElement = null;
 var overlayId = null;
 var BatchModifyForm = function (_a) {
-    _a.api; _a.processDefinitionId; _a.root;
+    _a.api; _a.processDefinitionId;
     var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(initialState.viewer), viewer = _c[0], setViewer = _c[1];
     var _d = reactExports.useState(initialState.instructions), instructions = _d[0], setInstructions = _d[1];
@@ -36233,9 +36288,6 @@ var BatchModifyForm = function (_a) {
     hooks.setViewer = setViewer;
     hooks.setInstructions = setInstructions;
     hooks.setEvent = setEvent;
-    function deleteInstruction(activityId) {
-        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
-    }
     function addInstruction(activityId, name, instruction) {
         setInstructions(__spreadArray(__spreadArray([], instructions, true), [
             {
@@ -36245,33 +36297,10 @@ var BatchModifyForm = function (_a) {
             },
         ], false));
     }
-    function changeInstructionType(index, event) {
-        var updatedInstructions = instructions.map(function (instruction, i) {
-            if (i === index) {
-                instruction.type = event.target.value;
-            }
-            return instruction;
-        });
-        setInstructions(updatedInstructions);
-    }
     function hideButton() {
         if (overlayId != null) {
             viewer.get('overlays').remove(overlayId);
         }
-    }
-    function moveItemUp(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index - 1];
-        updatedInstructions[index - 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
-    }
-    function moveItemDown(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index + 1];
-        updatedInstructions[index + 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
     }
     // badges
     reactExports.useEffect(function () {
@@ -36346,31 +36375,7 @@ var BatchModifyForm = function (_a) {
         }
     }, [event, viewer]);
     return (React.createElement("div", null,
-        React.createElement("table", { className: "cam-table modification-table" },
-            React.createElement("thead", null,
-                React.createElement("tr", null,
-                    React.createElement("th", null, "Remove"),
-                    React.createElement("th", null, "Order"),
-                    React.createElement("th", null, "Instruction"))),
-            React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
-                React.createElement("td", { className: "remove" },
-                    React.createElement("div", null,
-                        React.createElement("button", { className: "btn btn-danger", onClick: function () { return deleteInstruction(instruction.activityId); } },
-                            React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
-                React.createElement("td", { className: "order" },
-                    index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
-                        React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
-                    index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
-                        React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
-                React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
-                    React.createElement("div", { className: "color-bar" }),
-                    React.createElement("div", { className: "instruction-container" },
-                        React.createElement("div", { className: "instruction-container-row" },
-                            React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
-                                React.createElement("option", { value: "cancel" }, "cancel"),
-                                React.createElement("option", { value: "startBeforeActivity" }, "start before"),
-                                React.createElement("option", { value: "startAfterActivity" }, "start after")),
-                            React.createElement("span", null, instruction.name)))))); }))),
+        React.createElement(ModificationTable, { instructions: instructions, setInstructions: setInstructions }),
         React.createElement("div", { style: {
                 height: '4em',
                 paddingRight: '1em',
@@ -36407,11 +36412,7 @@ var definitionBatchModify = [
         pluginPoint: 'cockpit.processDefinition.diagram.plugin',
         render: function (viewer) {
             hooks.setViewer(viewer);
-            // console.log(viewer.get('eventBus'));
             viewer.get('eventBus').on('element.hover', function (event) { return hooks.setEvent(event); });
-            viewer.get('eventBus').on('*', function (event) {
-                console.log('Event:', event);
-            });
         },
     },
     {

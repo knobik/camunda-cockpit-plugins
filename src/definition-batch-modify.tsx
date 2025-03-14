@@ -1,5 +1,3 @@
-import './Components/definition-batch-modify-table.scss';
-
 import { Activity } from 'bpmn-moddle';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -9,6 +7,7 @@ import ReactModal from 'react-modal';
 import BetterFilterBox from './Components/BetterFilterBox';
 import { DefinitionPluginParams, ModificationInstruction } from './types';
 import { get, post } from './utils/api';
+import ModificationTable from './Components/ModificationTable';
 
 
 
@@ -44,7 +43,7 @@ let badgeIds: Record<string, string> = {};
 let currentElement: any = null;
 let overlayId: string | null = null;
 
-const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId, root }) => {
+const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions);
@@ -52,10 +51,6 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   hooks.setViewer = setViewer;
   hooks.setInstructions = setInstructions;
   hooks.setEvent = setEvent;
-
-  function deleteInstruction(activityId: string) {
-    setInstructions(instructions.filter((instruction: any) => instruction.activityId !== activityId));
-  }
 
   function addInstruction(activityId: string, name: string, instruction: string) {
     setInstructions([
@@ -68,36 +63,10 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     ]);
   }
 
-  function changeInstructionType(index: number, event: any) {
-    const updatedInstructions = instructions.map((instruction: any, i: number) => {
-      if (i === index) {
-        instruction.type = event.target.value;
-      }
-      return instruction;
-    });
-    setInstructions(updatedInstructions);
-  }
-
   function hideButton() {
     if (overlayId != null) {
       viewer.get('overlays').remove(overlayId);
     }
-  }
-
-  function moveItemUp(index: number) {
-    const updatedInstructions = [...instructions];
-    const temp = updatedInstructions[index - 1];
-    updatedInstructions[index - 1] = updatedInstructions[index];
-    updatedInstructions[index] = temp;
-    setInstructions(updatedInstructions);
-  }
-
-  function moveItemDown(index: number) {
-    const updatedInstructions = [...instructions];
-    const temp = updatedInstructions[index + 1];
-    updatedInstructions[index + 1] = updatedInstructions[index];
-    updatedInstructions[index] = temp;
-    setInstructions(updatedInstructions);
   }
 
   // badges
@@ -106,6 +75,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
       const elementRegistry = viewer.get('elementRegistry');
       elementRegistry.forEach(function (flowElement: any) {
         let badgeId: string | null = badgeIds[flowElement.id] || null;
+
         const instruction = instructions.find((instruction: any) => instruction.activityId === flowElement.id);
         if (instruction) {
           if (badgeId) {
@@ -190,58 +160,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
 
   return (
     <div>
-      <table className="cam-table modification-table">
-        <thead>
-          <tr>
-            <th>Remove</th>
-            <th>Order</th>
-            <th>Instruction</th>
-          </tr>
-        </thead>
-        <tbody>
-          {instructions.map((instruction: ModificationInstruction, index: number) => (
-            <tr key={index}>
-              <td className="remove">
-                <div>
-                  <button className="btn btn-danger" onClick={() => deleteInstruction(instruction.activityId)}>
-                    <span className="glyphicon glyphicon-trash"></span>
-                  </button>
-                </div>
-              </td>
-              <td className="order">
-                {index > 0 && (
-                  <button className="btn btn-sm btn-default arrow-up" onClick={() => moveItemUp(index)}>
-                    <span className="glyphicon glyphicon-arrow-up"></span>
-                  </button>
-                )}
-                {index < instructions.length - 1 && (
-                  <button className="btn btn-sm btn-default arrow-down" onClick={() => moveItemDown(index)}>
-                    <span className="glyphicon glyphicon-arrow-down"></span>
-                  </button>
-                )}
-              </td>
-              <td className={`instruction ${instruction.type === 'cancel' ? 'color-cancel' : 'color-move'}`}>
-                <div className="color-bar"></div>
-                <div className="instruction-container">
-                  <div className="instruction-container-row">
-                    <select
-                      className="form-control"
-                      style={{ width: '200px' }}
-                      value={instruction.type}
-                      onChange={(event: any) => changeInstructionType(index, event)}
-                    >
-                      <option value="cancel">cancel</option>
-                      <option value="startBeforeActivity">start before</option>
-                      <option value="startAfterActivity">start after</option>
-                    </select>
-                    <span>{instruction.name}</span>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ModificationTable instructions={instructions} setInstructions={setInstructions} />
       <div
         style={{
           height: '4em',
@@ -303,11 +222,7 @@ export default [
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
-      // console.log(viewer.get('eventBus'));
       viewer.get('eventBus').on('element.hover', (event: any) => hooks.setEvent(event));
-      viewer.get('eventBus').on('*', (event: any) => {
-        console.log('Event:', event);
-      });
     },
   },
   {
