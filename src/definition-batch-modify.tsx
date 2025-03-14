@@ -26,37 +26,44 @@ const initialState: Record<string, any> = {
   ],
   viewer: null,
   tabNode: null,
-  event: null,
+  hoverEvent: null,
 };
 
 const hooks: Record<string, any> = {
   setViewer: (viewer: any) => (initialState.viewer = viewer),
   setTabNode: (node: Element) => (initialState.tabNode = node),
   setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
-  setEvent: (event: any) => (initialState.event = event),
+  setHoverEvent: (hoverEvent: any) => (initialState.hoverEvent = hoverEvent),
 };
 
-const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processDefinitionId }) => {
+const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
-  const [event, setEvent] = useState(initialState.event);
+  const [hoverEvent, setHoverEvent] = useState(initialState.hoverEvent);
   const [badgeIds, setBadgeIds] = useState([] as string[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
 
   hooks.setViewer = setViewer;
   hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
-  hooks.setEvent = setEvent;
+  hooks.setHoverEvent = setHoverEvent;
 
-  function addInstruction(activityId: string, name: string, instruction: string) {
+  function addInstruction(activityId: string, name: string, type: string) {
+    const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
+    if (update) {
+      update.type = type;
+      setInstructions([...instructions]);
+      return;
+    }
+
     setInstructions([
       ...instructions,
       {
-        activityId: activityId,
-        name: name,
-        type: instruction,
+        activityId,
+        name: name ?? activityId,
+        type,
       } as ModificationInstruction,
     ]);
   }
@@ -95,7 +102,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
 
   // wrench
   useEffect(() => {
-    if (viewer && event) {
+    if (viewer && hoverEvent) {
       const hoverActivities = [
         'bpmn:CallActivity',
         'bpmn:ExclusiveGateway',
@@ -110,11 +117,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
         viewer.get('overlays').remove(wrenchOverlayId);
       }
 
-      if (!hoverActivities.includes(event.element.type)) {
-        return;
-      }
-
-      if (instructions.find((instruction: any) => instruction.activityId == event.element.id)) {
+      if (!hoverActivities.includes(hoverEvent.element.type)) {
         return;
       }
 
@@ -122,8 +125,8 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
       createRoot(button!).render(
         <React.StrictMode>
           <select
-            onChange={(changeEvent: any) => {
-              addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value);
+            onChange={(event: any) => {
+              addInstruction(hoverEvent.element.id, hoverEvent.element.businessObject.name, event.target.value);
             }}
           >
             <option>-- Modify</option>
@@ -134,7 +137,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
         </React.StrictMode>
       );
 
-      const overlayId: string = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
+      const overlayId: string = viewer.get('overlays').add(hoverEvent.element, {
         position: {
           right: 10,
           bottom: 10,
@@ -144,28 +147,28 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
 
       setWrenchOverlayId(overlayId);
     }
-  }, [event, viewer]);
+  }, [hoverEvent, viewer]);
 
   return (
     <>
-      {tabNode &&
+      {tabNode && (
         <Portal node={tabNode}>
-            <ModificationTable instructions={instructions} setInstructions={setInstructions} />
-            <div
-              style={{
-                height: '4em',
-                paddingRight: '1em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
-                Select Instances
-              </button>
-            </div>
+          <ModificationTable instructions={instructions} setInstructions={setInstructions} />
+          <div
+            style={{
+              height: '4em',
+              paddingRight: '1em',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
+              Select Instances
+            </button>
+          </div>
         </Portal>
-      }
+      )}
       <ReactModal
         className="modal-dialog"
         isOpen={showInstanceModal}
@@ -214,7 +217,8 @@ export default [
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
-      viewer.get('eventBus').on('element.hover', (event: any) => hooks.setEvent(event));
+      viewer.get('eventBus').on('element.hover', (event: any) => hooks.setHoverEvent(event));
+      hooks.setInstructions([]); // reset instructions when switching diagrams
     },
   },
   {

@@ -36238,33 +36238,39 @@ var initialState = {
     ],
     viewer: null,
     tabNode: null,
-    event: null,
+    hoverEvent: null,
 };
 var hooks = {
     setViewer: function (viewer) { return (initialState.viewer = viewer); },
     setTabNode: function (node) { return (initialState.tabNode = node); },
     setInstructions: function (instructions) { return (initialState.instructions = instructions); },
-    setEvent: function (event) { return (initialState.event = event); },
+    setHoverEvent: function (hoverEvent) { return (initialState.hoverEvent = hoverEvent); },
 };
 var BatchModifyForm = function (_a) {
-    _a.root; _a.api; _a.processDefinitionId;
+    _a.api; _a.processDefinitionId;
     var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(initialState.viewer), viewer = _c[0], setViewer = _c[1];
     var _d = reactExports.useState(initialState.instructions), instructions = _d[0], setInstructions = _d[1];
     var _e = reactExports.useState(initialState.tabNode), tabNode = _e[0], setTabNode = _e[1];
-    var _f = reactExports.useState(initialState.event), event = _f[0], setEvent = _f[1];
+    var _f = reactExports.useState(initialState.hoverEvent), hoverEvent = _f[0], setHoverEvent = _f[1];
     var _g = reactExports.useState([]), badgeIds = _g[0], setBadgeIds = _g[1];
     var _h = reactExports.useState(''), wrenchOverlayId = _h[0], setWrenchOverlayId = _h[1];
     hooks.setViewer = setViewer;
     hooks.setTabNode = setTabNode;
     hooks.setInstructions = setInstructions;
-    hooks.setEvent = setEvent;
-    function addInstruction(activityId, name, instruction) {
+    hooks.setHoverEvent = setHoverEvent;
+    function addInstruction(activityId, name, type) {
+        var update = instructions.find(function (instruction) { return instruction.activityId === activityId; });
+        if (update) {
+            update.type = type;
+            setInstructions(__spreadArray([], instructions, true));
+            return;
+        }
         setInstructions(__spreadArray(__spreadArray([], instructions, true), [
             {
                 activityId: activityId,
-                name: name,
-                type: instruction,
+                name: name !== null && name !== void 0 ? name : activityId,
+                type: type,
             },
         ], false));
     }
@@ -36299,7 +36305,7 @@ var BatchModifyForm = function (_a) {
     }, [instructions, viewer]);
     // wrench
     reactExports.useEffect(function () {
-        if (viewer && event) {
+        if (viewer && hoverEvent) {
             var hoverActivities = [
                 'bpmn:CallActivity',
                 'bpmn:ExclusiveGateway',
@@ -36312,22 +36318,19 @@ var BatchModifyForm = function (_a) {
             if (wrenchOverlayId !== '') {
                 viewer.get('overlays').remove(wrenchOverlayId);
             }
-            if (!hoverActivities.includes(event.element.type)) {
-                return;
-            }
-            if (instructions.find(function (instruction) { return instruction.activityId == event.element.id; })) {
+            if (!hoverActivities.includes(hoverEvent.element.type)) {
                 return;
             }
             var button = document.createElement('div');
             createRoot(button).render(React.createElement(React.StrictMode, null,
-                React.createElement("select", { onChange: function (changeEvent) {
-                        addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value);
+                React.createElement("select", { onChange: function (event) {
+                        addInstruction(hoverEvent.element.id, hoverEvent.element.businessObject.name, event.target.value);
                     } },
                     React.createElement("option", null, "-- Modify"),
                     React.createElement("option", { value: "cancel" }, "cancel"),
                     React.createElement("option", { value: "startBeforeActivity" }, "start before"),
                     React.createElement("option", { value: "startAfterActivity" }, "start after"))));
-            var overlayId = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
+            var overlayId = viewer.get('overlays').add(hoverEvent.element, {
                 position: {
                     right: 10,
                     bottom: 10,
@@ -36336,19 +36339,18 @@ var BatchModifyForm = function (_a) {
             });
             setWrenchOverlayId(overlayId);
         }
-    }, [event, viewer]);
+    }, [hoverEvent, viewer]);
     return (React.createElement(React.Fragment, null,
-        tabNode &&
-            React.createElement(Portal, { node: tabNode },
-                React.createElement(ModificationTable, { instructions: instructions, setInstructions: setInstructions }),
-                React.createElement("div", { style: {
-                        height: '4em',
-                        paddingRight: '1em',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                    } },
-                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances"))),
+        tabNode && (React.createElement(Portal, { node: tabNode },
+            React.createElement(ModificationTable, { instructions: instructions, setInstructions: setInstructions }),
+            React.createElement("div", { style: {
+                    height: '4em',
+                    paddingRight: '1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                } },
+                React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")))),
         React.createElement(ReactModal, { className: "modal-dialog", isOpen: showInstanceModal, style: {
                 content: {},
                 overlay: {
@@ -36377,7 +36379,8 @@ var definitionBatchModify = [
         pluginPoint: 'cockpit.processDefinition.diagram.plugin',
         render: function (viewer) {
             hooks.setViewer(viewer);
-            viewer.get('eventBus').on('element.hover', function (event) { return hooks.setEvent(event); });
+            viewer.get('eventBus').on('element.hover', function (event) { return hooks.setHoverEvent(event); });
+            hooks.setInstructions([]); // reset instructions when switching diagrams
         },
     },
     {
