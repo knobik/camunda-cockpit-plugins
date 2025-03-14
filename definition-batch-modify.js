@@ -36337,38 +36337,39 @@ var BatchModifyForm = function (_a) {
             setWrenchOverlayId(overlayId);
         }
     }, [event, viewer]);
-    return tabNode ? (React.createElement(Portal, { node: tabNode },
-        React.createElement("div", null,
-            React.createElement(ModificationTable, { instructions: instructions, setInstructions: setInstructions }),
-            React.createElement("div", { style: {
-                    height: '4em',
-                    paddingRight: '1em',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                } },
-                React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")),
-            React.createElement(ReactModal, { className: "modal-dialog", isOpen: showInstanceModal, style: {
-                    content: {},
-                    overlay: {
-                        zIndex: 2000,
-                    },
-                }, ariaHideApp: false },
-                React.createElement("div", { className: "modal-content", style: {
+    return (React.createElement(React.Fragment, null,
+        tabNode &&
+            React.createElement(Portal, { node: tabNode },
+                React.createElement(ModificationTable, { instructions: instructions, setInstructions: setInstructions }),
+                React.createElement("div", { style: {
+                        height: '4em',
+                        paddingRight: '1em',
                         display: 'flex',
-                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
                     } },
-                    React.createElement("div", { className: "modal-header" },
-                        React.createElement("h3", null, "Select Instances to Modify")),
-                    React.createElement("div", { className: "modal-body" }, "asddddddddddd"),
-                    React.createElement("div", { className: "model-footer", style: {
-                            height: '4em',
-                            paddingRight: '1em',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                        } },
-                        React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"))))))) : null;
+                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances"))),
+        React.createElement(ReactModal, { className: "modal-dialog", isOpen: showInstanceModal, style: {
+                content: {},
+                overlay: {
+                    zIndex: 2000,
+                },
+            }, ariaHideApp: false },
+            React.createElement("div", { className: "modal-content", style: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                } },
+                React.createElement("div", { className: "modal-header" },
+                    React.createElement("h3", null, "Select Instances to Modify")),
+                React.createElement("div", { className: "modal-body" }, "asddddddddddd"),
+                React.createElement("div", { className: "model-footer", style: {
+                        height: '4em',
+                        paddingRight: '1em',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                    } },
+                    React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"))))));
 };
 var definitionBatchModify = [
     {

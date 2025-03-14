@@ -146,47 +146,12 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
     }
   }, [event, viewer]);
 
-  return tabNode ? (
-    <Portal node={tabNode}>
-      <div>
-        <ModificationTable instructions={instructions} setInstructions={setInstructions} />
-        <div
-          style={{
-            height: '4em',
-            paddingRight: '1em',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
-            Select Instances
-          </button>
-        </div>
-        <ReactModal
-          className="modal-dialog"
-          isOpen={showInstanceModal}
-          style={{
-            content: {},
-            overlay: {
-              zIndex: 2000,
-            },
-          }}
-          ariaHideApp={false}
-        >
-          <div
-            className="modal-content"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div className="modal-header">
-              <h3>Select Instances to Modify</h3>
-            </div>
-            <div className="modal-body">asddddddddddd</div>
+  return (
+    <>
+      {tabNode &&
+        <Portal node={tabNode}>
+            <ModificationTable instructions={instructions} setInstructions={setInstructions} />
             <div
-              className="model-footer"
               style={{
                 height: '4em',
                 paddingRight: '1em',
@@ -195,15 +160,52 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ root, api, processD
                 justifyContent: 'flex-end',
               }}
             >
-              <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
-                Close
+              <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
+                Select Instances
               </button>
             </div>
+        </Portal>
+      }
+      <ReactModal
+        className="modal-dialog"
+        isOpen={showInstanceModal}
+        style={{
+          content: {},
+          overlay: {
+            zIndex: 2000,
+          },
+        }}
+        ariaHideApp={false}
+      >
+        <div
+          className="modal-content"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div className="modal-header">
+            <h3>Select Instances to Modify</h3>
           </div>
-        </ReactModal>
-      </div>
-    </Portal>
-  ) : null;
+          <div className="modal-body">asddddddddddd</div>
+          <div
+            className="model-footer"
+            style={{
+              height: '4em',
+              paddingRight: '1em',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      </ReactModal>
+    </>
+  );
 };
 
 export default [
