@@ -36276,15 +36276,14 @@ var hooks = {
     setInstructions: function (instructions) { return (initialState.instructions = instructions); },
     setEvent: function (event) { return (initialState.event = event); },
 };
-var badgeIds = {};
-var currentElement = null;
-var overlayId = null;
 var BatchModifyForm = function (_a) {
     _a.api; _a.processDefinitionId;
     var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(initialState.viewer), viewer = _c[0], setViewer = _c[1];
     var _d = reactExports.useState(initialState.instructions), instructions = _d[0], setInstructions = _d[1];
     var _e = reactExports.useState(initialState.event), event = _e[0], setEvent = _e[1];
+    var _f = reactExports.useState([]), badgeIds = _f[0], setBadgeIds = _f[1];
+    var _g = reactExports.useState(''), wrenchOverlayId = _g[0], setWrenchOverlayId = _g[1];
     hooks.setViewer = setViewer;
     hooks.setInstructions = setInstructions;
     hooks.setEvent = setEvent;
@@ -36297,43 +36296,33 @@ var BatchModifyForm = function (_a) {
             },
         ], false));
     }
-    function hideButton() {
-        if (overlayId != null) {
-            viewer.get('overlays').remove(overlayId);
-        }
-    }
     // badges
     reactExports.useEffect(function () {
         if (viewer) {
-            var elementRegistry = viewer.get('elementRegistry');
-            elementRegistry.forEach(function (flowElement) {
-                var badgeId = badgeIds[flowElement.id] || null;
-                var instruction = instructions.find(function (instruction) { return instruction.activityId === flowElement.id; });
-                if (instruction) {
-                    if (badgeId) {
-                        viewer.get('overlays').remove(badgeId);
-                    }
-                    var position = {
-                        left: -10,
+            for (var _i = 0, badgeIds_1 = badgeIds; _i < badgeIds_1.length; _i++) {
+                var badgeId = badgeIds_1[_i];
+                viewer.get('overlays').remove(badgeId);
+            }
+            var overlays_1 = viewer.get('overlays');
+            var update_1 = [];
+            instructions.map(function (instruction) {
+                var position = {
+                    left: -10,
+                    top: -10,
+                };
+                if (instruction.type === 'startAfterActivity') {
+                    position = {
+                        right: 10,
                         top: -10,
                     };
-                    if (instruction.type === 'startAfterActivity') {
-                        position = {
-                            right: 10,
-                            top: -10,
-                        };
-                    }
-                    badgeId = viewer.get('overlays').add(flowElement, 'BADGE', {
-                        position: position,
-                        html: "<span class=\"badge badge-warning\">".concat(instruction.type === 'cancel' ? '-' : '+', "</span>"),
-                    });
-                    badgeIds[flowElement.id] = badgeId;
                 }
-                else if (badgeId) {
-                    viewer.get('overlays').remove(badgeId);
-                    delete badgeIds[flowElement.id];
-                }
+                var badgeId = overlays_1.add(instruction.activityId.split('#')[0], {
+                    position: position,
+                    html: "<span class=\"badge badge-warning\">".concat(instruction.type === 'cancel' ? '-' : '+', "</span>"),
+                });
+                update_1.push(badgeId);
             });
+            setBadgeIds(update_1);
         }
     }, [instructions, viewer]);
     // wrench
@@ -36348,30 +36337,32 @@ var BatchModifyForm = function (_a) {
                 'bpmn:EndEvent',
                 'bpmn:StartEvent',
             ];
-            hideButton();
+            if (wrenchOverlayId !== '') {
+                viewer.get('overlays').remove(wrenchOverlayId);
+            }
             if (!hoverActivities.includes(event.element.type)) {
                 return;
             }
             if (instructions.find(function (instruction) { return instruction.activityId == event.element.id; })) {
                 return;
             }
-            currentElement = event.element;
             var button = document.createElement('div');
             createRoot(button).render(React.createElement(React.StrictMode, null,
-                React.createElement("select", { onChange: function (event) {
-                        return addInstruction(currentElement.id, currentElement.businessObject.name, event.target.value);
+                React.createElement("select", { onChange: function (changeEvent) {
+                        addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value);
                     } },
                     React.createElement("option", null, "-- Modify"),
                     React.createElement("option", { value: "cancel" }, "cancel"),
                     React.createElement("option", { value: "startBeforeActivity" }, "start before"),
                     React.createElement("option", { value: "startAfterActivity" }, "start after"))));
-            overlayId = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
+            var overlayId = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
                 position: {
                     right: 10,
                     bottom: 10,
                 },
                 html: button,
             });
+            setWrenchOverlayId(overlayId);
         }
     }, [event, viewer]);
     return (React.createElement("div", null,

@@ -67,7 +67,7 @@ const hooks: Record<string, any> = {
   setStatistics: (node: Element) => (initialState.statistics = node),
 };
 
-const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinitionId }) => {
+const Plugin: React.FC<DefinitionPluginParams> = ({  root, api, processDefinitionId }) => {
   const [autoCompleteHandler] = useState(new DefinitionFilterAutoCompleteHandler([], DefinitionFilterOptions));
   const [expressions, setExpressions] = useState([] as Expression[]);
   const [query, setQuery] = useState({} as Record<string, string | null>);

@@ -1,15 +1,8 @@
-import { Activity } from 'bpmn-moddle';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Field, Form } from 'react-final-form';
 import ReactModal from 'react-modal';
-
-import BetterFilterBox from './Components/BetterFilterBox';
 import { DefinitionPluginParams, ModificationInstruction } from './types';
-import { get, post } from './utils/api';
 import ModificationTable from './Components/ModificationTable';
-
-
 
 const initialState: Record<string, any> = {
   instructions: [
@@ -39,15 +32,14 @@ const hooks: Record<string, any> = {
   setEvent: (event: any) => (initialState.event = event),
 };
 
-let badgeIds: Record<string, string> = {};
-let currentElement: any = null;
-let overlayId: string | null = null;
-
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [viewer, setViewer] = useState(initialState.viewer);
-  const [instructions, setInstructions] = useState(initialState.instructions);
+  const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [event, setEvent] = useState(initialState.event);
+  const [badgeIds, setBadgeIds] = useState([] as string[]);
+  const [wrenchOverlayId, setWrenchOverlayId] = useState('');
+
   hooks.setViewer = setViewer;
   hooks.setInstructions = setInstructions;
   hooks.setEvent = setEvent;
@@ -63,47 +55,36 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     ]);
   }
 
-  function hideButton() {
-    if (overlayId != null) {
-      viewer.get('overlays').remove(overlayId);
-    }
-  }
-
   // badges
   useEffect(() => {
     if (viewer) {
-      const elementRegistry = viewer.get('elementRegistry');
-      elementRegistry.forEach(function (flowElement: any) {
-        let badgeId: string | null = badgeIds[flowElement.id] || null;
+      for (const badgeId of badgeIds) {
+        viewer.get('overlays').remove(badgeId);
+      }
 
-        const instruction = instructions.find((instruction: any) => instruction.activityId === flowElement.id);
-        if (instruction) {
-          if (badgeId) {
-            viewer.get('overlays').remove(badgeId);
-          }
+      const overlays = viewer.get('overlays');
+      const update: string[] = [];
+      instructions.map((instruction: ModificationInstruction) => {
 
-          let position: any = {
-            left: -10,
+        let position: any = {
+          left: -10,
+          top: -10,
+        };
+        if (instruction.type === 'startAfterActivity') {
+          position = {
+            right: 10,
             top: -10,
           };
-          if (instruction.type === 'startAfterActivity') {
-            position = {
-              right: 10,
-              top: -10,
-            };
-          }
-
-          badgeId = viewer.get('overlays').add(flowElement, 'BADGE', {
-            position,
-            html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
-          });
-
-          badgeIds[flowElement.id] = badgeId as string;
-        } else if (badgeId) {
-          viewer.get('overlays').remove(badgeId);
-          delete badgeIds[flowElement.id];
         }
+
+        const badgeId = overlays.add(instruction.activityId.split('#')[0], {
+          position,
+          html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
+        });
+        update.push(badgeId);
       });
+
+      setBadgeIds(update);
     }
   }, [instructions, viewer]);
 
@@ -120,7 +101,9 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         'bpmn:StartEvent',
       ];
 
-      hideButton();
+      if (wrenchOverlayId !== '') {
+        viewer.get('overlays').remove(wrenchOverlayId);
+      }
 
       if (!hoverActivities.includes(event.element.type)) {
         return;
@@ -130,15 +113,13 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         return;
       }
 
-      currentElement = event.element;
-
       let button = document.createElement('div');
       createRoot(button!).render(
         <React.StrictMode>
           <select
-            onChange={(event: any) =>
-              addInstruction(currentElement.id, currentElement.businessObject.name, event.target.value)
-            }
+            onChange={(changeEvent: any) => {
+              addInstruction(event.element.id, event.element.businessObject.name, changeEvent.target.value)
+            }}
           >
             <option>-- Modify</option>
             <option value="cancel">cancel</option>
@@ -148,13 +129,15 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         </React.StrictMode>
       );
 
-      overlayId = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
+      const overlayId: string = viewer.get('overlays').add(event.element, 'INSTRUCTION', {
         position: {
           right: 10,
           bottom: 10,
         },
         html: button,
       });
+
+      setWrenchOverlayId(overlayId);
     }
   }, [event, viewer]);
 
