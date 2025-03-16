@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 
 import { API } from '../types';
 import { get } from '../utils/api';
-import CamundaFilterBox, { Expression } from './CamundaFilterBox';
+import CamundaFilterBox, { ExpressionDefinition, Operator } from './CamundaFilterBox';
 
 export interface FilteredProcessInstance {
   id: string;
@@ -18,6 +18,49 @@ export interface ProcessInstanceSelectModalProps {
   processDefinitionId: string;
 }
 
+const expressionDefinitions: ExpressionDefinition[] = [
+  {
+    label: 'Business Key',
+    type: 'businessKey',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'Activity ID',
+    type: 'activityIdIn',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'With Incidents',
+    type: 'withIncidents',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'Variable',
+    type: 'variable',
+    availableOperators: [
+      Operator.eq,
+      Operator.neq,
+      Operator.gt,
+      Operator.gteq,
+      Operator.lt,
+      Operator.lteq,
+      Operator.like,
+    ],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: true,
+  } as ExpressionDefinition,
+];
+
 const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   setShowInstanceModal,
   showInstanceModal,
@@ -25,7 +68,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   processDefinitionId,
 }) => {
   const [query, setQuery] = useState({} as Record<string, any>);
-  const [expressions, setExpressions] = useState([] as Expression[]);
+  const [expressions, setExpressions] = useState([] as ExpressionDefinition[]);
   const [processInstances, setProcessInstances] = useState([] as FilteredProcessInstance[]);
   const [filterType, setFilterType] = useState('instance');
 
@@ -153,6 +196,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
           <div>
             <h4>Filter for running process instances</h4>
             <CamundaFilterBox
+              availableExpressions={expressionDefinitions}
               placeholder="Filter available instances..."
             />
             <div style={{ maxHeight: '400px', overflowY: 'auto' }}>

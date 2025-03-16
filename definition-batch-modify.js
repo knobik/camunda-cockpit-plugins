@@ -41354,9 +41354,11 @@ var Operator;
     Operator["lt"] = "lt";
     Operator["lteq"] = "lteq";
     Operator["like"] = "like";
+    Operator["before"] = "before";
+    Operator["after"] = "after";
 })(Operator || (Operator = {}));
-function operatorToText(operator) {
-    switch (operator) {
+function operatorToText(o) {
+    switch (o) {
         case Operator.eq:
             return '=';
         case Operator.neq:
@@ -41372,134 +41374,110 @@ function operatorToText(operator) {
         case Operator.like:
             return 'like';
         default:
-            return '';
+            return Operator[o];
     }
 }
 function isValidExpression(expression) {
-    if (expression.requiresValue && expression.value === '') {
+    if (expression.definition.requiresValue && expression.value === '') {
         return false;
     }
-    if (expression.requiresName && expression.name === '') {
+    if (expression.definition.requiresName && expression.name === '') {
         return false;
     }
     return true;
 }
 var CamundaFilterBox = function (_a) {
-    var placeholder = _a.placeholder;
-    var _b = reactExports.useState([
-        {
-            label: 'Activity ID',
-            type: 'activityIdIn',
-            name: '',
-            availableOperators: [Operator.eq],
-            operator: Operator.eq,
-            value: 'prepareBankTransfer',
-            requiresValue: true,
-            requiresName: false,
-        },
-        {
-            label: 'Activity ID',
-            type: 'activityIdIn',
-            name: '',
-            availableOperators: [Operator.eq],
-            operator: Operator.eq,
-            value: '',
-            requiresValue: true,
-            requiresName: false,
-        },
-        {
-            label: 'With Incidents',
-            type: 'withIncidents',
-            name: '',
-            availableOperators: [Operator.eq],
-            operator: Operator.eq,
-            value: '',
-            requiresValue: false,
-            requiresName: false,
-        },
-        {
-            label: 'Variable',
-            type: 'variable',
-            name: 'dupa',
-            availableOperators: [
-                Operator.eq,
-                Operator.neq,
-                Operator.gt,
-                Operator.gteq,
-                Operator.lt,
-                Operator.lteq,
-                Operator.like,
-            ],
-            operator: Operator.eq,
-            value: 'some value',
-            requiresValue: true,
-            requiresName: true,
-        },
-        {
-            label: 'Variable',
-            type: 'variable',
-            name: '',
-            availableOperators: [
-                Operator.eq,
-                Operator.neq,
-                Operator.gt,
-                Operator.gteq,
-                Operator.lt,
-                Operator.lteq,
-                Operator.like,
-            ],
-            operator: Operator.eq,
-            value: '',
-            requiresValue: true,
-            requiresName: true,
-        },
-        {
-            label: 'Variable',
-            type: 'variable',
-            name: '',
-            availableOperators: [
-                Operator.eq,
-                Operator.neq,
-                Operator.gt,
-                Operator.gteq,
-                Operator.lt,
-                Operator.lteq,
-                Operator.like,
-            ],
-            operator: Operator.eq,
-            value: 'some value',
-            requiresValue: true,
-            requiresName: true,
-        },
-    ]), expressions = _b[0], setExpressions = _b[1];
+    var placeholder = _a.placeholder, availableExpressions = _a.availableExpressions;
+    var _b = reactExports.useState([]), expressions = _b[0], setExpressions = _b[1];
     var CustomToggle = React.forwardRef(function (_a, ref) {
         var children = _a.children, onClick = _a.onClick;
         return (React.createElement("input", { ref: ref, className: "search-input", defaultValue: children, placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
                 e.preventDefault();
                 onClick(e);
+            }, onKeyDown: function (e) {
+                if (e.key === 'Enter') {
+                    addExpression(availableExpressions[0].type, e.currentTarget.value);
+                }
             } }));
     });
+    function addExpression(type, value) {
+        if (!type) {
+            return;
+        }
+        var definition = availableExpressions.find(function (def) { return def.type === type; });
+        if (!definition) {
+            return;
+        }
+        setExpressions(__spreadArray(__spreadArray([], expressions, true), [
+            {
+                definition: definition,
+                operator: definition.defaultOperator,
+                name: '',
+                value: value !== null && value !== void 0 ? value : '',
+            },
+        ], false));
+    }
     function removeExpression(index) {
         setExpressions(expressions.filter(function (_, i) { return i !== index; }));
     }
     return (React.createElement("div", { className: "camunda-filter-box-container form-control" },
         expressions.map(function (expression, index) { return (React.createElement("div", { className: "expression ".concat(!isValidExpression(expression) ? 'invalid' : ''), key: index },
             React.createElement("span", { className: "glyphicon glyphicon-remove", onClick: function () { return removeExpression(index); } }),
-            React.createElement("span", null, expression.label),
-            (expression.name || expression.requiresName) && (React.createElement(React.Fragment, null,
+            React.createElement("span", null, expression.definition.label),
+            (expression.name || expression.definition.requiresName) && (React.createElement(React.Fragment, null,
                 React.createElement("span", { className: "non-editable" }, ":"),
                 React.createElement("span", null, expression.name !== '' ? expression.name : '??'))),
-            expression.requiresValue &&
+            expression.definition.requiresValue &&
                 React.createElement(React.Fragment, null,
-                    React.createElement("span", { className: "".concat(expression.availableOperators.length === 1 ? 'non-editable' : '') }, operatorToText(expression.operator)),
+                    React.createElement("span", { className: "".concat(expression.definition.availableOperators.length === 1 ? 'non-editable' : '') }, operatorToText(expression.operator)),
                     React.createElement("span", null, expression.value !== '' ? expression.value : '??')))); }),
-        React.createElement(Dropdown$1, null,
+        React.createElement(Dropdown$1, { onSelect: function (eventKey) { return addExpression(eventKey); } },
             React.createElement(Dropdown$1.Toggle, { as: CustomToggle }),
-            React.createElement(Dropdown$1.Menu, null,
-                React.createElement(Dropdown$1.Item, { eventKey: "1" }, "Red"),
-                React.createElement(Dropdown$1.Item, { eventKey: "2" }, "Blue")))));
+            React.createElement(Dropdown$1.Menu, null, availableExpressions.map(function (definition, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: definition.type }, definition.label)); })))));
 };
 
+var expressionDefinitions = [
+    {
+        label: 'Business Key',
+        type: 'businessKey',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        requiresValue: true,
+        requiresName: false,
+    },
+    {
+        label: 'Activity ID',
+        type: 'activityIdIn',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        requiresValue: true,
+        requiresName: false,
+    },
+    {
+        label: 'With Incidents',
+        type: 'withIncidents',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        requiresValue: false,
+        requiresName: false,
+    },
+    {
+        label: 'Variable',
+        type: 'variable',
+        availableOperators: [
+            Operator.eq,
+            Operator.neq,
+            Operator.gt,
+            Operator.gteq,
+            Operator.lt,
+            Operator.lteq,
+            Operator.like,
+        ],
+        defaultOperator: Operator.eq,
+        requiresValue: true,
+        requiresName: true,
+    },
+];
 var ProcessInstanceSelectModal = function (_a) {
     var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
@@ -41583,7 +41561,7 @@ var ProcessInstanceSelectModal = function (_a) {
                             React.createElement("strong", null, "Query")))),
                 React.createElement("div", null,
                     React.createElement("h4", null, "Filter for running process instances"),
-                    React.createElement(CamundaFilterBox, { placeholder: "Filter available instances..." }),
+                    React.createElement(CamundaFilterBox, { availableExpressions: expressionDefinitions, placeholder: "Filter available instances..." }),
                     React.createElement("div", { style: { maxHeight: '400px', overflowY: 'auto' } },
                         React.createElement("table", { className: "cam-table" },
                             React.createElement("thead", null,

@@ -1,11 +1,8 @@
 import './camunda-filter-box.scss';
 
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, SyntheticEvent, useEffect, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-
-export interface CamundaFilterBoxProps {
-  placeholder?: string;
-}
+import { ModificationInstruction } from './ModificationTable';
 
 export enum Operator {
   eq = 'eq', // =
@@ -14,22 +11,30 @@ export enum Operator {
   gteq = 'gteq', // >=
   lt = 'lt', // <
   lteq = 'lteq', // <=
-  like = 'like', // like
+  like = 'like',
+  before = 'before',
+  after = 'after',
 }
 
-export interface Expression {
+export interface ExpressionDefinition {
   label: string;
   type: string;
   availableOperators: Operator[];
-  operator: Operator;
-  value: string;
-  name: string;
+  defaultOperator: Operator;
   requiresName: boolean;
   requiresValue: boolean;
 }
 
-function operatorToText(operator: Operator): string {
-  switch (operator) {
+export interface Expression {
+  definition: ExpressionDefinition,
+  name: string;
+  operator: Operator;
+  value: string;
+}
+
+
+function operatorToText(o: Operator): string {
+  switch (o) {
     case Operator.eq:
       return '=';
     case Operator.neq:
@@ -45,109 +50,33 @@ function operatorToText(operator: Operator): string {
     case Operator.like:
       return 'like';
     default:
-      return '';
+      return Operator[o];
   }
 }
 
 function isValidExpression(expression: Expression): boolean {
-  if (expression.requiresValue && expression.value === '') {
+  if (expression.definition.requiresValue && expression.value === '') {
     return false;
   }
 
-  if (expression.requiresName && expression.name === '') {
+  if (expression.definition.requiresName && expression.name === '') {
     return false;
   }
 
   return true;
 }
 
-const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder }) => {
-  const [expressions, setExpressions] = useState([
-    {
-      label: 'Activity ID',
-      type: 'activityIdIn',
-      name: '',
-      availableOperators: [Operator.eq],
-      operator: Operator.eq,
-      value: 'prepareBankTransfer',
-      requiresValue: true,
-      requiresName: false,
-    } as Expression,
-    {
-      label: 'Activity ID',
-      type: 'activityIdIn',
-      name: '',
-      availableOperators: [Operator.eq],
-      operator: Operator.eq,
-      value: '',
-      requiresValue: true,
-      requiresName: false,
-    } as Expression,
-    {
-      label: 'With Incidents',
-      type: 'withIncidents',
-      name: '',
-      availableOperators: [Operator.eq],
-      operator: Operator.eq,
-      value: '',
-      requiresValue: false,
-      requiresName: false,
-    } as Expression,
-    {
-      label: 'Variable',
-      type: 'variable',
-      name: 'dupa',
-      availableOperators: [
-        Operator.eq,
-        Operator.neq,
-        Operator.gt,
-        Operator.gteq,
-        Operator.lt,
-        Operator.lteq,
-        Operator.like,
-      ],
-      operator: Operator.eq,
-      value: 'some value',
-      requiresValue: true,
-      requiresName: true,
-    } as Expression,
-    {
-      label: 'Variable',
-      type: 'variable',
-      name: '',
-      availableOperators: [
-        Operator.eq,
-        Operator.neq,
-        Operator.gt,
-        Operator.gteq,
-        Operator.lt,
-        Operator.lteq,
-        Operator.like,
-      ],
-      operator: Operator.eq,
-      value: '',
-      requiresValue: true,
-      requiresName: true,
-    } as Expression,
-    {
-      label: 'Variable',
-      type: 'variable',
-      name: '',
-      availableOperators: [
-        Operator.eq,
-        Operator.neq,
-        Operator.gt,
-        Operator.gteq,
-        Operator.lt,
-        Operator.lteq,
-        Operator.like,
-      ],
-      operator: Operator.eq,
-      value: 'some value',
-      requiresValue: true,
-      requiresName: true,
-    } as Expression,
-  ] as Expression[]);
+const hooks: Record<string, any> = {
+  customToggle: () => forwardRef((props, ref) => null),
+};
+
+export interface CamundaFilterBoxProps {
+  placeholder?: string;
+  availableExpressions: ExpressionDefinition[];
+}
+
+const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availableExpressions }) => {
+  const [expressions, setExpressions] = useState([] as Expression[]);
 
   const CustomToggle = React.forwardRef<
     HTMLInputElement,
@@ -165,8 +94,34 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder }) => {
         e.preventDefault();
         onClick(e);
       }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          addExpression(availableExpressions[0].type, e.currentTarget.value);
+        }
+      }}
     />
   ));
+
+  function addExpression(type: string | null, value?: string) {
+    if (!type) {
+      return;
+    }
+
+    const definition = availableExpressions.find((def) => def.type === type);
+    if (!definition) {
+      return;
+    }
+
+    setExpressions([
+      ...expressions,
+      {
+        definition,
+        operator: definition.defaultOperator,
+        name: '',
+        value: value ?? '',
+      } as Expression,
+    ]);
+  }
 
   function removeExpression(index: number) {
     setExpressions(expressions.filter((_, i) => i !== index));
@@ -178,9 +133,9 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder }) => {
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>
           <span>
-            {expression.label}
+            {expression.definition.label}
           </span>
-          {(expression.name || expression.requiresName) && (
+          {(expression.name || expression.definition.requiresName) && (
             <>
               <span className="non-editable">:</span>
               <span>
@@ -188,9 +143,9 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder }) => {
               </span>
             </>
           )}
-          {expression.requiresValue &&
+          {expression.definition.requiresValue &&
             <>
-              <span className={`${expression.availableOperators.length === 1 ? 'non-editable' : ''}`}>
+              <span className={`${expression.definition.availableOperators.length === 1 ? 'non-editable' : ''}`}>
                 {operatorToText(expression.operator)}
               </span>
               <span>
@@ -200,11 +155,14 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder }) => {
           }
         </div>
       ))}
-      <Dropdown>
+      <Dropdown
+        onSelect={(eventKey: string | null) => addExpression(eventKey)}
+      >
         <Dropdown.Toggle as={CustomToggle}></Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Item eventKey="1">Red</Dropdown.Item>
-          <Dropdown.Item eventKey="2">Blue</Dropdown.Item>
+          {availableExpressions.map((definition: ExpressionDefinition, index: number) => (
+            <Dropdown.Item key={index} eventKey={definition.type}>{definition.label}</Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       </Dropdown>
     </div>
