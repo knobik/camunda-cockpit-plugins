@@ -27,8 +27,3 @@ export interface TaskListPluginParams {
   taskId: string;
 }
 
-export interface ModificationInstruction {
-  type: string;
-  name: string;
-  activityId: string;
-}

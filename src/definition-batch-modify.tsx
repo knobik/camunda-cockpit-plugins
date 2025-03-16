@@ -3,30 +3,14 @@ import './bootstrap.scss';
 import React, { useEffect, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { createRoot } from 'react-dom/client';
-import ReactModal from 'react-modal';
 
-import ModificationTable from './Components/ModificationTable';
+import ModificationTable, { ModificationInstruction } from './Components/ModificationTable';
 import Portal from './Components/Portal';
-import { DefinitionPluginParams, ModificationInstruction } from './types';
+import ProcessInstanceSelectModal from './Components/ProcessInstanceSelectModal';
+import { DefinitionPluginParams } from './types';
 
 const initialState: Record<string, any> = {
-  instructions: [
-    // {
-    //   "activityId": "prepareBankTransfer",
-    //   "name": "Prepare Bank Transfer",
-    //   "type": "cancel"
-    // },
-    // {
-    //   "activityId": "approveInvoice",
-    //   "name": "Approve Invoice",
-    //   "type": "startBeforeActivity"
-    // },
-    // {
-    //   "activityId": "assignApprover",
-    //   "name": "Assign Approver Group",
-    //   "type": "startAfterActivity"
-    // }
-  ],
+  instructions: [],
   viewer: null,
   tabNode: null,
   elementEvent: null,
@@ -40,7 +24,7 @@ const hooks: Record<string, any> = {
 };
 
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
-  const [showInstanceModal, setShowInstanceModal] = useState(false);
+  const [showInstanceModal, setShowInstanceModal] = useState(true);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
@@ -192,44 +176,12 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
           )}
         </Portal>
       )}
-      <ReactModal
-        className="modal-dialog"
-        isOpen={showInstanceModal}
-        style={{
-          content: {},
-          overlay: {
-            zIndex: 2000,
-          },
-        }}
-        ariaHideApp={false}
-      >
-        <div
-          className="modal-content"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <div className="modal-header">
-            <h3>Select Instances to Modify</h3>
-          </div>
-          <div className="modal-body">asddddddddddd</div>
-          <div
-            className="model-footer"
-            style={{
-              height: '4em',
-              paddingRight: '1em',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
-              Close
-            </button>
-          </div>
-        </div>
-      </ReactModal>
+      <ProcessInstanceSelectModal
+        setShowInstanceModal={setShowInstanceModal}
+        showInstanceModal={showInstanceModal}
+        api={api}
+        processDefinitionId={processDefinitionId}
+      />
     </>
   );
 };
@@ -241,10 +193,6 @@ export default [
     render: (viewer: any) => {
       hooks.setViewer(viewer);
       viewer.get('eventBus').on('element.hover', (event: any) => hooks.setElementEvent(event));
-
-      // viewer.get('eventBus').on('element.hover', (event: any) => console.log('hover', event.element.id));
-      // viewer.get('eventBus').on('element.out', (event: any) => console.log('out', event.element.id));
-
       hooks.setInstructions([]); // reset instructions when switching diagrams
     },
   },

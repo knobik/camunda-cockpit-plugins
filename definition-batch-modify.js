@@ -31,6 +31,55 @@ PERFORMANCE OF THIS SOFTWARE.
 /* global Reflect, Promise, SuppressedError, Symbol, Iterator */
 
 
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+function __generator(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+}
+
 function __spreadArray(to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -46,7 +95,7 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
-___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}");
+___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}\n\n.modal-dialog.process-select-modal {\n  width: 90rem !important;\n}");
 
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -39574,6 +39623,68 @@ var m = reactDomExports;
   };
 }
 
+___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
+
+var ModificationTable = function (_a) {
+    var instructions = _a.instructions, setInstructions = _a.setInstructions;
+    function removeInstruction(activityId) {
+        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
+    }
+    function changeInstructionType(index, event) {
+        var updatedInstructions = instructions.map(function (instruction, i) {
+            if (i === index) {
+                instruction.type = event.target.value;
+            }
+            return instruction;
+        });
+        setInstructions(updatedInstructions);
+    }
+    function moveItemUp(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index - 1];
+        updatedInstructions[index - 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    function moveItemDown(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index + 1];
+        updatedInstructions[index + 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    return (React.createElement("table", { className: "cam-table modification-table" },
+        React.createElement("thead", null,
+            React.createElement("tr", null,
+                React.createElement("th", null, "Remove"),
+                React.createElement("th", null, "Order"),
+                React.createElement("th", null, "Instruction"))),
+        React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
+            React.createElement("td", { className: "remove" },
+                React.createElement("div", null,
+                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return removeInstruction(instruction.activityId); } },
+                        React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
+            React.createElement("td", { className: "order" },
+                index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
+                index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
+            React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
+                React.createElement("div", { className: "color-bar" }),
+                React.createElement("div", { className: "instruction-container" },
+                    React.createElement("div", { className: "instruction-container-row" },
+                        React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
+                            React.createElement("option", { value: "cancel" }, "cancel"),
+                            React.createElement("option", { value: "startBeforeActivity" }, "start before"),
+                            React.createElement("option", { value: "startAfterActivity" }, "start after")),
+                        React.createElement("span", null, instruction.name)))))); }))));
+};
+
+var Portal = function (_a) {
+    var children = _a.children, node = _a.node;
+    return ReactDOM.createPortal(children, node);
+};
+
 var lib = {exports: {}};
 
 var Modal$1 = {};
@@ -41169,86 +41280,342 @@ Modal$1.default = Modal;
 var libExports = lib.exports;
 var ReactModal = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
-___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
+var headers = function (api) {
+    return {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': api.CSRFToken,
+    };
+};
+var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, res, _a, _b, _c, _d, _e, _f, _g;
+    return __generator(this, function (_h) {
+        switch (_h.label) {
+            case 0:
+                // XXX: Workaround a possible bug where engine api has been parsed wrong
+                if (api.engine.match(/\/#\//)) {
+                    api.engine = api.engine.split('/#/')[0].replace(/.*\//g, '');
+                    api.engineApi = api.baseApi + '/engine/' + api.engine;
+                }
+                params = params || {};
+                if (['/history/activity-instance', '/history/variable-instance', '/history/decision-instance'].includes(path) &&
+                    !(params === null || params === void 0 ? void 0 : params.maxResults)) {
+                    params.maxResults = '1000';
+                }
+                query = new URLSearchParams(params).toString();
+                if (!query) return [3 /*break*/, 2];
+                return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
+                        method: 'get',
+                        headers: headers(api),
+                    })];
+            case 1:
+                _a = _h.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
+                    method: 'get',
+                    headers: headers(api),
+                })];
+            case 3:
+                _a = _h.sent();
+                _h.label = 4;
+            case 4:
+                res = _a;
+                if (!(res.status === 200 && (res.headers.get('Content-Type') || '').startsWith('application/json'))) return [3 /*break*/, 6];
+                return [4 /*yield*/, res.json()];
+            case 5: return [2 /*return*/, _h.sent()];
+            case 6:
+                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 8];
+                _c = (_b = console).debug;
+                _d = [res.status, path];
+                return [4 /*yield*/, res.json()];
+            case 7:
+                _c.apply(_b, _d.concat([_h.sent()]));
+                return [3 /*break*/, 10];
+            case 8:
+                _f = (_e = console).debug;
+                _g = [res.status, path];
+                return [4 /*yield*/, res.text()];
+            case 9:
+                _f.apply(_e, _g.concat([_h.sent()]));
+                _h.label = 10;
+            case 10: return [2 /*return*/, []];
+        }
+    });
+}); };
 
-var ModificationTable = function (_a) {
-    var instructions = _a.instructions, setInstructions = _a.setInstructions;
-    function deleteInstruction(activityId) {
-        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
+___$insertStylesToHeader(".camunda-filter-box-container {\n  height: auto;\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  flex-wrap: wrap;\n  padding: 0 0 5px 0;\n}\n.camunda-filter-box-container .expression {\n  display: inline;\n  font-weight: inherit;\n  font-size: inherit;\n  padding: 0 3px;\n  border-radius: 3px;\n  color: #155cb5;\n  background-color: #fafafa;\n  border: 1px solid #e5e5e5;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container .expression.invalid {\n  background-color: #f2dede;\n  border-color: #ebccd1;\n  color: #a94442;\n}\n.camunda-filter-box-container .expression span {\n  margin-right: 5px;\n  cursor: pointer;\n}\n.camunda-filter-box-container .expression span:last-child {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span.non-editable {\n  cursor: default;\n}\n.camunda-filter-box-container .expression span .form-control {\n  width: auto;\n  min-width: 40px;\n  max-width: 100%;\n  margin-bottom: -1px;\n  height: auto;\n}\n.camunda-filter-box-container.form-control .search-input {\n  border: 0;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container.form-control .search-input:focus {\n  outline: none;\n}");
+
+var Operator;
+(function (Operator) {
+    Operator["eq"] = "eq";
+    Operator["neq"] = "neq";
+    Operator["gt"] = "gt";
+    Operator["gteq"] = "gteq";
+    Operator["lt"] = "lt";
+    Operator["lteq"] = "lteq";
+    Operator["like"] = "like";
+})(Operator || (Operator = {}));
+function operatorToText(operator) {
+    switch (operator) {
+        case Operator.eq:
+            return '=';
+        case Operator.neq:
+            return '!=';
+        case Operator.gt:
+            return '>';
+        case Operator.gteq:
+            return '>=';
+        case Operator.lt:
+            return '<';
+        case Operator.lteq:
+            return '<=';
+        case Operator.like:
+            return 'like';
+        default:
+            return '';
     }
-    function changeInstructionType(index, event) {
-        var updatedInstructions = instructions.map(function (instruction, i) {
-            if (i === index) {
-                instruction.type = event.target.value;
-            }
-            return instruction;
-        });
-        setInstructions(updatedInstructions);
+}
+function isValidExpression(expression) {
+    if (expression.requiresValue && expression.value === '') {
+        return false;
     }
-    function moveItemUp(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index - 1];
-        updatedInstructions[index - 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
+    if (expression.requiresName && expression.name === '') {
+        return false;
     }
-    function moveItemDown(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index + 1];
-        updatedInstructions[index + 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
+    return true;
+}
+var CamundaFilterBox = function (_a) {
+    var placeholder = _a.placeholder;
+    var _b = reactExports.useState([
+        {
+            label: 'Activity ID',
+            type: 'activityIdIn',
+            name: '',
+            availableOperators: [Operator.eq],
+            operator: Operator.eq,
+            value: 'prepareBankTransfer',
+            requiresValue: true,
+            requiresName: false,
+        },
+        {
+            label: 'Activity ID',
+            type: 'activityIdIn',
+            name: '',
+            availableOperators: [Operator.eq],
+            operator: Operator.eq,
+            value: '',
+            requiresValue: true,
+            requiresName: false,
+        },
+        {
+            label: 'With Incidents',
+            type: 'withIncidents',
+            name: '',
+            availableOperators: [Operator.eq],
+            operator: Operator.eq,
+            value: '',
+            requiresValue: false,
+            requiresName: false,
+        },
+        {
+            label: 'Variable',
+            type: 'variable',
+            name: 'dupa',
+            availableOperators: [
+                Operator.eq,
+                Operator.neq,
+                Operator.gt,
+                Operator.gteq,
+                Operator.lt,
+                Operator.lteq,
+                Operator.like,
+            ],
+            operator: Operator.eq,
+            value: 'some value',
+            requiresValue: true,
+            requiresName: true,
+        },
+        {
+            label: 'Variable',
+            type: 'variable',
+            name: '',
+            availableOperators: [
+                Operator.eq,
+                Operator.neq,
+                Operator.gt,
+                Operator.gteq,
+                Operator.lt,
+                Operator.lteq,
+                Operator.like,
+            ],
+            operator: Operator.eq,
+            value: '',
+            requiresValue: true,
+            requiresName: true,
+        },
+        {
+            label: 'Variable',
+            type: 'variable',
+            name: '',
+            availableOperators: [
+                Operator.eq,
+                Operator.neq,
+                Operator.gt,
+                Operator.gteq,
+                Operator.lt,
+                Operator.lteq,
+                Operator.like,
+            ],
+            operator: Operator.eq,
+            value: 'some value',
+            requiresValue: true,
+            requiresName: true,
+        },
+    ]), expressions = _b[0], setExpressions = _b[1];
+    var CustomToggle = React.forwardRef(function (_a, ref) {
+        var children = _a.children, onClick = _a.onClick;
+        return (React.createElement("input", { ref: ref, className: "search-input", defaultValue: children, placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
+                e.preventDefault();
+                onClick(e);
+            } }));
+    });
+    function removeExpression(index) {
+        setExpressions(expressions.filter(function (_, i) { return i !== index; }));
     }
-    return (React.createElement("table", { className: "cam-table modification-table" },
-        React.createElement("thead", null,
-            React.createElement("tr", null,
-                React.createElement("th", null, "Remove"),
-                React.createElement("th", null, "Order"),
-                React.createElement("th", null, "Instruction"))),
-        React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
-            React.createElement("td", { className: "remove" },
-                React.createElement("div", null,
-                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return deleteInstruction(instruction.activityId); } },
-                        React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
-            React.createElement("td", { className: "order" },
-                index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
-                    React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
-                index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
-                    React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
-            React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
-                React.createElement("div", { className: "color-bar" }),
-                React.createElement("div", { className: "instruction-container" },
-                    React.createElement("div", { className: "instruction-container-row" },
-                        React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
-                            React.createElement("option", { value: "cancel" }, "cancel"),
-                            React.createElement("option", { value: "startBeforeActivity" }, "start before"),
-                            React.createElement("option", { value: "startAfterActivity" }, "start after")),
-                        React.createElement("span", null, instruction.name)))))); }))));
+    return (React.createElement("div", { className: "camunda-filter-box-container form-control" },
+        expressions.map(function (expression, index) { return (React.createElement("div", { className: "expression ".concat(!isValidExpression(expression) ? 'invalid' : ''), key: index },
+            React.createElement("span", { className: "glyphicon glyphicon-remove", onClick: function () { return removeExpression(index); } }),
+            React.createElement("span", null, expression.label),
+            (expression.name || expression.requiresName) && (React.createElement(React.Fragment, null,
+                React.createElement("span", { className: "non-editable" }, ":"),
+                React.createElement("span", null, expression.name !== '' ? expression.name : '??'))),
+            expression.requiresValue &&
+                React.createElement(React.Fragment, null,
+                    React.createElement("span", { className: "".concat(expression.availableOperators.length === 1 ? 'non-editable' : '') }, operatorToText(expression.operator)),
+                    React.createElement("span", null, expression.value !== '' ? expression.value : '??')))); }),
+        React.createElement(Dropdown$1, null,
+            React.createElement(Dropdown$1.Toggle, { as: CustomToggle }),
+            React.createElement(Dropdown$1.Menu, null,
+                React.createElement(Dropdown$1.Item, { eventKey: "1" }, "Red"),
+                React.createElement(Dropdown$1.Item, { eventKey: "2" }, "Blue")))));
 };
 
-var Portal = function (_a) {
-    var children = _a.children, node = _a.node;
-    return ReactDOM.createPortal(children, node);
+var ProcessInstanceSelectModal = function (_a) {
+    var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId;
+    var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
+    var _c = reactExports.useState([]), expressions = _c[0]; _c[1];
+    var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
+    var _e = reactExports.useState('instance'), filterType = _e[0], setFilterType = _e[1];
+    reactExports.useEffect(function () {
+        if (Object.keys(query).length > 0) {
+            (function () { return __awaiter(void 0, void 0, void 0, function () {
+                var items, filtered;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, get(api, '/process-instance', __assign(__assign({}, query), { processDefinitionId: processDefinitionId }))];
+                        case 1:
+                            items = _a.sent();
+                            filtered = items.map(function (item) {
+                                return {
+                                    id: item.id,
+                                    businessKey: item.businessKey,
+                                    checked: filterType === 'query',
+                                };
+                            });
+                            setProcessInstances(filtered);
+                            return [2 /*return*/];
+                    }
+                });
+            }); })();
+        }
+    }, [query]);
+    reactExports.useEffect(function () {
+        if (expressions.length > 0) ;
+        else {
+            setQuery({
+                firstResult: 0,
+                // sortBy: 'definitionKey',
+                // sortOrder: 'asc',
+            });
+        }
+    }, [expressions]);
+    function toggleChecked(id) {
+        processInstances.map(function (processInstance) {
+            if (processInstance.id === id) {
+                processInstance.checked = !processInstance.checked;
+            }
+        });
+        setProcessInstances(__spreadArray([], processInstances, true));
+    }
+    function toggleCheckedAll(checked) {
+        processInstances.map(function (processInstance) {
+            processInstance.checked = checked;
+        });
+        setProcessInstances(__spreadArray([], processInstances, true));
+    }
+    function changeFilterType(value) {
+        if (value === 'query') {
+            toggleCheckedAll(true);
+        }
+        setFilterType(value);
+    }
+    return (React.createElement(ReactModal, { className: "modal-dialog process-select-modal", isOpen: showInstanceModal, style: {
+            content: {},
+            overlay: {
+                zIndex: 2000,
+            },
+        }, ariaHideApp: false },
+        React.createElement("div", { className: "modal-content", style: {
+                display: 'flex',
+                flexDirection: 'column',
+            } },
+            React.createElement("div", { className: "modal-header" },
+                React.createElement("h3", null, "Select instances to modify")),
+            React.createElement("div", { className: "modal-body" },
+                React.createElement("div", { style: { marginBottom: '2em' } },
+                    React.createElement("h4", null, "Choose selection type"),
+                    React.createElement("div", null,
+                        React.createElement("label", { className: "radio-inline" },
+                            React.createElement("input", { type: "radio", name: "filterType", value: "instance", defaultChecked: filterType === 'instance', onChange: function (event) { return changeFilterType(event.target.value); } }),
+                            React.createElement("strong", null, "Instance")),
+                        React.createElement("label", { className: "radio-inline" },
+                            React.createElement("input", { type: "radio", name: "filterType", value: "query", defaultChecked: filterType === 'query', onChange: function (event) { return changeFilterType(event.target.value); } }),
+                            React.createElement("strong", null, "Query")))),
+                React.createElement("div", null,
+                    React.createElement("h4", null, "Filter for running process instances"),
+                    React.createElement(CamundaFilterBox, { placeholder: "Filter available instances..." }),
+                    React.createElement("div", { style: { maxHeight: '400px', overflowY: 'auto' } },
+                        React.createElement("table", { className: "cam-table" },
+                            React.createElement("thead", null,
+                                React.createElement("tr", null,
+                                    filterType === 'instance' &&
+                                        React.createElement("th", null,
+                                            React.createElement("input", { type: "checkbox", checked: processInstances.every(function (processInstance) { return processInstance.checked; }), onChange: function (event) { return toggleCheckedAll(event.target.checked); } })),
+                                    React.createElement("th", null, "ID"),
+                                    React.createElement("th", null, "Business Key"))),
+                            React.createElement("tbody", null, processInstances.map(function (processInstance, index) { return (React.createElement("tr", { key: index },
+                                filterType === 'instance' &&
+                                    React.createElement("td", null,
+                                        React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } })),
+                                React.createElement("td", null,
+                                    React.createElement("a", { href: "#/process-instance/".concat(processInstance.id), target: "_blank" }, processInstance.id)),
+                                React.createElement("td", null, processInstance.businessKey))); })))))),
+            React.createElement("div", { className: "model-footer", style: {
+                    height: '4em',
+                    paddingRight: '1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                } },
+                React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"),
+                React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: !processInstances.some(function (instance) { return instance.checked; }) },
+                    "Modify selected instances (",
+                    processInstances.filter(function (instance) { return instance.checked; }).length,
+                    ")")))));
 };
 
 var initialState = {
-    instructions: [
-    // {
-    //   "activityId": "prepareBankTransfer",
-    //   "name": "Prepare Bank Transfer",
-    //   "type": "cancel"
-    // },
-    // {
-    //   "activityId": "approveInvoice",
-    //   "name": "Approve Invoice",
-    //   "type": "startBeforeActivity"
-    // },
-    // {
-    //   "activityId": "assignApprover",
-    //   "name": "Assign Approver Group",
-    //   "type": "startAfterActivity"
-    // }
-    ],
+    instructions: [],
     viewer: null,
     tabNode: null,
     elementEvent: null,
@@ -41260,8 +41627,8 @@ var hooks = {
     setElementEvent: function (elementEvent) { return (initialState.elementEvent = elementEvent); },
 };
 var BatchModifyForm = function (_a) {
-    _a.api; _a.processDefinitionId;
-    var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
+    var api = _a.api, processDefinitionId = _a.processDefinitionId;
+    var _b = reactExports.useState(true), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(initialState.viewer), viewer = _c[0], setViewer = _c[1];
     var _d = reactExports.useState(initialState.instructions), instructions = _d[0], setInstructions = _d[1];
     var _e = reactExports.useState(initialState.tabNode), tabNode = _e[0], setTabNode = _e[1];
@@ -41372,27 +41739,7 @@ var BatchModifyForm = function (_a) {
                     justifyContent: 'flex-end',
                 } },
                 React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")))))),
-        React.createElement(ReactModal, { className: "modal-dialog", isOpen: showInstanceModal, style: {
-                content: {},
-                overlay: {
-                    zIndex: 2000,
-                },
-            }, ariaHideApp: false },
-            React.createElement("div", { className: "modal-content", style: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                } },
-                React.createElement("div", { className: "modal-header" },
-                    React.createElement("h3", null, "Select Instances to Modify")),
-                React.createElement("div", { className: "modal-body" }, "asddddddddddd"),
-                React.createElement("div", { className: "model-footer", style: {
-                        height: '4em',
-                        paddingRight: '1em',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                    } },
-                    React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"))))));
+        React.createElement(ProcessInstanceSelectModal, { setShowInstanceModal: setShowInstanceModal, showInstanceModal: showInstanceModal, api: api, processDefinitionId: processDefinitionId })));
 };
 var definitionBatchModify = [
     {
@@ -41401,8 +41748,6 @@ var definitionBatchModify = [
         render: function (viewer) {
             hooks.setViewer(viewer);
             viewer.get('eventBus').on('element.hover', function (event) { return hooks.setElementEvent(event); });
-            // viewer.get('eventBus').on('element.hover', (event: any) => console.log('hover', event.element.id));
-            // viewer.get('eventBus').on('element.out', (event: any) => console.log('out', event.element.id));
             hooks.setInstructions([]); // reset instructions when switching diagrams
         },
     },

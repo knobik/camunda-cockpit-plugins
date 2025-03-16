@@ -1,0 +1,58 @@
+.camunda-filter-box-container {
+  height: auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0 0 5px 0;
+
+  .expression {
+    display: inline;
+    font-weight: inherit;
+    font-size: inherit;
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #155cb5;
+    background-color: #fafafa;
+    border: 1px solid #e5e5e5;
+    margin: 5px 10px 0 5px;
+
+    &.invalid {
+      background-color: #f2dede;
+      border-color: #ebccd1;
+      color: #a94442;
+    }
+
+    span {
+      margin-right: 5px;
+      cursor: pointer;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.non-editable {
+        cursor: default;
+      }
+
+      .form-control {
+        width: auto;
+        min-width: 40px;
+        max-width: 100%;
+        margin-bottom: -1px;
+        height: auto;
+      }
+    }
+  }
+
+  &.form-control {
+    .search-input {
+      border: 0;
+      margin: 5px 10px 0 5px;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}

@@ -1,6 +1,11 @@
 import './definition-batch-modify-table.scss';
 import React from 'react';
-import { ModificationInstruction } from '../types';
+
+export interface ModificationInstruction {
+  type: string;
+  name: string;
+  activityId: string;
+}
 
 export interface ModificationTableProps {
   instructions: ModificationInstruction[];
@@ -8,8 +13,8 @@ export interface ModificationTableProps {
 }
 
 const ModificationTable: React.FC<ModificationTableProps> = ({ instructions, setInstructions }) => {
-  function deleteInstruction(activityId: string) {
-    setInstructions(instructions.filter((instruction: any) => instruction.activityId !== activityId));
+  function removeInstruction(activityId: string) {
+    setInstructions(instructions.filter((instruction: ModificationInstruction) => instruction.activityId !== activityId));
   }
 
   function changeInstructionType(index: number, event: any) {
@@ -52,7 +57,7 @@ const ModificationTable: React.FC<ModificationTableProps> = ({ instructions, set
           <tr key={index}>
             <td className="remove">
               <div>
-                <button className="btn btn-danger" onClick={() => deleteInstruction(instruction.activityId)}>
+                <button className="btn btn-danger" onClick={() => removeInstruction(instruction.activityId)}>
                   <span className="glyphicon glyphicon-trash"></span>
                 </button>
               </div>
