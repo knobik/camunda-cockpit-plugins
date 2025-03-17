@@ -41287,16 +41287,11 @@ var headers = function (api) {
         'X-XSRF-TOKEN': api.CSRFToken,
     };
 };
-var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, res, _a, _b, _c, _d, _e, _f, _g;
-    return __generator(this, function (_h) {
-        switch (_h.label) {
+var post = function (api, path, params, payload) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, res, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                // XXX: Workaround a possible bug where engine api has been parsed wrong
-                if (api.engine.match(/\/#\//)) {
-                    api.engine = api.engine.split('/#/')[0].replace(/.*\//g, '');
-                    api.engineApi = api.baseApi + '/engine/' + api.engine;
-                }
                 params = params || {};
                 if (['/history/activity-instance', '/history/variable-instance', '/history/decision-instance'].includes(path) &&
                     !(params === null || params === void 0 ? void 0 : params.maxResults)) {
@@ -41305,40 +41300,28 @@ var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0
                 query = new URLSearchParams(params).toString();
                 if (!query) return [3 /*break*/, 2];
                 return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
-                        method: 'get',
+                        method: 'post',
                         headers: headers(api),
+                        body: payload,
                     })];
             case 1:
-                _a = _h.sent();
+                _a = _b.sent();
                 return [3 /*break*/, 4];
             case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
-                    method: 'get',
+                    method: 'post',
                     headers: headers(api),
+                    body: payload,
                 })];
             case 3:
-                _a = _h.sent();
-                _h.label = 4;
+                _a = _b.sent();
+                _b.label = 4;
             case 4:
                 res = _a;
-                if (!(res.status === 200 && (res.headers.get('Content-Type') || '').startsWith('application/json'))) return [3 /*break*/, 6];
+                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 6];
                 return [4 /*yield*/, res.json()];
-            case 5: return [2 /*return*/, _h.sent()];
-            case 6:
-                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 8];
-                _c = (_b = console).debug;
-                _d = [res.status, path];
-                return [4 /*yield*/, res.json()];
-            case 7:
-                _c.apply(_b, _d.concat([_h.sent()]));
-                return [3 /*break*/, 10];
-            case 8:
-                _f = (_e = console).debug;
-                _g = [res.status, path];
-                return [4 /*yield*/, res.text()];
-            case 9:
-                _f.apply(_e, _g.concat([_h.sent()]));
-                _h.label = 10;
-            case 10: return [2 /*return*/, []];
+            case 5: return [2 /*return*/, _b.sent()];
+            case 6: return [4 /*yield*/, res.text()];
+            case 7: return [2 /*return*/, _b.sent()];
         }
     });
 }); };
@@ -41438,11 +41421,10 @@ function isValidExpression(expression) {
     return true;
 }
 var CamundaFilterBox = function (_a) {
-    var placeholder = _a.placeholder, availableExpressions = _a.availableExpressions;
-    var _b = reactExports.useState([]), expressions = _b[0], setExpressions = _b[1];
+    var placeholder = _a.placeholder, availableExpressions = _a.availableExpressions, expressions = _a.expressions, setExpressions = _a.setExpressions;
     var CustomToggle = React.forwardRef(function (_a, ref) {
         var onClick = _a.onClick;
-        return (React.createElement("input", { ref: ref, autoFocus: true, className: "search-input", placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
+        return (React.createElement("input", { ref: ref, className: "search-input", placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
                 e.preventDefault();
                 onClick(e);
             }, onKeyDown: function (e) {
@@ -41483,7 +41465,7 @@ var CamundaFilterBox = function (_a) {
         updateExpression(index, expression);
     }
     function removeExpression(index) {
-        setExpressions(function (oldExpressions) { return oldExpressions.filter(function (e, i) { return i !== index; }); });
+        setExpressions(expressions.filter(function (e, i) { return i !== index; }));
     }
     return (React.createElement("div", { className: "camunda-filter-box-container form-control" },
         expressions.map(function (expression, index) { return (React.createElement("div", { className: "expression ".concat(!isValidExpression(expression) ? 'invalid' : ''), key: index },
@@ -41545,7 +41527,7 @@ var expressionDefinitions = [
 var ProcessInstanceSelectModal = function (_a) {
     var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
-    var _c = reactExports.useState([]), expressions = _c[0]; _c[1];
+    var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
     var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
     var _e = reactExports.useState('instance'), filterType = _e[0], setFilterType = _e[1];
     reactExports.useEffect(function () {
@@ -41554,7 +41536,7 @@ var ProcessInstanceSelectModal = function (_a) {
                 var items, filtered;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, get(api, '/process-instance', __assign(__assign({}, query), { processDefinitionId: processDefinitionId }))];
+                        case 0: return [4 /*yield*/, post(api, '/process-instance', {}, JSON.stringify(__assign(__assign({}, query), { processDefinitionId: processDefinitionId })))];
                         case 1:
                             items = _a.sent();
                             filtered = items.map(function (item) {
@@ -41572,12 +41554,48 @@ var ProcessInstanceSelectModal = function (_a) {
         }
     }, [query]);
     reactExports.useEffect(function () {
-        if (expressions.length > 0) ;
+        if (expressions.length > 0) {
+            var variableExpressions = expressions
+                .filter(function (expression) { return expression.definition.type === 'variable'; })
+                .map(function (expression) {
+                var value = expression.value;
+                // numeric cast
+                if (isNaN(Number(expression.value))) {
+                    value = Number(expression.value);
+                }
+                // cast boolean
+                if (expression.value === 'true' || expression.value === 'false') {
+                    value = expression.value === 'true';
+                }
+                return {
+                    name: expression.name,
+                    operator: expression.operator,
+                    value: value,
+                };
+            });
+            var activityIdInExpressions = expressions
+                .filter(function (expression) { return expression.definition.type === 'activityIdIn'; })
+                .map(function (expression) {
+                return expression.value;
+            });
+            var rest = expressions.filter(function (expression) {
+                return expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn';
+            });
+            var query_1 = {};
+            rest.map(function (expression) {
+                query_1[expression.definition.type] = expression.value;
+            });
+            if (activityIdInExpressions.length > 0) {
+                query_1['activityIdIn'] = activityIdInExpressions;
+            }
+            if (variableExpressions.length > 0) {
+                query_1['variables'] = variableExpressions;
+            }
+            setQuery(query_1);
+        }
         else {
             setQuery({
                 firstResult: 0,
-                // sortBy: 'definitionKey',
-                // sortOrder: 'asc',
             });
         }
     }, [expressions]);
@@ -41625,20 +41643,18 @@ var ProcessInstanceSelectModal = function (_a) {
                             React.createElement("strong", null, "Query")))),
                 React.createElement("div", null,
                     React.createElement("h4", null, "Filter for running process instances"),
-                    React.createElement(CamundaFilterBox, { availableExpressions: expressionDefinitions, placeholder: "Filter available instances..." }),
+                    React.createElement(CamundaFilterBox, { expressions: expressions, setExpressions: setExpressions, availableExpressions: expressionDefinitions, placeholder: "Filter available instances..." }),
                     React.createElement("div", { style: { maxHeight: '400px', overflowY: 'auto' } },
                         React.createElement("table", { className: "cam-table" },
                             React.createElement("thead", null,
                                 React.createElement("tr", null,
-                                    filterType === 'instance' &&
-                                        React.createElement("th", null,
-                                            React.createElement("input", { type: "checkbox", checked: processInstances.every(function (processInstance) { return processInstance.checked; }), onChange: function (event) { return toggleCheckedAll(event.target.checked); } })),
+                                    filterType === 'instance' && (React.createElement("th", null,
+                                        React.createElement("input", { type: "checkbox", checked: processInstances.every(function (processInstance) { return processInstance.checked; }), onChange: function (event) { return toggleCheckedAll(event.target.checked); } }))),
                                     React.createElement("th", null, "ID"),
                                     React.createElement("th", null, "Business Key"))),
                             React.createElement("tbody", null, processInstances.map(function (processInstance, index) { return (React.createElement("tr", { key: index },
-                                filterType === 'instance' &&
-                                    React.createElement("td", null,
-                                        React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } })),
+                                filterType === 'instance' && (React.createElement("td", null,
+                                    React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } }))),
                                 React.createElement("td", null,
                                     React.createElement("a", { href: "#/process-instance/".concat(processInstance.id), target: "_blank" }, processInstance.id)),
                                 React.createElement("td", null, processInstance.businessKey))); })))))),

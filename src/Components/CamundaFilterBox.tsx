@@ -70,10 +70,11 @@ function isValidExpression(expression: Expression): boolean {
 export interface CamundaFilterBoxProps {
   placeholder?: string;
   availableExpressions: ExpressionDefinition[];
+  expressions: Expression[];
+  setExpressions: (expressions: Expression[]) => void;
 }
 
-const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availableExpressions }) => {
-  const [expressions, setExpressions] = useState([] as Expression[]);
+const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availableExpressions, expressions, setExpressions }) => {
 
   const CustomToggle = React.forwardRef<
     HTMLInputElement,
@@ -83,7 +84,6 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
   >(({ onClick }, ref) => (
     <input
       ref={ref}
-      autoFocus
       className="search-input"
       placeholder={placeholder ?? 'Add criteria...'}
       onClick={e => {
@@ -137,7 +137,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
   }
 
   function removeExpression(index: number) {
-    setExpressions(oldExpressions => oldExpressions.filter((e, i) => i !== index));
+    setExpressions(expressions.filter((e, i) => i !== index));
   }
 
   return (

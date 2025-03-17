@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 
 import { API } from '../types';
-import { get } from '../utils/api';
-import CamundaFilterBox, { ExpressionDefinition, Operator } from './CamundaFilterBox';
+import { get, post } from '../utils/api';
+import CamundaFilterBox, { Expression, ExpressionDefinition, Operator } from './CamundaFilterBox';
 
 export interface FilteredProcessInstance {
   id: string;
@@ -68,17 +68,17 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   processDefinitionId,
 }) => {
   const [query, setQuery] = useState({} as Record<string, any>);
-  const [expressions, setExpressions] = useState([] as ExpressionDefinition[]);
+  const [expressions, setExpressions] = useState([] as Expression[]);
   const [processInstances, setProcessInstances] = useState([] as FilteredProcessInstance[]);
   const [filterType, setFilterType] = useState('instance');
 
   useEffect(() => {
     if (Object.keys(query).length > 0) {
       (async () => {
-        const items = await get(api, '/process-instance', {
+        const items = await post(api, '/process-instance', {}, JSON.stringify({
           ...query,
           processDefinitionId,
-        });
+        }));
 
         const filtered: FilteredProcessInstance[] = items.map((item: any) => {
           return {
@@ -95,26 +95,55 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
 
   useEffect(() => {
     if (expressions.length > 0) {
-      // const query: any = {
-      //   sortBy: 'endTime',
-      //   sortOrder: 'desc',
-      //   maxResults: 1000,
-      // };
-      // for (const { category, operator, value } of expressions) {
-      //   if (category === 'started' && operator === 'after' && !isNaN(new Date(`${value}`).getTime())) {
-      //     query['startedAfter'] = `${value}T00:00:00.000+0000`;
-      //   } else if (category === 'finished' && operator === 'before' && !isNaN(new Date(`${value}`).getTime())) {
-      //     query['finishedBefore'] = `${value}T00:00:00.000+0000`;
-      //   } else if (category === 'maxResults' && operator == 'is' && !isNaN(parseInt(`${value}`, 10))) {
-      //     query['maxResults'] = `${value}`;
-      //   }
-      // }
-      // setQuery(query);
+      const variableExpressions: any[] = expressions
+        .filter((expression: Expression) => expression.definition.type === 'variable')
+        .map((expression: Expression) => {
+          let value: any = expression.value;
+
+          // numeric cast
+          if (isNaN(Number(expression.value))) {
+            value = Number(expression.value);
+          }
+
+          // cast boolean
+          if (expression.value === 'true' || expression.value === 'false') {
+            value = expression.value === 'true';
+          }
+
+          return {
+            name: expression.name,
+            operator: expression.operator as string,
+            value: value,
+          };
+        });
+
+      const activityIdInExpressions: string[] = expressions
+        .filter((expression: Expression) => expression.definition.type === 'activityIdIn')
+        .map((expression: Expression) => {
+          return expression.value;
+        });
+
+      const rest = expressions.filter(
+        (expression: Expression) =>
+          expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn'
+      );
+
+      let query: any = {};
+      rest.map((expression: Expression) => {
+        query[expression.definition.type] = expression.value;
+      });
+
+      if (activityIdInExpressions.length > 0) {
+        query['activityIdIn'] = activityIdInExpressions;
+      }
+      if (variableExpressions.length > 0) {
+        query['variables'] = variableExpressions;
+      }
+
+      setQuery(query);
     } else {
       setQuery({
         firstResult: 0,
-        // sortBy: 'definitionKey',
-        // sortOrder: 'asc',
       });
     }
   }, [expressions]);
@@ -196,6 +225,8 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
           <div>
             <h4>Filter for running process instances</h4>
             <CamundaFilterBox
+              expressions={expressions}
+              setExpressions={setExpressions}
               availableExpressions={expressionDefinitions}
               placeholder="Filter available instances..."
             />
@@ -203,7 +234,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
               <table className="cam-table">
                 <thead>
                   <tr>
-                    {filterType === 'instance' &&
+                    {filterType === 'instance' && (
                       <th>
                         <input
                           type="checkbox"
@@ -213,7 +244,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                           onChange={event => toggleCheckedAll(event.target.checked)}
                         />
                       </th>
-                    }
+                    )}
                     <th>ID</th>
                     <th>Business Key</th>
                   </tr>
@@ -221,7 +252,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                 <tbody>
                   {processInstances.map((processInstance: any, index: number) => (
                     <tr key={index}>
-                      {filterType === 'instance' &&
+                      {filterType === 'instance' && (
                         <td>
                           <input
                             type="checkbox"
@@ -229,7 +260,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                             onChange={() => toggleChecked(processInstance.id)}
                           />
                         </td>
-                      }
+                      )}
                       <td>
                         <a href={`#/process-instance/${processInstance.id}`} target="_blank">
                           {processInstance.id}
@@ -256,8 +287,13 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
           <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
             Close
           </button>
-          <button className="btn btn-danger" style={{ marginLeft: '1em' }} disabled={!processInstances.some((instance: FilteredProcessInstance) => instance.checked)}>
-            Modify selected instances ({processInstances.filter((instance: FilteredProcessInstance) => instance.checked).length})
+          <button
+            className="btn btn-danger"
+            style={{ marginLeft: '1em' }}
+            disabled={!processInstances.some((instance: FilteredProcessInstance) => instance.checked)}
+          >
+            Modify selected instances (
+            {processInstances.filter((instance: FilteredProcessInstance) => instance.checked).length})
           </button>
         </div>
       </div>
