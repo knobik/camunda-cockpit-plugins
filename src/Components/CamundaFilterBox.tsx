@@ -3,6 +3,7 @@ import './camunda-filter-box.scss';
 import React, { forwardRef, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import CamundaFilterBoxSelectValue from './CamundaFilterBoxSelectValue';
 import CamundaFilterBoxTextValue from './CamundaFilterBoxTextValue';
 
 export enum Operator {
@@ -125,6 +126,19 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
     setExpressions(expressions.map((e, i) => (i === index ? expression : e)));
   }
 
+  function changeExpressionType(index: number, expression: Expression, newType: string) {
+    const definition = availableExpressions.find(def => def.type === newType);
+    if (!definition) {
+      return;
+    }
+    expression.definition = definition;
+    expression.operator = definition.defaultOperator;
+    expression.name = definition.requiresName ? expression.name : '';
+    expression.value = definition.requiresValue ? expression.value : '';
+
+    updateExpression(index, expression);
+  }
+
   function removeExpression(index: number) {
     setExpressions(expressions.filter((_, i) => i !== index));
   }
@@ -134,7 +148,12 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
       {expressions.map((expression, index) => (
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>
-          <span>{expression.definition.label}</span>
+          <CamundaFilterBoxSelectValue
+            options={availableExpressions.map(def => def.type)}
+            defaultValue={expression.definition.type}
+            translator={(value: string) => availableExpressions.find(def => def.type === value)?.label ?? value}
+            updateExpression={(changed, newValue) => changeExpressionType(index, expression, newValue)}
+          />
           {(expression.name || expression.definition.requiresName) && (
             <>
               <span className="non-editable">:</span>
@@ -147,9 +166,17 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
           )}
           {expression.definition.requiresValue && (
             <>
-              <span className={`${expression.definition.availableOperators.length === 1 ? 'non-editable' : ''}`}>
-                {operatorToText(expression.operator)}
-              </span>
+              {expression.definition.availableOperators.length === 1 ? (
+                <span className="non-editable">{operatorToText(expression.operator)}</span>
+              ) : (
+                <CamundaFilterBoxSelectValue
+                  options={expression.definition.availableOperators}
+                  expression={expression}
+                  field="operator"
+                  translator={operatorToText}
+                  updateExpression={changed => updateExpression(index, changed)}
+                />
+              )}
               <CamundaFilterBoxTextValue
                 expression={expression}
                 field="value"

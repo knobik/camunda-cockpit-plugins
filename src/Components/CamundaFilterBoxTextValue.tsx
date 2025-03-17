@@ -4,7 +4,7 @@ import { Expression } from './CamundaFilterBox';
 export interface CamundaFilterBoxTextValueProps {
   field: string;
   expression: Expression;
-  updateExpression: (expression: Expression) => void;
+  updateExpression: (expression: Expression, newValue: string) => void;
 }
 
 const CamundaFilterBoxTextValue: React.FC<CamundaFilterBoxTextValueProps> = ({ expression, field, updateExpression }) => {
@@ -14,9 +14,8 @@ const CamundaFilterBoxTextValue: React.FC<CamundaFilterBoxTextValueProps> = ({ e
 
   function submitChange(newValue: string) {
     setIsEditing(false);
-
     (expression as any)[field] = newValue;
-    updateExpression(expression as Expression);
+    updateExpression(expression as Expression, newValue);
   }
 
   return (
