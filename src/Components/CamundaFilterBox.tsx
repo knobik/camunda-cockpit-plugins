@@ -1,8 +1,7 @@
 import './camunda-filter-box.scss';
 
-import React, { forwardRef, SyntheticEvent, useEffect, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { ModificationInstruction } from './ModificationTable';
 
 export enum Operator {
   eq = 'eq', // =
@@ -81,14 +80,12 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
   const CustomToggle = React.forwardRef<
     HTMLInputElement,
     {
-      children: React.ReactNode;
       onClick: (e: React.MouseEvent<HTMLInputElement>) => void;
     }
-  >(({ children, onClick }, ref) => (
+  >(({ onClick }, ref) => (
     <input
       ref={ref}
       className="search-input"
-      defaultValue={children as string}
       placeholder={placeholder ?? 'Add criteria...'}
       onClick={e => {
         e.preventDefault();
@@ -158,7 +155,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
       <Dropdown
         onSelect={(eventKey: string | null) => addExpression(eventKey)}
       >
-        <Dropdown.Toggle as={CustomToggle}></Dropdown.Toggle>
+        <Dropdown.Toggle as={CustomToggle} />
         <Dropdown.Menu>
           {availableExpressions.map((definition: ExpressionDefinition, index: number) => (
             <Dropdown.Item key={index} eventKey={definition.type}>{definition.label}</Dropdown.Item>

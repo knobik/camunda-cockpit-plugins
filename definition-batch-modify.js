@@ -41390,8 +41390,8 @@ var CamundaFilterBox = function (_a) {
     var placeholder = _a.placeholder, availableExpressions = _a.availableExpressions;
     var _b = reactExports.useState([]), expressions = _b[0], setExpressions = _b[1];
     var CustomToggle = React.forwardRef(function (_a, ref) {
-        var children = _a.children, onClick = _a.onClick;
-        return (React.createElement("input", { ref: ref, className: "search-input", defaultValue: children, placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
+        var onClick = _a.onClick;
+        return (React.createElement("input", { ref: ref, className: "search-input", placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
                 e.preventDefault();
                 onClick(e);
             }, onKeyDown: function (e) {
