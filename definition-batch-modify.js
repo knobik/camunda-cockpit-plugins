@@ -41429,16 +41429,16 @@ var CamundaFilterBox = function (_a) {
                 onClick(e);
             }, onKeyDown: function (e) {
                 if (e.key === 'Enter') {
-                    addExpression(availableExpressions[0].type, e.currentTarget.value);
+                    addExpression(availableExpressions[0].label, e.currentTarget.value);
                 }
             } }));
     });
-    function addExpression(type, value) {
+    function addExpression(label, value) {
         var _a;
-        if (!type) {
+        if (!label) {
             return;
         }
-        var definition = availableExpressions.find(function (def) { return def.type === type; });
+        var definition = availableExpressions.find(function (def) { return def.label === label; });
         if (!definition) {
             return;
         }
@@ -41454,8 +41454,8 @@ var CamundaFilterBox = function (_a) {
     function updateExpression(index, expression) {
         setExpressions(expressions.map(function (e, i) { return (i === index ? expression : e); }));
     }
-    function changeExpressionType(index, expression, newType) {
-        var definition = availableExpressions.find(function (def) { return def.type === newType; });
+    function changeExpressionDefinition(index, expression, newDefinitionLabel) {
+        var definition = availableExpressions.find(function (def) { return def.label === newDefinitionLabel; });
         if (!definition) {
             return;
         }
@@ -41466,12 +41466,12 @@ var CamundaFilterBox = function (_a) {
         updateExpression(index, expression);
     }
     function removeExpression(index) {
-        setExpressions(expressions.filter(function (e, i) { return i !== index; }));
+        setExpressions(expressions.filter(function (_, i) { return i !== index; }));
     }
     return (React.createElement("div", { className: "camunda-filter-box-container form-control" },
         expressions.map(function (expression, index) { return (React.createElement("div", { className: "expression ".concat(!isValidExpression(expression) ? 'invalid' : ''), key: index },
             React.createElement("span", { className: "glyphicon glyphicon-remove", onClick: function () { return removeExpression(index); } }),
-            React.createElement(CamundaFilterBoxSelectValue, { options: availableExpressions.map(function (def) { return def.type; }), defaultValue: expression.definition.type, translator: function (value) { var _a, _b; return (_b = (_a = availableExpressions.find(function (def) { return def.type === value; })) === null || _a === void 0 ? void 0 : _a.label) !== null && _b !== void 0 ? _b : value; }, updateExpression: function (changed, newValue) { return changeExpressionType(index, expression, newValue); } }),
+            React.createElement(CamundaFilterBoxSelectValue, { options: availableExpressions.map(function (def) { return def.label; }), defaultValue: expression.definition.label, updateExpression: function (_, newValue) { return changeExpressionDefinition(index, expression, newValue); } }),
             (expression.name || expression.definition.requiresName) && (React.createElement(React.Fragment, null,
                 React.createElement("span", { className: "non-editable" }, ":"),
                 React.createElement(CamundaFilterBoxTextValue, { expression: expression, field: "name", updateExpression: function (changed) { return updateExpression(index, changed); } }))),
@@ -41480,7 +41480,7 @@ var CamundaFilterBox = function (_a) {
                 React.createElement(CamundaFilterBoxTextValue, { openEditing: expression.value === '', expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } }))))); }),
         React.createElement(Dropdown$1, { onSelect: function (eventKey) { return addExpression(eventKey); } },
             React.createElement(Dropdown$1.Toggle, { as: CustomToggle }),
-            React.createElement(Dropdown$1.Menu, null, availableExpressions.map(function (definition, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: definition.type }, definition.label)); })))));
+            React.createElement(Dropdown$1.Menu, null, availableExpressions.map(function (definition, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: definition.label }, definition.label)); })))));
 };
 
 var expressionDefinitions = [
@@ -41506,6 +41506,15 @@ var expressionDefinitions = [
         availableOperators: [Operator.eq],
         defaultOperator: Operator.eq,
         defaultValue: 'true',
+        requiresValue: false,
+        requiresName: false,
+    },
+    {
+        label: 'Without Incidents',
+        type: 'withIncident',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        defaultValue: 'false',
         requiresValue: false,
         requiresName: false,
     },

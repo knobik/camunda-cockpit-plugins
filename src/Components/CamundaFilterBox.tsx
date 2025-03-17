@@ -93,18 +93,18 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
       }}
       onKeyDown={e => {
         if (e.key === 'Enter') {
-          addExpression(availableExpressions[0].type, e.currentTarget.value);
+          addExpression(availableExpressions[0].label, e.currentTarget.value);
         }
       }}
     />
   ));
 
-  function addExpression(type: string | null, value?: string) {
-    if (!type) {
+  function addExpression(label: string | null, value?: string) {
+    if (!label) {
       return;
     }
 
-    const definition = availableExpressions.find(def => def.type === type);
+    const definition = availableExpressions.find(def => def.label === label);
     if (!definition) {
       return;
     }
@@ -124,8 +124,8 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
     setExpressions(expressions.map((e, i) => (i === index ? expression : e)));
   }
 
-  function changeExpressionType(index: number, expression: Expression, newType: string) {
-    const definition = availableExpressions.find(def => def.type === newType);
+  function changeExpressionDefinition(index: number, expression: Expression, newDefinitionLabel: string) {
+    const definition = availableExpressions.find(def => def.label === newDefinitionLabel);
     if (!definition) {
       return;
     }
@@ -138,7 +138,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
   }
 
   function removeExpression(index: number) {
-    setExpressions(expressions.filter((e, i) => i !== index));
+    setExpressions(expressions.filter((_, i) => i !== index));
   }
 
   return (
@@ -147,10 +147,9 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>
           <CamundaFilterBoxSelectValue
-            options={availableExpressions.map(def => def.type)}
-            defaultValue={expression.definition.type}
-            translator={(value: string) => availableExpressions.find(def => def.type === value)?.label ?? value}
-            updateExpression={(changed, newValue) => changeExpressionType(index, expression, newValue)}
+            options={availableExpressions.map(def => def.label)}
+            defaultValue={expression.definition.label}
+            updateExpression={(_, newValue) => changeExpressionDefinition(index, expression, newValue)}
           />
           {(expression.name || expression.definition.requiresName) && (
             <>
@@ -189,7 +188,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
         <Dropdown.Toggle as={CustomToggle} />
         <Dropdown.Menu>
           {availableExpressions.map((definition: ExpressionDefinition, index: number) => (
-            <Dropdown.Item key={index} eventKey={definition.type}>
+            <Dropdown.Item key={index} eventKey={definition.label}>
               {definition.label}
             </Dropdown.Item>
           ))}

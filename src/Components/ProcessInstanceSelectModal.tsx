@@ -45,6 +45,15 @@ const expressionDefinitions: ExpressionDefinition[] = [
     requiresName: false,
   } as ExpressionDefinition,
   {
+    label: 'Without Incidents',
+    type: 'withIncident',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    defaultValue: 'false',
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
     label: 'Variable',
     type: 'variable',
     availableOperators: [
