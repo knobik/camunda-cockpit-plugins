@@ -35,7 +35,7 @@ export interface Expression {
   value: string;
 }
 
-function operatorToText(o: Operator): string {
+export function operatorToText(o: Operator): string {
   switch (o) {
     case Operator.eq:
       return '=';
@@ -85,6 +85,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
   >(({ onClick }, ref) => (
     <input
       ref={ref}
+      autoComplete="off"
       className="search-input"
       placeholder={placeholder ?? 'Add criteria...'}
       onClick={e => {
