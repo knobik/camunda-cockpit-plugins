@@ -11,13 +11,6 @@ export interface FilteredProcessInstance {
   checked: boolean;
 }
 
-export interface ProcessInstanceSelectModalProps {
-  api: API;
-  setShowInstanceModal: any;
-  showInstanceModal: boolean;
-  processDefinitionId: string;
-}
-
 const expressionDefinitions: ExpressionDefinition[] = [
   {
     label: 'Business Key',
@@ -71,6 +64,14 @@ const expressionDefinitions: ExpressionDefinition[] = [
   } as ExpressionDefinition,
 ];
 
+export interface ProcessInstanceSelectModalProps {
+  api: API;
+  setShowInstanceModal: any;
+  showInstanceModal: boolean;
+  processDefinitionId: string;
+  onCompleted: (queryType: string, processInstanceIds: string[], query: Record<string, any>) => void;
+}
+
 function castValue(value: string): any {
   let result: any = value;
 
@@ -91,6 +92,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   showInstanceModal,
   api,
   processDefinitionId,
+  onCompleted,
 }) => {
   const [query, setQuery] = useState({} as Record<string, any>);
   const [expressions, setExpressions] = useState([] as Expression[]);
@@ -98,7 +100,6 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   const [filterType, setFilterType] = useState('instance');
 
   useEffect(() => {
-    if (Object.keys(query).length > 0) {
       (async () => {
         const items = await post(
           api,
@@ -120,51 +121,46 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
 
         setProcessInstances(filtered);
       })();
-    }
   }, [query]);
 
   useEffect(() => {
-    if (expressions.length > 0) {
-      const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
+    const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
 
-      const variableExpressions: any[] = validExpressions
-        .filter((expression: Expression) => expression.definition.type === 'variable')
-        .map((expression: Expression) => {
-          return {
-            name: expression.name,
-            operator: expression.operator as string,
-            value: castValue(expression.value),
-          };
-        });
-
-      const activityIdInExpressions: string[] = validExpressions
-        .filter((expression: Expression) => expression.definition.type === 'activityIdIn')
-        .map((expression: Expression) => {
-          return expression.value;
-        });
-
-      const rest = validExpressions.filter(
-        (expression: Expression) =>
-          expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn'
-      );
-
-      let query: any = {};
-      rest.map((expression: Expression) => {
-        query[expression.definition.type] = castValue(expression.value);
+    const variableExpressions: any[] = validExpressions
+      .filter((expression: Expression) => expression.definition.type === 'variable')
+      .map((expression: Expression) => {
+        return {
+          name: expression.name,
+          operator: expression.operator as string,
+          value: castValue(expression.value),
+        };
       });
 
-      if (activityIdInExpressions.length > 0) {
-        query['activityIdIn'] = activityIdInExpressions;
-      }
-      if (variableExpressions.length > 0) {
-        query['variables'] = variableExpressions;
-      }
-
-      setQuery(query);
-    } else {
-      setQuery({
-        firstResult: 0,
+    const activityIdInExpressions: string[] = validExpressions
+      .filter((expression: Expression) => expression.definition.type === 'activityIdIn')
+      .map((expression: Expression) => {
+        return expression.value;
       });
+
+    const rest = validExpressions.filter(
+      (expression: Expression) =>
+        expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn'
+    );
+
+    let newQuery: any = {};
+    rest.map((expression: Expression) => {
+      newQuery[expression.definition.type] = castValue(expression.value);
+    });
+
+    if (activityIdInExpressions.length > 0) {
+      newQuery['activityIdIn'] = activityIdInExpressions;
+    }
+    if (variableExpressions.length > 0) {
+      newQuery['variables'] = variableExpressions;
+    }
+
+    if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
+      setQuery(newQuery);
     }
   }, [expressions]);
 
@@ -311,6 +307,16 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
             className="btn btn-danger"
             style={{ marginLeft: '1em' }}
             disabled={!processInstances.some((instance: FilteredProcessInstance) => instance.checked)}
+            onClick={() => {
+              onCompleted(
+                filterType,
+                processInstances
+                  .filter((instance: FilteredProcessInstance) => instance.checked)
+                  .map((instance: FilteredProcessInstance) => instance.id),
+                query
+              );
+              setShowInstanceModal(false);
+            }}
           >
             Modify selected instances (
             {processInstances.filter((instance: FilteredProcessInstance) => instance.checked).length})

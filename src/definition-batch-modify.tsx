@@ -181,6 +181,9 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         showInstanceModal={showInstanceModal}
         api={api}
         processDefinitionId={processDefinitionId}
+        onCompleted={(queryType, processInstanceIds, query)=>{
+          console.log(queryType, processInstanceIds, query);
+        }}
       />
     </>
   );

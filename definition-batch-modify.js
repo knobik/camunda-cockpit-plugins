@@ -41548,70 +41548,63 @@ function castValue(value) {
     return result;
 }
 var ProcessInstanceSelectModal = function (_a) {
-    var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId;
+    var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
     var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
     var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
     var _e = reactExports.useState('instance'), filterType = _e[0], setFilterType = _e[1];
     reactExports.useEffect(function () {
-        if (Object.keys(query).length > 0) {
-            (function () { return __awaiter(void 0, void 0, void 0, function () {
-                var items, filtered;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, post(api, '/process-instance', {}, JSON.stringify(__assign(__assign({}, query), { processDefinitionId: processDefinitionId })))];
-                        case 1:
-                            items = _a.sent();
-                            filtered = items.map(function (item) {
-                                return {
-                                    id: item.id,
-                                    businessKey: item.businessKey,
-                                    checked: filterType === 'query',
-                                };
-                            });
-                            setProcessInstances(filtered);
-                            return [2 /*return*/];
-                    }
-                });
-            }); })();
-        }
+        (function () { return __awaiter(void 0, void 0, void 0, function () {
+            var items, filtered;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, post(api, '/process-instance', {}, JSON.stringify(__assign(__assign({}, query), { processDefinitionId: processDefinitionId })))];
+                    case 1:
+                        items = _a.sent();
+                        filtered = items.map(function (item) {
+                            return {
+                                id: item.id,
+                                businessKey: item.businessKey,
+                                checked: filterType === 'query',
+                            };
+                        });
+                        setProcessInstances(filtered);
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
     }, [query]);
     reactExports.useEffect(function () {
-        if (expressions.length > 0) {
-            var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
-            var variableExpressions = validExpressions
-                .filter(function (expression) { return expression.definition.type === 'variable'; })
-                .map(function (expression) {
-                return {
-                    name: expression.name,
-                    operator: expression.operator,
-                    value: castValue(expression.value),
-                };
-            });
-            var activityIdInExpressions = validExpressions
-                .filter(function (expression) { return expression.definition.type === 'activityIdIn'; })
-                .map(function (expression) {
-                return expression.value;
-            });
-            var rest = validExpressions.filter(function (expression) {
-                return expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn';
-            });
-            var query_1 = {};
-            rest.map(function (expression) {
-                query_1[expression.definition.type] = castValue(expression.value);
-            });
-            if (activityIdInExpressions.length > 0) {
-                query_1['activityIdIn'] = activityIdInExpressions;
-            }
-            if (variableExpressions.length > 0) {
-                query_1['variables'] = variableExpressions;
-            }
-            setQuery(query_1);
+        var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
+        var variableExpressions = validExpressions
+            .filter(function (expression) { return expression.definition.type === 'variable'; })
+            .map(function (expression) {
+            return {
+                name: expression.name,
+                operator: expression.operator,
+                value: castValue(expression.value),
+            };
+        });
+        var activityIdInExpressions = validExpressions
+            .filter(function (expression) { return expression.definition.type === 'activityIdIn'; })
+            .map(function (expression) {
+            return expression.value;
+        });
+        var rest = validExpressions.filter(function (expression) {
+            return expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn';
+        });
+        var newQuery = {};
+        rest.map(function (expression) {
+            newQuery[expression.definition.type] = castValue(expression.value);
+        });
+        if (activityIdInExpressions.length > 0) {
+            newQuery['activityIdIn'] = activityIdInExpressions;
         }
-        else {
-            setQuery({
-                firstResult: 0,
-            });
+        if (variableExpressions.length > 0) {
+            newQuery['variables'] = variableExpressions;
+        }
+        if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
+            setQuery(newQuery);
         }
     }, [expressions]);
     function toggleChecked(id) {
@@ -41681,7 +41674,12 @@ var ProcessInstanceSelectModal = function (_a) {
                     justifyContent: 'flex-end',
                 } },
                 React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"),
-                React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: !processInstances.some(function (instance) { return instance.checked; }) },
+                React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: !processInstances.some(function (instance) { return instance.checked; }), onClick: function () {
+                        onCompleted(filterType, processInstances
+                            .filter(function (instance) { return instance.checked; })
+                            .map(function (instance) { return instance.id; }), query);
+                        setShowInstanceModal(false);
+                    } },
                     "Modify selected instances (",
                     processInstances.filter(function (instance) { return instance.checked; }).length,
                     ")")))));
@@ -41812,7 +41810,9 @@ var BatchModifyForm = function (_a) {
                     justifyContent: 'flex-end',
                 } },
                 React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")))))),
-        React.createElement(ProcessInstanceSelectModal, { setShowInstanceModal: setShowInstanceModal, showInstanceModal: showInstanceModal, api: api, processDefinitionId: processDefinitionId })));
+        React.createElement(ProcessInstanceSelectModal, { setShowInstanceModal: setShowInstanceModal, showInstanceModal: showInstanceModal, api: api, processDefinitionId: processDefinitionId, onCompleted: function (queryType, processInstanceIds, query) {
+                console.log(queryType, processInstanceIds, query);
+            } })));
 };
 var definitionBatchModify = [
     {
