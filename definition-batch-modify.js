@@ -41536,6 +41536,11 @@ var expressionDefinitions = [
         requiresName: true,
     },
 ];
+var FilterType;
+(function (FilterType) {
+    FilterType["INSTANCE"] = "instance";
+    FilterType["QUERY"] = "query";
+})(FilterType || (FilterType = {}));
 function castValue(value) {
     var result = value;
     if (!isNaN(Number(value))) {
@@ -41552,7 +41557,7 @@ var ProcessInstanceSelectModal = function (_a) {
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
     var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
     var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
-    var _e = reactExports.useState('instance'), filterType = _e[0], setFilterType = _e[1];
+    var _e = reactExports.useState(FilterType.INSTANCE), filterType = _e[0], setFilterType = _e[1];
     reactExports.useEffect(function () {
         (function () { return __awaiter(void 0, void 0, void 0, function () {
             var items, filtered;
@@ -41622,7 +41627,7 @@ var ProcessInstanceSelectModal = function (_a) {
         setProcessInstances(__spreadArray([], processInstances, true));
     }
     function changeFilterType(value) {
-        if (value === 'query') {
+        if (value === FilterType.QUERY) {
             toggleCheckedAll(true);
         }
         setFilterType(value);
@@ -41644,10 +41649,10 @@ var ProcessInstanceSelectModal = function (_a) {
                     React.createElement("h4", null, "Choose selection type"),
                     React.createElement("div", null,
                         React.createElement("label", { className: "radio-inline" },
-                            React.createElement("input", { type: "radio", name: "filterType", value: "instance", defaultChecked: filterType === 'instance', onChange: function (event) { return changeFilterType(event.target.value); } }),
+                            React.createElement("input", { type: "radio", name: "filterType", value: FilterType.INSTANCE, defaultChecked: filterType === FilterType.INSTANCE, onChange: function (event) { return changeFilterType(FilterType.INSTANCE); } }),
                             React.createElement("strong", null, "Instance")),
                         React.createElement("label", { className: "radio-inline" },
-                            React.createElement("input", { type: "radio", name: "filterType", value: "query", defaultChecked: filterType === 'query', onChange: function (event) { return changeFilterType(event.target.value); } }),
+                            React.createElement("input", { type: "radio", name: "filterType", value: FilterType.QUERY, defaultChecked: filterType === FilterType.QUERY, onChange: function (event) { return changeFilterType(FilterType.QUERY); } }),
                             React.createElement("strong", null, "Query")))),
                 React.createElement("div", null,
                     React.createElement("h4", null, "Filter for running process instances"),
@@ -41661,7 +41666,7 @@ var ProcessInstanceSelectModal = function (_a) {
                                     React.createElement("th", null, "ID"),
                                     React.createElement("th", null, "Business Key"))),
                             React.createElement("tbody", null, processInstances.map(function (processInstance, index) { return (React.createElement("tr", { key: index },
-                                filterType === 'instance' && (React.createElement("td", null,
+                                filterType === FilterType.INSTANCE && (React.createElement("td", null,
                                     React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } }))),
                                 React.createElement("td", null,
                                     React.createElement("a", { href: "#/process-instance/".concat(processInstance.id), target: "_blank" }, processInstance.id)),
@@ -41675,9 +41680,9 @@ var ProcessInstanceSelectModal = function (_a) {
                 } },
                 React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"),
                 React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: !processInstances.some(function (instance) { return instance.checked; }), onClick: function () {
-                        onCompleted(filterType, processInstances
+                        onCompleted(filterType, filterType === FilterType.INSTANCE ? processInstances
                             .filter(function (instance) { return instance.checked; })
-                            .map(function (instance) { return instance.id; }), query);
+                            .map(function (instance) { return instance.id; }) : undefined, filterType === FilterType.QUERY ? query : undefined);
                         setShowInstanceModal(false);
                     } },
                     "Modify selected instances (",

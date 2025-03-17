@@ -5,12 +5,6 @@ import { API } from '../types';
 import { get, post } from '../utils/api';
 import CamundaFilterBox, { Expression, ExpressionDefinition, Operator, isValidExpression } from './CamundaFilterBox';
 
-export interface FilteredProcessInstance {
-  id: string;
-  businessKey: string;
-  checked: boolean;
-}
-
 const expressionDefinitions: ExpressionDefinition[] = [
   {
     label: 'Business Key',
@@ -64,12 +58,23 @@ const expressionDefinitions: ExpressionDefinition[] = [
   } as ExpressionDefinition,
 ];
 
+export enum FilterType {
+  INSTANCE = 'instance',
+  QUERY = 'query',
+}
+
+export interface FilteredProcessInstance {
+  id: string;
+  businessKey: string;
+  checked: boolean;
+}
+
 export interface ProcessInstanceSelectModalProps {
   api: API;
   setShowInstanceModal: any;
   showInstanceModal: boolean;
   processDefinitionId: string;
-  onCompleted: (queryType: string, processInstanceIds: string[], query: Record<string, any>) => void;
+  onCompleted: (queryType: FilterType, processInstanceIds?: string[], query?: Record<string, any>) => void;
 }
 
 function castValue(value: string): any {
@@ -97,7 +102,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   const [query, setQuery] = useState({} as Record<string, any>);
   const [expressions, setExpressions] = useState([] as Expression[]);
   const [processInstances, setProcessInstances] = useState([] as FilteredProcessInstance[]);
-  const [filterType, setFilterType] = useState('instance');
+  const [filterType, setFilterType] = useState(FilterType.INSTANCE);
 
   useEffect(() => {
       (async () => {
@@ -182,8 +187,8 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
     setProcessInstances([...processInstances]);
   }
 
-  function changeFilterType(value: string) {
-    if (value === 'query') {
+  function changeFilterType(value: FilterType) {
+    if (value === FilterType.QUERY) {
       toggleCheckedAll(true);
     }
 
@@ -220,9 +225,9 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                 <input
                   type="radio"
                   name="filterType"
-                  value="instance"
-                  defaultChecked={filterType === 'instance'}
-                  onChange={event => changeFilterType(event.target.value)}
+                  value={FilterType.INSTANCE}
+                  defaultChecked={filterType === FilterType.INSTANCE}
+                  onChange={event => changeFilterType(FilterType.INSTANCE)}
                 />
                 <strong>Instance</strong>
               </label>
@@ -230,9 +235,9 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                 <input
                   type="radio"
                   name="filterType"
-                  value="query"
-                  defaultChecked={filterType === 'query'}
-                  onChange={event => changeFilterType(event.target.value)}
+                  value={FilterType.QUERY}
+                  defaultChecked={filterType === FilterType.QUERY}
+                  onChange={event => changeFilterType(FilterType.QUERY)}
                 />
                 <strong>Query</strong>
               </label>
@@ -268,7 +273,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                 <tbody>
                   {processInstances.map((processInstance: any, index: number) => (
                     <tr key={index}>
-                      {filterType === 'instance' && (
+                      {filterType === FilterType.INSTANCE && (
                         <td>
                           <input
                             type="checkbox"
@@ -310,10 +315,10 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
             onClick={() => {
               onCompleted(
                 filterType,
-                processInstances
+                filterType === FilterType.INSTANCE ? processInstances
                   .filter((instance: FilteredProcessInstance) => instance.checked)
-                  .map((instance: FilteredProcessInstance) => instance.id),
-                query
+                  .map((instance: FilteredProcessInstance) => instance.id) : undefined,
+                filterType === FilterType.QUERY ? query : undefined
               );
               setShowInstanceModal(false);
             }}
