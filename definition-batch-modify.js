@@ -41434,6 +41434,7 @@ var CamundaFilterBox = function (_a) {
             } }));
     });
     function addExpression(type, value) {
+        var _a;
         if (!type) {
             return;
         }
@@ -41446,7 +41447,7 @@ var CamundaFilterBox = function (_a) {
                 definition: definition,
                 operator: definition.defaultOperator,
                 name: '',
-                value: value !== null && value !== void 0 ? value : '',
+                value: (_a = value !== null && value !== void 0 ? value : definition.defaultValue) !== null && _a !== void 0 ? _a : '',
             },
         ], false));
     }
@@ -41501,9 +41502,10 @@ var expressionDefinitions = [
     },
     {
         label: 'With Incidents',
-        type: 'withIncidents',
+        type: 'withIncident',
         availableOperators: [Operator.eq],
         defaultOperator: Operator.eq,
+        defaultValue: 'true',
         requiresValue: false,
         requiresName: false,
     },
@@ -41524,6 +41526,17 @@ var expressionDefinitions = [
         requiresName: true,
     },
 ];
+function castValue(value) {
+    var result = value;
+    if (!isNaN(Number(value))) {
+        result = Number(value);
+    }
+    // cast boolean
+    if (value === 'true' || value === 'false') {
+        result = value === 'true';
+    }
+    return result;
+}
 var ProcessInstanceSelectModal = function (_a) {
     var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
@@ -41558,19 +41571,10 @@ var ProcessInstanceSelectModal = function (_a) {
             var variableExpressions = expressions
                 .filter(function (expression) { return expression.definition.type === 'variable'; })
                 .map(function (expression) {
-                var value = expression.value;
-                // numeric cast
-                if (isNaN(Number(expression.value))) {
-                    value = Number(expression.value);
-                }
-                // cast boolean
-                if (expression.value === 'true' || expression.value === 'false') {
-                    value = expression.value === 'true';
-                }
                 return {
                     name: expression.name,
                     operator: expression.operator,
-                    value: value,
+                    value: castValue(expression.value),
                 };
             });
             var activityIdInExpressions = expressions
@@ -41583,7 +41587,7 @@ var ProcessInstanceSelectModal = function (_a) {
             });
             var query_1 = {};
             rest.map(function (expression) {
-                query_1[expression.definition.type] = expression.value;
+                query_1[expression.definition.type] = castValue(expression.value);
             });
             if (activityIdInExpressions.length > 0) {
                 query_1['activityIdIn'] = activityIdInExpressions;

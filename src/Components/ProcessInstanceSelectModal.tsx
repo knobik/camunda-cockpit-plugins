@@ -37,9 +37,10 @@ const expressionDefinitions: ExpressionDefinition[] = [
   } as ExpressionDefinition,
   {
     label: 'With Incidents',
-    type: 'withIncidents',
+    type: 'withIncident',
     availableOperators: [Operator.eq],
     defaultOperator: Operator.eq,
+    defaultValue: 'true',
     requiresValue: false,
     requiresName: false,
   } as ExpressionDefinition,
@@ -60,6 +61,21 @@ const expressionDefinitions: ExpressionDefinition[] = [
     requiresName: true,
   } as ExpressionDefinition,
 ];
+
+function castValue(value: string): any {
+  let result: any = value;
+
+  if (!isNaN(Number(value))) {
+    result = Number(value);
+  }
+
+  // cast boolean
+  if (value === 'true' || value === 'false') {
+    result = value === 'true';
+  }
+
+  return result;
+}
 
 const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   setShowInstanceModal,
@@ -98,22 +114,10 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
       const variableExpressions: any[] = expressions
         .filter((expression: Expression) => expression.definition.type === 'variable')
         .map((expression: Expression) => {
-          let value: any = expression.value;
-
-          // numeric cast
-          if (isNaN(Number(expression.value))) {
-            value = Number(expression.value);
-          }
-
-          // cast boolean
-          if (expression.value === 'true' || expression.value === 'false') {
-            value = expression.value === 'true';
-          }
-
           return {
             name: expression.name,
             operator: expression.operator as string,
-            value: value,
+            value: castValue(expression.value),
           };
         });
 
@@ -130,7 +134,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
 
       let query: any = {};
       rest.map((expression: Expression) => {
-        query[expression.definition.type] = expression.value;
+        query[expression.definition.type] = castValue(expression.value);
       });
 
       if (activityIdInExpressions.length > 0) {

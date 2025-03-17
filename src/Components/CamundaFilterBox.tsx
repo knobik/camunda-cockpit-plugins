@@ -23,6 +23,7 @@ export interface ExpressionDefinition {
   type: string;
   availableOperators: Operator[];
   defaultOperator: Operator;
+  defaultValue?: string;
   requiresName: boolean;
   requiresValue: boolean;
 }
@@ -114,7 +115,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
         definition,
         operator: definition.defaultOperator,
         name: '',
-        value: value ?? '',
+        value: value ?? definition.defaultValue ?? '',
       } as Expression,
     ]);
   }
