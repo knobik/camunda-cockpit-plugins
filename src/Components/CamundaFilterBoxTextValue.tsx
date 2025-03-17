@@ -1,35 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import { Expression } from './CamundaFilterBox';
 
 export interface CamundaFilterBoxTextValueProps {
   field: string;
   expression: Expression;
   updateExpression: (expression: Expression, newValue: string) => void;
+  openEditing?: boolean;
 }
 
-const CamundaFilterBoxTextValue: React.FC<CamundaFilterBoxTextValueProps> = ({ expression, field, updateExpression }) => {
-  const [isEditing, setIsEditing] = React.useState(false);
+const CamundaFilterBoxTextValue: React.FC<CamundaFilterBoxTextValueProps> = ({
+  expression,
+  field,
+  updateExpression,
+  openEditing,
+}) => {
+  const [isEditing, setIsEditing] = useState(openEditing ?? true);
+  const value = (expression as any)[field];
+  const [newValue, setNewValue] = useState('');
 
-  const value: string = (expression as any)[field];
-
-  function submitChange(newValue: string) {
+  function submitChange(changed: string) {
     setIsEditing(false);
-    (expression as any)[field] = newValue;
-    updateExpression(expression as Expression, newValue);
+    (expression as any)[field] = changed;
+    updateExpression(expression as Expression, changed);
   }
 
   return (
     <>
       {isEditing ? (
-        <input
-          autoFocus
-          defaultValue={value}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              submitChange(e.currentTarget.value);
-            }
-          }}
-        />
+        <div style={{ display: 'inline-block', position: 'relative' }}>
+          <input
+            autoFocus
+            defaultValue={value}
+            onChange={e => setNewValue(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                submitChange(newValue);
+              }
+            }}
+          />
+          <div
+            className="btn-group"
+            style={{ position: 'absolute', right: '0', top: '0', transform: 'translateY(-100%)' }}
+          >
+            <button className="btn btn-default btn-xs" onClick={() => submitChange(newValue)}>
+              <span className="glyphicon glyphicon-ok"></span>
+            </button>
+            <button className="btn btn-default btn-xs" onClick={() => setIsEditing(false)}>
+              <span className="glyphicon glyphicon-remove"></span>
+            </button>
+          </div>
+        </div>
       ) : (
         <span onClick={() => setIsEditing(true)}>{value !== '' ? value : '??'}</span>
       )}
