@@ -132,7 +132,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
     expression.definition = definition;
     expression.operator = definition.defaultOperator;
     expression.name = definition.requiresName ? expression.name : '';
-    expression.value = definition.requiresValue ? expression.value : '';
+    expression.value = definition.requiresValue ? expression.value : (definition.defaultValue ?? '');
 
     updateExpression(index, expression);
   }

@@ -41455,6 +41455,7 @@ var CamundaFilterBox = function (_a) {
         setExpressions(expressions.map(function (e, i) { return (i === index ? expression : e); }));
     }
     function changeExpressionDefinition(index, expression, newDefinitionLabel) {
+        var _a;
         var definition = availableExpressions.find(function (def) { return def.label === newDefinitionLabel; });
         if (!definition) {
             return;
@@ -41462,7 +41463,7 @@ var CamundaFilterBox = function (_a) {
         expression.definition = definition;
         expression.operator = definition.defaultOperator;
         expression.name = definition.requiresName ? expression.name : '';
-        expression.value = definition.requiresValue ? expression.value : '';
+        expression.value = definition.requiresValue ? expression.value : ((_a = definition.defaultValue) !== null && _a !== void 0 ? _a : '');
         updateExpression(index, expression);
     }
     function removeExpression(index) {
