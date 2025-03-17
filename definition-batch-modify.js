@@ -41345,6 +41345,22 @@ var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0
 
 ___$insertStylesToHeader(".camunda-filter-box-container {\n  height: auto;\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  flex-wrap: wrap;\n  padding: 0 0 5px 0;\n}\n.camunda-filter-box-container .expression {\n  display: inline;\n  font-weight: inherit;\n  font-size: inherit;\n  padding: 0 3px;\n  border-radius: 3px;\n  color: #155cb5;\n  background-color: #fafafa;\n  border: 1px solid #e5e5e5;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container .expression.invalid {\n  background-color: #f2dede;\n  border-color: #ebccd1;\n  color: #a94442;\n}\n.camunda-filter-box-container .expression span {\n  margin-right: 5px;\n  cursor: pointer;\n}\n.camunda-filter-box-container .expression span:last-child {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span.non-editable {\n  cursor: default;\n}\n.camunda-filter-box-container .expression span .form-control {\n  width: auto;\n  min-width: 40px;\n  max-width: 100%;\n  margin-bottom: -1px;\n  height: auto;\n}\n.camunda-filter-box-container.form-control .search-input {\n  border: 0;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container.form-control .search-input:focus {\n  outline: none;\n}");
 
+var CamundaFilterBoxTextValue = function (_a) {
+    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression;
+    var _b = React.useState(false), isEditing = _b[0], setIsEditing = _b[1];
+    var value = expression[field];
+    function submitChange(newValue) {
+        setIsEditing(false);
+        expression[field] = newValue;
+        updateExpression(expression);
+    }
+    return (React.createElement(React.Fragment, null, isEditing ? (React.createElement("input", { autoFocus: true, defaultValue: value, onKeyDown: function (e) {
+            if (e.key === 'Enter') {
+                submitChange(e.currentTarget.value);
+            }
+        } })) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, value !== '' ? value : '??'))));
+};
+
 var Operator;
 (function (Operator) {
     Operator["eq"] = "eq";
@@ -41417,6 +41433,9 @@ var CamundaFilterBox = function (_a) {
             },
         ], false));
     }
+    function updateExpression(index, expression) {
+        setExpressions(expressions.map(function (e, i) { return (i === index ? expression : e); }));
+    }
     function removeExpression(index) {
         setExpressions(expressions.filter(function (_, i) { return i !== index; }));
     }
@@ -41426,11 +41445,10 @@ var CamundaFilterBox = function (_a) {
             React.createElement("span", null, expression.definition.label),
             (expression.name || expression.definition.requiresName) && (React.createElement(React.Fragment, null,
                 React.createElement("span", { className: "non-editable" }, ":"),
-                React.createElement("span", null, expression.name !== '' ? expression.name : '??'))),
-            expression.definition.requiresValue &&
-                React.createElement(React.Fragment, null,
-                    React.createElement("span", { className: "".concat(expression.definition.availableOperators.length === 1 ? 'non-editable' : '') }, operatorToText(expression.operator)),
-                    React.createElement("span", null, expression.value !== '' ? expression.value : '??')))); }),
+                React.createElement(CamundaFilterBoxTextValue, { expression: expression, field: "name", updateExpression: function (changed) { return updateExpression(index, changed); } }))),
+            expression.definition.requiresValue && (React.createElement(React.Fragment, null,
+                React.createElement("span", { className: "".concat(expression.definition.availableOperators.length === 1 ? 'non-editable' : '') }, operatorToText(expression.operator)),
+                React.createElement(CamundaFilterBoxTextValue, { expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } }))))); }),
         React.createElement(Dropdown$1, { onSelect: function (eventKey) { return addExpression(eventKey); } },
             React.createElement(Dropdown$1.Toggle, { as: CustomToggle }),
             React.createElement(Dropdown$1.Menu, null, availableExpressions.map(function (definition, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: definition.type }, definition.label)); })))));

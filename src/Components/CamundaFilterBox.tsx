@@ -3,6 +3,8 @@ import './camunda-filter-box.scss';
 import React, { forwardRef, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import CamundaFilterBoxTextValue from './CamundaFilterBoxTextValue';
+
 export enum Operator {
   eq = 'eq', // =
   neq = 'neq', // !=
@@ -25,12 +27,11 @@ export interface ExpressionDefinition {
 }
 
 export interface Expression {
-  definition: ExpressionDefinition,
+  definition: ExpressionDefinition;
   name: string;
   operator: Operator;
   value: string;
 }
-
 
 function operatorToText(o: Operator): string {
   switch (o) {
@@ -91,7 +92,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
         e.preventDefault();
         onClick(e);
       }}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter') {
           addExpression(availableExpressions[0].type, e.currentTarget.value);
         }
@@ -104,7 +105,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
       return;
     }
 
-    const definition = availableExpressions.find((def) => def.type === type);
+    const definition = availableExpressions.find(def => def.type === type);
     if (!definition) {
       return;
     }
@@ -120,6 +121,10 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
     ]);
   }
 
+  function updateExpression(index: number, expression: Expression) {
+    setExpressions(expressions.map((e, i) => (i === index ? expression : e)));
+  }
+
   function removeExpression(index: number) {
     setExpressions(expressions.filter((_, i) => i !== index));
   }
@@ -129,36 +134,38 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
       {expressions.map((expression, index) => (
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>
-          <span>
-            {expression.definition.label}
-          </span>
+          <span>{expression.definition.label}</span>
           {(expression.name || expression.definition.requiresName) && (
             <>
               <span className="non-editable">:</span>
-              <span>
-                {expression.name !== '' ? expression.name : '??'}
-              </span>
+              <CamundaFilterBoxTextValue
+                expression={expression}
+                field="name"
+                updateExpression={changed => updateExpression(index, changed)}
+              />
             </>
           )}
-          {expression.definition.requiresValue &&
+          {expression.definition.requiresValue && (
             <>
               <span className={`${expression.definition.availableOperators.length === 1 ? 'non-editable' : ''}`}>
                 {operatorToText(expression.operator)}
               </span>
-              <span>
-                {expression.value !== '' ? expression.value : '??'}
-              </span>
+              <CamundaFilterBoxTextValue
+                expression={expression}
+                field="value"
+                updateExpression={changed => updateExpression(index, changed)}
+              />
             </>
-          }
+          )}
         </div>
       ))}
-      <Dropdown
-        onSelect={(eventKey: string | null) => addExpression(eventKey)}
-      >
+      <Dropdown onSelect={(eventKey: string | null) => addExpression(eventKey)}>
         <Dropdown.Toggle as={CustomToggle} />
         <Dropdown.Menu>
           {availableExpressions.map((definition: ExpressionDefinition, index: number) => (
-            <Dropdown.Item key={index} eventKey={definition.type}>{definition.label}</Dropdown.Item>
+            <Dropdown.Item key={index} eventKey={definition.type}>
+              {definition.label}
+            </Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
