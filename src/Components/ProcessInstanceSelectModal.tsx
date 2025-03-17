@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 
 import { API } from '../types';
 import { get, post } from '../utils/api';
-import CamundaFilterBox, { Expression, ExpressionDefinition, Operator } from './CamundaFilterBox';
+import CamundaFilterBox, { Expression, ExpressionDefinition, Operator, isValidExpression } from './CamundaFilterBox';
 
 export interface FilteredProcessInstance {
   id: string;
@@ -91,10 +91,15 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   useEffect(() => {
     if (Object.keys(query).length > 0) {
       (async () => {
-        const items = await post(api, '/process-instance', {}, JSON.stringify({
-          ...query,
-          processDefinitionId,
-        }));
+        const items = await post(
+          api,
+          '/process-instance',
+          {},
+          JSON.stringify({
+            ...query,
+            processDefinitionId,
+          })
+        );
 
         const filtered: FilteredProcessInstance[] = items.map((item: any) => {
           return {
@@ -111,7 +116,9 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
 
   useEffect(() => {
     if (expressions.length > 0) {
-      const variableExpressions: any[] = expressions
+      const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
+
+      const variableExpressions: any[] = validExpressions
         .filter((expression: Expression) => expression.definition.type === 'variable')
         .map((expression: Expression) => {
           return {
@@ -121,13 +128,13 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
           };
         });
 
-      const activityIdInExpressions: string[] = expressions
+      const activityIdInExpressions: string[] = validExpressions
         .filter((expression: Expression) => expression.definition.type === 'activityIdIn')
         .map((expression: Expression) => {
           return expression.value;
         });
 
-      const rest = expressions.filter(
+      const rest = validExpressions.filter(
         (expression: Expression) =>
           expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn'
       );

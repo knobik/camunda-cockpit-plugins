@@ -56,7 +56,7 @@ function operatorToText(o: Operator): string {
   }
 }
 
-function isValidExpression(expression: Expression): boolean {
+export function isValidExpression(expression: Expression): boolean {
   if (expression.definition.requiresValue && expression.value === '') {
     return false;
   }

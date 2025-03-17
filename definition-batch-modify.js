@@ -41568,7 +41568,8 @@ var ProcessInstanceSelectModal = function (_a) {
     }, [query]);
     reactExports.useEffect(function () {
         if (expressions.length > 0) {
-            var variableExpressions = expressions
+            var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
+            var variableExpressions = validExpressions
                 .filter(function (expression) { return expression.definition.type === 'variable'; })
                 .map(function (expression) {
                 return {
@@ -41577,12 +41578,12 @@ var ProcessInstanceSelectModal = function (_a) {
                     value: castValue(expression.value),
                 };
             });
-            var activityIdInExpressions = expressions
+            var activityIdInExpressions = validExpressions
                 .filter(function (expression) { return expression.definition.type === 'activityIdIn'; })
                 .map(function (expression) {
                 return expression.value;
             });
-            var rest = expressions.filter(function (expression) {
+            var rest = validExpressions.filter(function (expression) {
                 return expression.definition.type !== 'variable' && expression.definition.type !== 'activityIdIn';
             });
             var query_1 = {};
