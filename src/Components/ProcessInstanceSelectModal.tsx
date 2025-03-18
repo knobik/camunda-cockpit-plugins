@@ -131,7 +131,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
 
       setProcessInstances(filtered);
     })();
-  }, [query]);
+  }, [query, processDefinitionId]);
 
   useEffect(() => {
     const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
@@ -172,7 +172,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
     if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
       setQuery(newQuery);
     }
-  }, [expressions]);
+  }, [expressions, processDefinitionId]);
 
   function toggleChecked(id: string) {
     processInstances.map((processInstance: FilteredProcessInstance) => {

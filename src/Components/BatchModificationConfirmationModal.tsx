@@ -1,3 +1,5 @@
+import './batch-modification-confirmation-modal.scss';
+
 import React, { useEffect, useState } from 'react';
 import { ReactJason } from 'react-jason';
 import github from 'react-jason/themes/github';
@@ -138,6 +140,9 @@ const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmation
         <div className="modal-body">
           <div className="row">
             <div className="col-md-12">
+              <div style={{ textAlign: 'center' }}>
+                You are playing with <span className="glyphicon glyphicon-fire"></span>. Please, carefully review the modification being performed.
+              </div>
               <h3>Options</h3>
               <div className="row">
                 <div className="col-md-6">
@@ -239,8 +244,9 @@ const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmation
               <table className="cam-table">
                 <tbody>
                   {instructions.map((instruction, index) => (
-                    <tr key={index}>
-                      <td>{instruction.type}</td>
+                    <tr key={index} className={instruction.type === 'cancel' ? 'color-cancel' : 'color-move'}>
+                      <td className="empty"></td>
+                      <td style={{ paddingLeft: '1em' }}>{instruction.type}</td>
                       <td>{instruction.name}</td>
                     </tr>
                   ))}

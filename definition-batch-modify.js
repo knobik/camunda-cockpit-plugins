@@ -41255,6 +41255,8 @@ var BatchInformationModal = function (_a) {
                 React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowModal(false); } }, "Close")))));
 };
 
+___$insertStylesToHeader("tr:nth-child(odd) {\n  background-color: inherit !important;\n}\ntr:nth-child(even) {\n  background-color: inherit !important;\n}\ntr td.empty {\n  width: 10px;\n}\ntr.color-cancel td {\n  border-top: 1px solid #db8b73 !important;\n}\ntr.color-cancel td.empty {\n  background-color: #db8b73;\n}\ntr.color-move td {\n  border-top: 1px solid #3e71df !important;\n}\ntr.color-move td.empty {\n  background-color: #3e71df;\n}");
+
 var u=reactExports.createContext({});function l(){var e=reactExports.useContext(u).token,t=reactExports.useCallback(function(t){return e('"'===t||"'"===t?"quotation":"punctuation",t)},[e]);return {token:e,char:t}}function c(e,t,r){return void 0===r&&(r="span"),l().token(e,t,r)}var i=function(e,t,r){return t+"["+r+"]"},s={fontFamily:'Menlo, Monaco, "Courier New", monospace',fontFeatureSettings:'"liga" 0, "calt" 0',lineHeight:"1.5em",whiteSpace:"pre",margin:0},m={styles:{root:Object.assign({},s,{backgroundColor:"#1e2024"}),attribute:{color:"#ef415a"},unquotedAttribute:{color:"#d1d3d7"},string:{color:"#57bedf"},nil:{color:"#f2851e"},number:{color:"#f2851e"},boolean:{color:"#f2851e"},punctuation:{color:"#d1d3d7"}}};Object.assign({},s,{backgroundColor:"#f8f8f8"}),Object.assign({},s,{backgroundColor:"#2c2d25"}),Object.assign({},s,{backgroundColor:"#23241e"}),Object.assign({},s,{backgroundColor:"#212121"}),Object.assign({},s,{backgroundColor:"#fff"});var f=["string","number","object","boolean"],d=function(e){return f.includes(typeof e)},v=function(t){var n=t.value,a=t.theme,o=t.nodeWrapper,l=t.itemKeyGenerator,c=t.sortKeys,p=void 0!==c&&c,s=t.quoteAttributes,f=void 0===s||s,d=React.useMemo(function(){return function(t){return function(n,a,o){void 0===o&&(o="span");var u=t.styles?t.styles[n]:void 0,l=t.classes?t.classes[n]:void 0;return Boolean(u||l)?reactExports.createElement(o,{style:u,className:l},a):React.createElement(React.Fragment,null,a)}}(a?"__esModule"in(t=a)?t.default:t:m);var t;},[a]),v=!0===p?K:p,b=l||i,g=React.useMemo(function(){return {token:d,getItemKey:b,quoteAttributes:f,nodeWrapper:o,sortKeys:v}},[d,b,f,o,v]);return React.createElement(u.Provider,{value:g},d("root",h({value:n,path:"",depth:1,nodeWrapper:o}),"pre"))};function h(t){var r=t.value,n=t.path,a=t.depth,o=t.nodeWrapper,u=function(t,r){return o?React.createElement(o,{path:n,type:r},t):t};if(null===r)return u(React.createElement(W,null),"nil");if(Array.isArray(r))return u(React.createElement(E,{value:r,path:n,depth:a}),"array");switch(typeof r){case"string":return u(React.createElement(b,{value:r,path:n,depth:a}),"string");case"number":return u(React.createElement(g,{value:r,path:n,depth:a}),"number");case"boolean":return u(React.createElement(y,{value:r,path:n,depth:a}),"boolean");case"object":return u(React.createElement(k,{value:r,path:n,depth:a}),"object");default:throw new Error("Unhandled type "+typeof r)}}function b(t){var r=t.value,n=l().char,a=A(r).slice(1,-1);return c("string",React.createElement(React.Fragment,null,n('"'),a,n('"')))}function g(e){return c("number",e.value)}function y(e){return c("boolean",e.value?"true":"false")}function E(t){var r=t.value,a=t.path,c=t.depth,i=l(),p=i.token,s=i.char,m=reactExports.useContext(u),f=m.getItemKey,v=m.nodeWrapper,b=r.length;return p("array",0===b?React.createElement(React.Fragment,null,s("["),s("]")):React.createElement(React.Fragment,null,s("["),"\n"+C(c),r.map(function(t,r){var n=f(t,a,r),u=r===b-1;return React.createElement(reactExports.Fragment,{key:n},d(t)?h({value:t,path:n,depth:c+1,nodeWrapper:v}):React.createElement(React.Fragment,null,"<",typeof t,"&rt;"),u?"\n"+C(c-1):React.createElement(React.Fragment,null,s(","),"\n"+C(c)))}),s("]")))}function k(t){var r=t.value,a=t.path,c=t.depth,i=reactExports.useContext(u),p=i.nodeWrapper,s=i.sortKeys,m=l(),f=m.token,v=m.char,h=r,b=Object.keys(h),g=s?b.sort(function(e,t){return s(e,t,h)}):b,y=g.length,E=y-1;return f("object",0===y?React.createElement(React.Fragment,null,v("{"),v("}")):React.createElement(React.Fragment,null,v("{"),"\n",g.map(function(t,r){var n=h[t],u=a?a+"."+t:t;return d(n)?React.createElement(reactExports.Fragment,{key:u},React.createElement(j,{attribute:t,value:n,depth:c,path:u,nodeWrapper:p,isLastKey:r===E})):null}),C(c-1),v("}")))}function F(t){var r,a=t.value,o=reactExports.useContext(u).quoteAttributes,c=l(),i=c.token,p=c.char,s=A(a).slice(1,-1);return r=o||s.includes('"')?i("attribute",React.createElement(React.Fragment,null,p('"'),s,p('"'))):i("unquotedAttribute",s),React.createElement(React.Fragment,null,r,p(":")," ")}function j(t){var r=t.attribute,n=t.value,a=t.path,u=t.depth,c=t.isLastKey,i=t.nodeWrapper,p=l().char,s=React.createElement(reactExports.Fragment,{key:a},C(u),React.createElement(F,{value:r}),h({value:n,path:a,depth:u+1,nodeWrapper:i}),c?"\n":React.createElement(React.Fragment,null,p(","),"\n"));return i?React.createElement(i,{type:"attributePair",path:a},s):s}function W(){return c("nil","null")}function A(e){return JSON.stringify(e)}function C(e){return "  ".repeat(e)}function K(e,t){return e.localeCompare(t)}
 
 var github$1 = {};
@@ -41588,7 +41590,7 @@ var ProcessInstanceSelectModal = function (_a) {
                 }
             });
         }); })();
-    }, [query]);
+    }, [query, processDefinitionId]);
     reactExports.useEffect(function () {
         var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
         var variableExpressions = validExpressions
@@ -41621,7 +41623,7 @@ var ProcessInstanceSelectModal = function (_a) {
         if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
             setQuery(newQuery);
         }
-    }, [expressions]);
+    }, [expressions, processDefinitionId]);
     function toggleChecked(id) {
         processInstances.map(function (processInstance) {
             if (processInstance.id === id) {
@@ -41799,6 +41801,10 @@ var BatchModificationConfirmationModal = function (_a) {
             React.createElement("div", { className: "modal-body" },
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-md-12" },
+                        React.createElement("div", { style: { textAlign: 'center' } },
+                            "You are playing with ",
+                            React.createElement("span", { className: "glyphicon glyphicon-fire" }),
+                            ". Please, carefully review the modification being performed."),
                         React.createElement("h3", null, "Options"),
                         React.createElement("div", { className: "row" },
                             React.createElement("div", { className: "col-md-6" },
@@ -41844,8 +41850,9 @@ var BatchModificationConfirmationModal = function (_a) {
                             React.createElement("strong", null, instanceCount),
                             " instances in the following way:"),
                         React.createElement("table", { className: "cam-table" },
-                            React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
-                                React.createElement("td", null, instruction.type),
+                            React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index, className: instruction.type === 'cancel' ? 'color-cancel' : 'color-move' },
+                                React.createElement("td", { className: "empty" }),
+                                React.createElement("td", { style: { paddingLeft: '1em' } }, instruction.type),
                                 React.createElement("td", null, instruction.name))); }))))),
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-md-2" },
