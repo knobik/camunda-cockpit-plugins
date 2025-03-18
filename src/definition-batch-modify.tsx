@@ -13,16 +13,16 @@ import { DefinitionPluginParams } from './types';
 
 const initialState: Record<string, any> = {
   instructions: [
-    // {
-    //   activityId: "approveInvoice",
-    //   name: "Approve Invoice",
-    //   type: "cancel"
-    // } as ModificationInstruction,
-    // {
-    //   activityId: "assignApprover",
-    //   name: "Assign Approver Group",
-    //   type: "startBeforeActivity"
-    // } as ModificationInstruction
+    {
+      activityId: "approveInvoice",
+      name: "Approve Invoice",
+      type: "cancel"
+    } as ModificationInstruction,
+    {
+      activityId: "assignApprover",
+      name: "Assign Approver Group",
+      type: "startBeforeActivity"
+    } as ModificationInstruction
   ],
   viewer: null,
   tabNode: null,
@@ -41,7 +41,7 @@ const hooks: Record<string, any> = {
 };
 
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
-  const [showInstanceModal, setShowInstanceModal] = useState(false);
+  const [showInstanceModal, setShowInstanceModal] = useState(true);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInformationModal, setShowInformationModal] = useState(false);
   const [batchResponse, setBatchResponse] = useState({} as any);

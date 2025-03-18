@@ -6,6 +6,22 @@
   flex-wrap: wrap;
   padding: 0 0 5px 0;
 
+  .datetime-picker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%);
+
+    .react-datepicker {
+      margin-bottom: 0px;
+      background-color: #ffffff;
+    }
+
+    .react-datepicker__aria-live {
+      display: none;
+    }
+  }
+
   .dropdown {
     display: inline;
 

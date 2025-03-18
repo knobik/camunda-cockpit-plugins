@@ -5,6 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 import CamundaFilterBoxSelectValue from './CamundaFilterBoxSelectValue';
 import CamundaFilterBoxTextValue from './CamundaFilterBoxTextValue';
+import CamundaFilterBoxDatetimeValue from './CamundaFilterBoxDatetimeValue';
 
 export enum Operator {
   eq = 'eq', // =
@@ -21,6 +22,7 @@ export enum Operator {
 export interface ExpressionDefinition {
   label: string;
   type: string;
+  fieldType?: string;
   availableOperators: Operator[];
   defaultOperator: Operator;
   defaultValue?: string;
@@ -175,12 +177,22 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
                   updateExpression={changed => updateExpression(index, changed)}
                 />
               )}
-              <CamundaFilterBoxTextValue
-                openEditing={expression.value === ''}
-                expression={expression}
-                field="value"
-                updateExpression={changed => updateExpression(index, changed)}
-              />
+              {(!expression.definition.fieldType || expression.definition.fieldType === 'text') &&
+                <CamundaFilterBoxTextValue
+                  openEditing={expression.value === ''}
+                  expression={expression}
+                  field="value"
+                  updateExpression={changed => updateExpression(index, changed)}
+                />
+              }
+              {expression.definition.fieldType === 'datetime' &&
+                <CamundaFilterBoxDatetimeValue
+                  openEditing={expression.value === ''}
+                  expression={expression}
+                  field="value"
+                  updateExpression={changed => updateExpression(index, changed)}
+                />
+              }
             </>
           )}
         </div>
