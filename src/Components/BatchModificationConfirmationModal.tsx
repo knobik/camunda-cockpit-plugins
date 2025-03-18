@@ -117,7 +117,7 @@ const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmation
 
   return (
     <ReactModal
-      className="modal-dialog confirmation-modal"
+      className="modal-dialog batch-modification-confirmation-modal"
       isOpen={showModal}
       style={{
         content: {},

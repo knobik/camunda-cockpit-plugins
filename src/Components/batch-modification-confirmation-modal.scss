@@ -1,32 +1,34 @@
-tr {
-  &:nth-child(odd) {
-    background-color: inherit !important;
-  }
+.batch-modification-confirmation-modal {
+  tr {
+    &:nth-child(odd) {
+      background-color: inherit !important;
+    }
 
-  &:nth-child(even) {
-    background-color: inherit !important;
-  }
+    &:nth-child(even) {
+      background-color: inherit !important;
+    }
 
-  td.empty {
-    width: 10px;
-  }
+    td.empty {
+      width: 10px;
+    }
 
-  &.color-cancel {
-    td {
-      border-top: 1px solid #db8b73 !important;
+    &.color-cancel {
+      td {
+        border-top: 1px solid #db8b73 !important;
 
-      &.empty {
-        background-color: #db8b73;
+        &.empty {
+          background-color: #db8b73;
+        }
       }
     }
-  }
 
-  &.color-move {
-    td {
-      border-top: 1px solid #3e71df !important;
+    &.color-move {
+      td {
+        border-top: 1px solid #3e71df !important;
 
-      &.empty {
-        background-color: #3e71df;
+        &.empty {
+          background-color: #3e71df;
+        }
       }
     }
   }
