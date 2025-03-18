@@ -63,6 +63,21 @@ const expressionDefinitions: ExpressionDefinition[] = [
   } as ExpressionDefinition,
 ];
 
+function castValue(value: string): any {
+  let result: any = value;
+
+  if (!isNaN(Number(value))) {
+    result = Number(value);
+  }
+
+  // cast boolean
+  if (value === 'true' || value === 'false') {
+    result = value === 'true';
+  }
+
+  return result;
+}
+
 export enum FilterType {
   INSTANCE = 'instance',
   QUERY = 'query',
@@ -80,21 +95,7 @@ export interface ProcessInstanceSelectModalProps {
   showModal: boolean;
   processDefinitionId: string;
   onCompleted: (queryType: FilterType, processInstanceIds?: string[], query?: Record<string, any>) => void;
-}
-
-function castValue(value: string): any {
-  let result: any = value;
-
-  if (!isNaN(Number(value))) {
-    result = Number(value);
-  }
-
-  // cast boolean
-  if (value === 'true' || value === 'false') {
-    result = value === 'true';
-  }
-
-  return result;
+  searchQuery: any[];
 }
 
 const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
@@ -103,11 +104,30 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   api,
   processDefinitionId,
   onCompleted,
+  searchQuery,
 }) => {
   const [query, setQuery] = useState({} as Record<string, any>);
   const [expressions, setExpressions] = useState([] as Expression[]);
   const [processInstances, setProcessInstances] = useState([] as FilteredProcessInstance[]);
   const [filterType, setFilterType] = useState(FilterType.INSTANCE);
+
+  // Update expressions when search query changes (url)
+  useEffect(() => {
+    const expressions = searchQuery
+      .filter((q: any) => expressionDefinitions.find((def) => def.type === q.type) !== undefined)
+      .map((q: any) => {
+        const def = expressionDefinitions.find((def) => def.type === q.type);
+        return {
+          definition: def,
+          operator: Operator[q.operator as keyof typeof Operator],
+          name: q.name ?? '',
+          value: q.value !== '' ? q.value : (def?.defaultValue ?? ''),
+        } as Expression
+    });
+
+    setExpressions(expressions as Expression[]);
+  }, [searchQuery]);
+
 
   useEffect(() => {
     (async () => {

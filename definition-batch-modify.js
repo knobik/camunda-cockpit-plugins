@@ -41546,11 +41546,6 @@ var expressionDefinitions = [
         requiresName: true,
     },
 ];
-var FilterType;
-(function (FilterType) {
-    FilterType["INSTANCE"] = "instance";
-    FilterType["QUERY"] = "query";
-})(FilterType || (FilterType = {}));
 function castValue(value) {
     var result = value;
     if (!isNaN(Number(value))) {
@@ -41562,12 +41557,33 @@ function castValue(value) {
     }
     return result;
 }
+var FilterType;
+(function (FilterType) {
+    FilterType["INSTANCE"] = "instance";
+    FilterType["QUERY"] = "query";
+})(FilterType || (FilterType = {}));
 var ProcessInstanceSelectModal = function (_a) {
-    var setShowModal = _a.setShowModal, showModal = _a.showModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted;
+    var setShowModal = _a.setShowModal, showModal = _a.showModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted, searchQuery = _a.searchQuery;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
     var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
     var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
     var _e = reactExports.useState(FilterType.INSTANCE), filterType = _e[0], setFilterType = _e[1];
+    // Update expressions when search query changes (url)
+    reactExports.useEffect(function () {
+        var expressions = searchQuery
+            .filter(function (q) { return expressionDefinitions.find(function (def) { return def.type === q.type; }) !== undefined; })
+            .map(function (q) {
+            var _a, _b;
+            var def = expressionDefinitions.find(function (def) { return def.type === q.type; });
+            return {
+                definition: def,
+                operator: Operator[q.operator],
+                name: (_a = q.name) !== null && _a !== void 0 ? _a : '',
+                value: q.value !== '' ? q.value : ((_b = def === null || def === void 0 ? void 0 : def.defaultValue) !== null && _b !== void 0 ? _b : ''),
+            };
+        });
+        setExpressions(expressions);
+    }, [searchQuery]);
     reactExports.useEffect(function () {
         (function () { return __awaiter(void 0, void 0, void 0, function () {
             var items, filtered;
@@ -41968,9 +41984,10 @@ var BatchModifyForm = function (_a) {
     var _k = reactExports.useState([]), badgeIds = _k[0], setBadgeIds = _k[1];
     var _l = reactExports.useState(''), wrenchOverlayId = _l[0], setWrenchOverlayId = _l[1];
     var _m = reactExports.useState(false), wrenchDropdownVisible = _m[0], setWrenchDropdownVisible = _m[1];
-    var _o = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _o[0], setSelectedFilterType = _o[1];
-    var _p = reactExports.useState([]), selectedProcessInstances = _p[0], setSelectedProcessInstances = _p[1];
-    var _q = reactExports.useState({}), selectedQuery = _q[0], setSelectedQuery = _q[1];
+    var _o = reactExports.useState([]), searchQuery = _o[0], setSearchQuery = _o[1];
+    var _p = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _p[0], setSelectedFilterType = _p[1];
+    var _q = reactExports.useState([]), selectedProcessInstances = _q[0], setSelectedProcessInstances = _q[1];
+    var _r = reactExports.useState({}), selectedQuery = _r[0], setSelectedQuery = _r[1];
     hooks.setViewer = setViewer;
     hooks.setTabNode = setTabNode;
     hooks.setInstructions = setInstructions;
@@ -42084,6 +42101,16 @@ var BatchModifyForm = function (_a) {
             setShowInformationModal(true);
         }
     }
+    function doShowInstanceModal() {
+        // Use forEach method instead of for...of loop to avoid iteration issues
+        var params = new URLSearchParams(document.location.href);
+        params.forEach(function (value, key) {
+            if (key.includes('searchQuery') && JSON.stringify(JSON.parse(value)) !== JSON.stringify(searchQuery)) {
+                setSearchQuery(JSON.parse(value));
+            }
+        });
+        setShowInstanceModal(true);
+    }
     return (React.createElement(React.Fragment, null,
         tabNode && (React.createElement(Portal, { node: tabNode }, instructions.length === 0 ? (React.createElement("div", { style: { textAlign: 'center' } },
             React.createElement("span", { className: "glyphicon glyphicon-wrench", style: { marginRight: '10px' } }),
@@ -42096,8 +42123,8 @@ var BatchModifyForm = function (_a) {
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                 } },
-                React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")))))),
-        React.createElement(ProcessInstanceSelectModal, { api: api, setShowModal: setShowInstanceModal, showModal: showInstanceModal, processDefinitionId: processDefinitionId, onCompleted: completeProcessInstanceSelection }),
+                React.createElement("button", { className: "btn btn-danger", onClick: function () { return doShowInstanceModal(); } }, "Select Instances")))))),
+        React.createElement(ProcessInstanceSelectModal, { searchQuery: searchQuery, api: api, setShowModal: setShowInstanceModal, showModal: showInstanceModal, processDefinitionId: processDefinitionId, onCompleted: completeProcessInstanceSelection }),
         React.createElement(BatchModificationConfirmationModal, { api: api, showModal: showConfirmModal, setShowModal: setShowConfirmModal, processDefinitionId: processDefinitionId, instructions: instructions, filterType: selectedFilterType, selectedProcessInstances: selectedProcessInstances, selectedQuery: selectedQuery, onBack: function () {
                 setShowConfirmModal(false);
                 setShowInstanceModal(true);

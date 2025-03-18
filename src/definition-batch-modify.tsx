@@ -49,6 +49,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   const [badgeIds, setBadgeIds] = useState([] as string[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
   const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState([] as any[]);
 
   const [selectedFilterType, setSelectedFilterType] = useState(FilterType.INSTANCE);
   const [selectedProcessInstances, setSelectedProcessInstances] = useState([] as string[]);
@@ -197,6 +198,18 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     }
   }
 
+  function doShowInstanceModal() {
+    // Use forEach method instead of for...of loop to avoid iteration issues
+    const params = new URLSearchParams(document.location.href);
+    params.forEach((value, key) => {
+      if (key.includes('searchQuery') && JSON.stringify(JSON.parse(value)) !== JSON.stringify(searchQuery)) {
+        setSearchQuery(JSON.parse(value));
+      }
+    });
+
+    setShowInstanceModal(true);
+  }
+
   return (
     <>
       {tabNode && (
@@ -218,7 +231,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
                   justifyContent: 'flex-end',
                 }}
               >
-                <button className="btn btn-danger" onClick={() => setShowInstanceModal(true)}>
+                <button className="btn btn-danger" onClick={() => doShowInstanceModal()}>
                   Select Instances
                 </button>
               </div>
@@ -227,6 +240,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         </Portal>
       )}
       <ProcessInstanceSelectModal
+        searchQuery={searchQuery}
         api={api}
         setShowModal={setShowInstanceModal}
         showModal={showInstanceModal}
