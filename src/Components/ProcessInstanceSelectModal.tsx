@@ -2,8 +2,13 @@ import React, { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 
 import { API } from '../types';
-import { get, post } from '../utils/api';
-import CamundaFilterBox, { Expression, ExpressionDefinition, Operator, isValidExpression } from './CamundaFilterBox';
+import { post } from '../utils/api';
+import CamundaFilterBox, {
+  Expression,
+  ExpressionDefinition,
+  Operator,
+  isValidExpression,
+} from './FilterBox/CamundaFilterBox';
 
 const expressionDefinitions: ExpressionDefinition[] = [
   {
@@ -71,8 +76,8 @@ export interface FilteredProcessInstance {
 
 export interface ProcessInstanceSelectModalProps {
   api: API;
-  setShowInstanceModal: any;
-  showInstanceModal: boolean;
+  setShowModal: (showModal: boolean) => void;
+  showModal: boolean;
   processDefinitionId: string;
   onCompleted: (queryType: FilterType, processInstanceIds?: string[], query?: Record<string, any>) => void;
 }
@@ -93,8 +98,8 @@ function castValue(value: string): any {
 }
 
 const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
-  setShowInstanceModal,
-  showInstanceModal,
+  setShowModal,
+  showModal,
   api,
   processDefinitionId,
   onCompleted,
@@ -105,27 +110,27 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   const [filterType, setFilterType] = useState(FilterType.INSTANCE);
 
   useEffect(() => {
-      (async () => {
-        const items = await post(
-          api,
-          '/process-instance',
-          {},
-          JSON.stringify({
-            ...query,
-            processDefinitionId,
-          })
-        );
+    (async () => {
+      const items = await post(
+        api,
+        '/process-instance',
+        {},
+        JSON.stringify({
+          ...query,
+          processDefinitionId,
+        })
+      );
 
-        const filtered: FilteredProcessInstance[] = items.map((item: any) => {
-          return {
-            id: item.id,
-            businessKey: item.businessKey,
-            checked: filterType === 'query',
-          } as FilteredProcessInstance;
-        });
+      const filtered: FilteredProcessInstance[] = items.map((item: any) => {
+        return {
+          id: item.id,
+          businessKey: item.businessKey,
+          checked: filterType === 'query',
+        } as FilteredProcessInstance;
+      });
 
-        setProcessInstances(filtered);
-      })();
+      setProcessInstances(filtered);
+    })();
   }, [query]);
 
   useEffect(() => {
@@ -198,7 +203,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   return (
     <ReactModal
       className="modal-dialog process-select-modal"
-      isOpen={showInstanceModal}
+      isOpen={showModal}
       style={{
         content: {},
         overlay: {
@@ -218,80 +223,84 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
           <h3>Select instances to modify</h3>
         </div>
         <div className="modal-body">
-          <div style={{ marginBottom: '2em' }}>
-            <h4>Choose selection type</h4>
-            <div>
-              <label className="radio-inline">
-                <input
-                  type="radio"
-                  name="filterType"
-                  value={FilterType.INSTANCE}
-                  defaultChecked={filterType === FilterType.INSTANCE}
-                  onChange={event => changeFilterType(FilterType.INSTANCE)}
-                />
-                <strong>Instance</strong>
-              </label>
-              <label className="radio-inline">
-                <input
-                  type="radio"
-                  name="filterType"
-                  value={FilterType.QUERY}
-                  defaultChecked={filterType === FilterType.QUERY}
-                  onChange={event => changeFilterType(FilterType.QUERY)}
-                />
-                <strong>Query</strong>
-              </label>
+          <div className="row">
+            <div className="col-md-12">
+              <h4>Choose selection type</h4>
+              <div>
+                <label className="radio-inline">
+                  <input
+                    type="radio"
+                    name="filterType"
+                    value={FilterType.INSTANCE}
+                    defaultChecked={filterType === FilterType.INSTANCE}
+                    onChange={event => changeFilterType(FilterType.INSTANCE)}
+                  />
+                  <strong>Instance</strong>
+                </label>
+                <label className="radio-inline">
+                  <input
+                    type="radio"
+                    name="filterType"
+                    value={FilterType.QUERY}
+                    defaultChecked={filterType === FilterType.QUERY}
+                    onChange={event => changeFilterType(FilterType.QUERY)}
+                  />
+                  <strong>Query</strong>
+                </label>
+              </div>
             </div>
           </div>
-          <div>
-            <h4>Filter for running process instances</h4>
-            <CamundaFilterBox
-              expressions={expressions}
-              setExpressions={setExpressions}
-              availableExpressions={expressionDefinitions}
-              placeholder="Filter available instances..."
-            />
-            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-              <table className="cam-table">
-                <thead>
-                  <tr>
-                    {filterType === 'instance' && (
-                      <th>
-                        <input
-                          type="checkbox"
-                          checked={processInstances.every(
-                            (processInstance: FilteredProcessInstance) => processInstance.checked
-                          )}
-                          onChange={event => toggleCheckedAll(event.target.checked)}
-                        />
-                      </th>
-                    )}
-                    <th>ID</th>
-                    <th>Business Key</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {processInstances.map((processInstance: any, index: number) => (
-                    <tr key={index}>
-                      {filterType === FilterType.INSTANCE && (
-                        <td>
+          <div className="row" style={{ marginTop: '1em'}}>
+            <div className="col-md-12">
+              <h4>Filter for running process instances</h4>
+              <CamundaFilterBox
+                expressions={expressions}
+                setExpressions={setExpressions}
+                availableExpressions={expressionDefinitions}
+                placeholder="Filter available instances..."
+              />
+              <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <table className="cam-table">
+                  <thead>
+                    <tr>
+                      {filterType === 'instance' && (
+                        <th>
                           <input
                             type="checkbox"
-                            checked={processInstance.checked}
-                            onChange={() => toggleChecked(processInstance.id)}
+                            checked={processInstances.every(
+                              (processInstance: FilteredProcessInstance) => processInstance.checked
+                            )}
+                            onChange={event => toggleCheckedAll(event.target.checked)}
                           />
-                        </td>
+                        </th>
                       )}
-                      <td>
-                        <a href={`#/process-instance/${processInstance.id}`} target="_blank">
-                          {processInstance.id}
-                        </a>
-                      </td>
-                      <td>{processInstance.businessKey}</td>
+                      <th>ID</th>
+                      <th>Business Key</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {processInstances.map((processInstance: any, index: number) => (
+                      <tr key={index}>
+                        {filterType === FilterType.INSTANCE && (
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={processInstance.checked}
+                              onChange={() => toggleChecked(processInstance.id)}
+                            />
+                          </td>
+                        )}
+                        <td>
+                          <a href={`#/process-instance/${processInstance.id}`} target="_blank">
+                            {processInstance.id}
+                          </a>
+                        </td>
+                        <td>{processInstance.businessKey}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -305,8 +314,8 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
             justifyContent: 'flex-end',
           }}
         >
-          <button className="btn btn-default" onClick={() => setShowInstanceModal(false)}>
-            Close
+          <button className="btn btn-link" onClick={() => setShowModal(false)}>
+            Cancel
           </button>
           <button
             className="btn btn-danger"
@@ -315,12 +324,14 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
             onClick={() => {
               onCompleted(
                 filterType,
-                filterType === FilterType.INSTANCE ? processInstances
-                  .filter((instance: FilteredProcessInstance) => instance.checked)
-                  .map((instance: FilteredProcessInstance) => instance.id) : undefined,
+                filterType === FilterType.INSTANCE
+                  ? processInstances
+                      .filter((instance: FilteredProcessInstance) => instance.checked)
+                      .map((instance: FilteredProcessInstance) => instance.id)
+                  : undefined,
                 filterType === FilterType.QUERY ? query : undefined
               );
-              setShowInstanceModal(false);
+              setShowModal(false);
             }}
           >
             Modify selected instances (

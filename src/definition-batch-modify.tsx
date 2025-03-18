@@ -4,13 +4,26 @@ import React, { useEffect, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { createRoot } from 'react-dom/client';
 
+import BatchInformationModal from './Components/BatchInformationModal';
+import BatchModificationConfirmationModal from './Components/BatchModificationConfirmationModal';
 import ModificationTable, { ModificationInstruction } from './Components/ModificationTable';
 import Portal from './Components/Portal';
-import ProcessInstanceSelectModal from './Components/ProcessInstanceSelectModal';
+import ProcessInstanceSelectModal, { FilterType } from './Components/ProcessInstanceSelectModal';
 import { DefinitionPluginParams } from './types';
 
 const initialState: Record<string, any> = {
-  instructions: [],
+  instructions: [
+    // {
+    //   activityId: "approveInvoice",
+    //   name: "Approve Invoice",
+    //   type: "cancel"
+    // } as ModificationInstruction,
+    // {
+    //   activityId: "assignApprover",
+    //   name: "Assign Approver Group",
+    //   type: "startBeforeActivity"
+    // } as ModificationInstruction
+  ],
   viewer: null,
   tabNode: null,
   elementEvent: null,
@@ -24,7 +37,11 @@ const hooks: Record<string, any> = {
 };
 
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
-  const [showInstanceModal, setShowInstanceModal] = useState(true);
+  const [showInstanceModal, setShowInstanceModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showInformationModal, setShowInformationModal] = useState(false);
+  const [batchResponse, setBatchResponse] = useState({} as any);
+
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
@@ -33,28 +50,14 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
   const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
 
+  const [selectedFilterType, setSelectedFilterType] = useState(FilterType.INSTANCE);
+  const [selectedProcessInstances, setSelectedProcessInstances] = useState([] as string[]);
+  const [selectedQuery, setSelectedQuery] = useState({} as Record<string, any>);
+
   hooks.setViewer = setViewer;
   hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
   hooks.setElementEvent = setElementEvent;
-
-  function addInstruction(activityId: string, name: string, type: string) {
-    const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
-    if (update) {
-      update.type = type;
-      setInstructions([...instructions]);
-      return;
-    }
-
-    setInstructions([
-      ...instructions,
-      {
-        activityId,
-        name: name ?? activityId,
-        type,
-      } as ModificationInstruction,
-    ]);
-  }
 
   // badges
   useEffect(() => {
@@ -147,6 +150,53 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
     }
   }, [elementEvent, viewer]);
 
+  function addInstruction(activityId: string, name: string, type: string) {
+    const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
+    if (update) {
+      update.type = type;
+      setInstructions([...instructions]);
+      return;
+    }
+
+    setInstructions([
+      ...instructions,
+      {
+        activityId,
+        name: name ?? activityId,
+        type,
+      } as ModificationInstruction,
+    ]);
+  }
+
+  function completeProcessInstanceSelection(
+    filterType: FilterType,
+    processInstanceIds: string[] | undefined,
+    query: Record<string, any> | undefined
+  ) {
+    setSelectedFilterType(filterType);
+    if (filterType === FilterType.INSTANCE) {
+      setSelectedProcessInstances(processInstanceIds as string[]);
+      setSelectedQuery({});
+    } else {
+      setSelectedQuery(query as Record<string, any>);
+      setSelectedProcessInstances([]);
+    }
+
+    setShowInstanceModal(false);
+    setShowConfirmModal(true);
+  }
+
+  function onModificationExecuted(asynchronous: boolean, response: any) {
+    setBatchResponse(response);
+
+    if (!asynchronous) {
+      window.location.reload();
+    } else {
+      setShowConfirmModal(false);
+      setShowInformationModal(true);
+    }
+  }
+
   return (
     <>
       {tabNode && (
@@ -177,13 +227,32 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
         </Portal>
       )}
       <ProcessInstanceSelectModal
-        setShowInstanceModal={setShowInstanceModal}
-        showInstanceModal={showInstanceModal}
         api={api}
+        setShowModal={setShowInstanceModal}
+        showModal={showInstanceModal}
         processDefinitionId={processDefinitionId}
-        onCompleted={(queryType, processInstanceIds, query)=>{
-          console.log(queryType, processInstanceIds, query);
+        onCompleted={completeProcessInstanceSelection}
+      />
+      <BatchModificationConfirmationModal
+        api={api}
+        showModal={showConfirmModal}
+        setShowModal={setShowConfirmModal}
+        processDefinitionId={processDefinitionId}
+        instructions={instructions}
+        filterType={selectedFilterType}
+        selectedProcessInstances={selectedProcessInstances}
+        selectedQuery={selectedQuery}
+        onBack={() => {
+          setShowConfirmModal(false);
+          setShowInstanceModal(true);
         }}
+        onExecuted={onModificationExecuted}
+      />
+      <BatchInformationModal
+        setShowModal={setShowInformationModal}
+        showModal={showInformationModal}
+        response={batchResponse}
+        content={`Modification is being executed. A new batch with ID ${batchResponse.id} has been created.`}
       />
     </>
   );
@@ -196,7 +265,7 @@ export default [
     render: (viewer: any) => {
       hooks.setViewer(viewer);
       viewer.get('eventBus').on('element.hover', (event: any) => hooks.setElementEvent(event));
-      hooks.setInstructions([]); // reset instructions when switching diagrams
+      hooks.setInstructions(initialState.instructions); // reset instructions when switching diagrams
     },
   },
   {

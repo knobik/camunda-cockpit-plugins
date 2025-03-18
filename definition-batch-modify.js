@@ -95,7 +95,7 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
-___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}\n\n.modal-dialog.process-select-modal {\n  width: 90rem !important;\n}");
+___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}\n\n.modal-dialog.process-select-modal {\n  width: 90rem !important;\n}\n.modal-dialog.confirmation-modal {\n  width: 90rem !important;\n}");
 
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -39610,80 +39610,18 @@ var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDomExports);
 
 var createRoot;
 
-var m = reactDomExports;
+var m$1 = reactDomExports;
 {
-  var i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+  var i$1 = m$1.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
   createRoot = function(c, o) {
-    i.usingClientEntryPoint = true;
+    i$1.usingClientEntryPoint = true;
     try {
-      return m.createRoot(c, o);
+      return m$1.createRoot(c, o);
     } finally {
-      i.usingClientEntryPoint = false;
+      i$1.usingClientEntryPoint = false;
     }
   };
 }
-
-___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
-
-var ModificationTable = function (_a) {
-    var instructions = _a.instructions, setInstructions = _a.setInstructions;
-    function removeInstruction(activityId) {
-        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
-    }
-    function changeInstructionType(index, event) {
-        var updatedInstructions = instructions.map(function (instruction, i) {
-            if (i === index) {
-                instruction.type = event.target.value;
-            }
-            return instruction;
-        });
-        setInstructions(updatedInstructions);
-    }
-    function moveItemUp(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index - 1];
-        updatedInstructions[index - 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
-    }
-    function moveItemDown(index) {
-        var updatedInstructions = __spreadArray([], instructions, true);
-        var temp = updatedInstructions[index + 1];
-        updatedInstructions[index + 1] = updatedInstructions[index];
-        updatedInstructions[index] = temp;
-        setInstructions(updatedInstructions);
-    }
-    return (React.createElement("table", { className: "cam-table modification-table" },
-        React.createElement("thead", null,
-            React.createElement("tr", null,
-                React.createElement("th", null, "Remove"),
-                React.createElement("th", null, "Order"),
-                React.createElement("th", null, "Instruction"))),
-        React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
-            React.createElement("td", { className: "remove" },
-                React.createElement("div", null,
-                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return removeInstruction(instruction.activityId); } },
-                        React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
-            React.createElement("td", { className: "order" },
-                index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
-                    React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
-                index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
-                    React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
-            React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
-                React.createElement("div", { className: "color-bar" }),
-                React.createElement("div", { className: "instruction-container" },
-                    React.createElement("div", { className: "instruction-container-row" },
-                        React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
-                            React.createElement("option", { value: "cancel" }, "cancel"),
-                            React.createElement("option", { value: "startBeforeActivity" }, "start before"),
-                            React.createElement("option", { value: "startAfterActivity" }, "start after")),
-                        React.createElement("span", null, instruction.name)))))); }))));
-};
-
-var Portal = function (_a) {
-    var children = _a.children, node = _a.node;
-    return ReactDOM.createPortal(children, node);
-};
 
 var lib = {exports: {}};
 
@@ -41280,6 +41218,78 @@ Modal$1.default = Modal;
 var libExports = lib.exports;
 var ReactModal = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
+var BatchInformationModal = function (_a) {
+    var setShowModal = _a.setShowModal, showModal = _a.showModal, response = _a.response, content = _a.content;
+    function gotoBatch(e) {
+        e.preventDefault();
+        setShowModal(false);
+        window.location.href = "#/batch?searchQuery=%5B%5D&details=".concat(response.id, "&type=runtime");
+    }
+    return (React.createElement(ReactModal, { className: "modal-dialog process-select-modal", isOpen: showModal, style: {
+            content: {},
+            overlay: {
+                zIndex: 2000,
+            },
+        }, ariaHideApp: false },
+        React.createElement("div", { className: "modal-content", style: {
+                display: 'flex',
+                flexDirection: 'column',
+            } },
+            React.createElement("div", { className: "modal-header" },
+                React.createElement("h3", null, "Batch modification")),
+            React.createElement("div", { className: "modal-body" },
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-12", style: { textAlign: 'center' } },
+                        React.createElement("h2", null,
+                            React.createElement("span", { className: "glyphicon glyphicon-ok" })),
+                        React.createElement("h3", null, content),
+                        React.createElement("h3", null,
+                            React.createElement("a", { href: "#", onClick: function (e) { return gotoBatch(e); } }, "Observe progress"))))),
+            React.createElement("div", { className: "model-footer", style: {
+                    height: '4em',
+                    paddingRight: '1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                } },
+                React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowModal(false); } }, "Close")))));
+};
+
+var u=reactExports.createContext({});function l(){var e=reactExports.useContext(u).token,t=reactExports.useCallback(function(t){return e('"'===t||"'"===t?"quotation":"punctuation",t)},[e]);return {token:e,char:t}}function c(e,t,r){return void 0===r&&(r="span"),l().token(e,t,r)}var i=function(e,t,r){return t+"["+r+"]"},s={fontFamily:'Menlo, Monaco, "Courier New", monospace',fontFeatureSettings:'"liga" 0, "calt" 0',lineHeight:"1.5em",whiteSpace:"pre",margin:0},m={styles:{root:Object.assign({},s,{backgroundColor:"#1e2024"}),attribute:{color:"#ef415a"},unquotedAttribute:{color:"#d1d3d7"},string:{color:"#57bedf"},nil:{color:"#f2851e"},number:{color:"#f2851e"},boolean:{color:"#f2851e"},punctuation:{color:"#d1d3d7"}}};Object.assign({},s,{backgroundColor:"#f8f8f8"}),Object.assign({},s,{backgroundColor:"#2c2d25"}),Object.assign({},s,{backgroundColor:"#23241e"}),Object.assign({},s,{backgroundColor:"#212121"}),Object.assign({},s,{backgroundColor:"#fff"});var f=["string","number","object","boolean"],d=function(e){return f.includes(typeof e)},v=function(t){var n=t.value,a=t.theme,o=t.nodeWrapper,l=t.itemKeyGenerator,c=t.sortKeys,p=void 0!==c&&c,s=t.quoteAttributes,f=void 0===s||s,d=React.useMemo(function(){return function(t){return function(n,a,o){void 0===o&&(o="span");var u=t.styles?t.styles[n]:void 0,l=t.classes?t.classes[n]:void 0;return Boolean(u||l)?reactExports.createElement(o,{style:u,className:l},a):React.createElement(React.Fragment,null,a)}}(a?"__esModule"in(t=a)?t.default:t:m);var t;},[a]),v=!0===p?K:p,b=l||i,g=React.useMemo(function(){return {token:d,getItemKey:b,quoteAttributes:f,nodeWrapper:o,sortKeys:v}},[d,b,f,o,v]);return React.createElement(u.Provider,{value:g},d("root",h({value:n,path:"",depth:1,nodeWrapper:o}),"pre"))};function h(t){var r=t.value,n=t.path,a=t.depth,o=t.nodeWrapper,u=function(t,r){return o?React.createElement(o,{path:n,type:r},t):t};if(null===r)return u(React.createElement(W,null),"nil");if(Array.isArray(r))return u(React.createElement(E,{value:r,path:n,depth:a}),"array");switch(typeof r){case"string":return u(React.createElement(b,{value:r,path:n,depth:a}),"string");case"number":return u(React.createElement(g,{value:r,path:n,depth:a}),"number");case"boolean":return u(React.createElement(y,{value:r,path:n,depth:a}),"boolean");case"object":return u(React.createElement(k,{value:r,path:n,depth:a}),"object");default:throw new Error("Unhandled type "+typeof r)}}function b(t){var r=t.value,n=l().char,a=A(r).slice(1,-1);return c("string",React.createElement(React.Fragment,null,n('"'),a,n('"')))}function g(e){return c("number",e.value)}function y(e){return c("boolean",e.value?"true":"false")}function E(t){var r=t.value,a=t.path,c=t.depth,i=l(),p=i.token,s=i.char,m=reactExports.useContext(u),f=m.getItemKey,v=m.nodeWrapper,b=r.length;return p("array",0===b?React.createElement(React.Fragment,null,s("["),s("]")):React.createElement(React.Fragment,null,s("["),"\n"+C(c),r.map(function(t,r){var n=f(t,a,r),u=r===b-1;return React.createElement(reactExports.Fragment,{key:n},d(t)?h({value:t,path:n,depth:c+1,nodeWrapper:v}):React.createElement(React.Fragment,null,"<",typeof t,"&rt;"),u?"\n"+C(c-1):React.createElement(React.Fragment,null,s(","),"\n"+C(c)))}),s("]")))}function k(t){var r=t.value,a=t.path,c=t.depth,i=reactExports.useContext(u),p=i.nodeWrapper,s=i.sortKeys,m=l(),f=m.token,v=m.char,h=r,b=Object.keys(h),g=s?b.sort(function(e,t){return s(e,t,h)}):b,y=g.length,E=y-1;return f("object",0===y?React.createElement(React.Fragment,null,v("{"),v("}")):React.createElement(React.Fragment,null,v("{"),"\n",g.map(function(t,r){var n=h[t],u=a?a+"."+t:t;return d(n)?React.createElement(reactExports.Fragment,{key:u},React.createElement(j,{attribute:t,value:n,depth:c,path:u,nodeWrapper:p,isLastKey:r===E})):null}),C(c-1),v("}")))}function F(t){var r,a=t.value,o=reactExports.useContext(u).quoteAttributes,c=l(),i=c.token,p=c.char,s=A(a).slice(1,-1);return r=o||s.includes('"')?i("attribute",React.createElement(React.Fragment,null,p('"'),s,p('"'))):i("unquotedAttribute",s),React.createElement(React.Fragment,null,r,p(":")," ")}function j(t){var r=t.attribute,n=t.value,a=t.path,u=t.depth,c=t.isLastKey,i=t.nodeWrapper,p=l().char,s=React.createElement(reactExports.Fragment,{key:a},C(u),React.createElement(F,{value:r}),h({value:n,path:a,depth:u+1,nodeWrapper:i}),c?"\n":React.createElement(React.Fragment,null,p(","),"\n"));return i?React.createElement(i,{type:"attributePair",path:a},s):s}function W(){return c("nil","null")}function A(e){return JSON.stringify(e)}function C(e){return "  ".repeat(e)}function K(e,t){return e.localeCompare(t)}
+
+var github$1 = {};
+
+var __shared__ = {};
+
+__shared__.__esModule = true;
+__shared__.sharedRoot = void 0;
+__shared__.sharedRoot = {
+    fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+    fontFeatureSettings: '"liga" 0, "calt" 0',
+    lineHeight: '1.5em',
+    whiteSpace: 'pre',
+    margin: 0
+};
+
+(function (exports) {
+	exports.__esModule = true;
+	var __shared__1 = __shared__;
+	exports["default"] = {
+	    styles: {
+	        root: Object.assign({}, __shared__1.sharedRoot, { backgroundColor: '#f8f8f8' }),
+	        attribute: { color: '#333' },
+	        unquotedAttribute: { color: '#333' },
+	        string: { color: '#de1044' },
+	        nil: { color: '#008080' },
+	        number: { color: '#008080' },
+	        boolean: { color: '#008080' },
+	        punctuation: { color: '#333' }
+	    }
+	}; 
+} (github$1));
+
+var github = /*@__PURE__*/getDefaultExportFromCjs(github$1);
+
 var headers = function (api) {
     return {
         Accept: 'application/json',
@@ -41553,7 +41563,7 @@ function castValue(value) {
     return result;
 }
 var ProcessInstanceSelectModal = function (_a) {
-    var setShowInstanceModal = _a.setShowInstanceModal, showInstanceModal = _a.showInstanceModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted;
+    var setShowModal = _a.setShowModal, showModal = _a.showModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
     var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
     var _d = reactExports.useState([]), processInstances = _d[0], setProcessInstances = _d[1];
@@ -41632,7 +41642,7 @@ var ProcessInstanceSelectModal = function (_a) {
         }
         setFilterType(value);
     }
-    return (React.createElement(ReactModal, { className: "modal-dialog process-select-modal", isOpen: showInstanceModal, style: {
+    return (React.createElement(ReactModal, { className: "modal-dialog process-select-modal", isOpen: showModal, style: {
             content: {},
             overlay: {
                 zIndex: 2000,
@@ -41645,32 +41655,34 @@ var ProcessInstanceSelectModal = function (_a) {
             React.createElement("div", { className: "modal-header" },
                 React.createElement("h3", null, "Select instances to modify")),
             React.createElement("div", { className: "modal-body" },
-                React.createElement("div", { style: { marginBottom: '2em' } },
-                    React.createElement("h4", null, "Choose selection type"),
-                    React.createElement("div", null,
-                        React.createElement("label", { className: "radio-inline" },
-                            React.createElement("input", { type: "radio", name: "filterType", value: FilterType.INSTANCE, defaultChecked: filterType === FilterType.INSTANCE, onChange: function (event) { return changeFilterType(FilterType.INSTANCE); } }),
-                            React.createElement("strong", null, "Instance")),
-                        React.createElement("label", { className: "radio-inline" },
-                            React.createElement("input", { type: "radio", name: "filterType", value: FilterType.QUERY, defaultChecked: filterType === FilterType.QUERY, onChange: function (event) { return changeFilterType(FilterType.QUERY); } }),
-                            React.createElement("strong", null, "Query")))),
-                React.createElement("div", null,
-                    React.createElement("h4", null, "Filter for running process instances"),
-                    React.createElement(CamundaFilterBox, { expressions: expressions, setExpressions: setExpressions, availableExpressions: expressionDefinitions, placeholder: "Filter available instances..." }),
-                    React.createElement("div", { style: { maxHeight: '400px', overflowY: 'auto' } },
-                        React.createElement("table", { className: "cam-table" },
-                            React.createElement("thead", null,
-                                React.createElement("tr", null,
-                                    filterType === 'instance' && (React.createElement("th", null,
-                                        React.createElement("input", { type: "checkbox", checked: processInstances.every(function (processInstance) { return processInstance.checked; }), onChange: function (event) { return toggleCheckedAll(event.target.checked); } }))),
-                                    React.createElement("th", null, "ID"),
-                                    React.createElement("th", null, "Business Key"))),
-                            React.createElement("tbody", null, processInstances.map(function (processInstance, index) { return (React.createElement("tr", { key: index },
-                                filterType === FilterType.INSTANCE && (React.createElement("td", null,
-                                    React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } }))),
-                                React.createElement("td", null,
-                                    React.createElement("a", { href: "#/process-instance/".concat(processInstance.id), target: "_blank" }, processInstance.id)),
-                                React.createElement("td", null, processInstance.businessKey))); })))))),
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-12" },
+                        React.createElement("h4", null, "Choose selection type"),
+                        React.createElement("div", null,
+                            React.createElement("label", { className: "radio-inline" },
+                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.INSTANCE, defaultChecked: filterType === FilterType.INSTANCE, onChange: function (event) { return changeFilterType(FilterType.INSTANCE); } }),
+                                React.createElement("strong", null, "Instance")),
+                            React.createElement("label", { className: "radio-inline" },
+                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.QUERY, defaultChecked: filterType === FilterType.QUERY, onChange: function (event) { return changeFilterType(FilterType.QUERY); } }),
+                                React.createElement("strong", null, "Query"))))),
+                React.createElement("div", { className: "row", style: { marginTop: '1em' } },
+                    React.createElement("div", { className: "col-md-12" },
+                        React.createElement("h4", null, "Filter for running process instances"),
+                        React.createElement(CamundaFilterBox, { expressions: expressions, setExpressions: setExpressions, availableExpressions: expressionDefinitions, placeholder: "Filter available instances..." }),
+                        React.createElement("div", { style: { maxHeight: '400px', overflowY: 'auto' } },
+                            React.createElement("table", { className: "cam-table" },
+                                React.createElement("thead", null,
+                                    React.createElement("tr", null,
+                                        filterType === 'instance' && (React.createElement("th", null,
+                                            React.createElement("input", { type: "checkbox", checked: processInstances.every(function (processInstance) { return processInstance.checked; }), onChange: function (event) { return toggleCheckedAll(event.target.checked); } }))),
+                                        React.createElement("th", null, "ID"),
+                                        React.createElement("th", null, "Business Key"))),
+                                React.createElement("tbody", null, processInstances.map(function (processInstance, index) { return (React.createElement("tr", { key: index },
+                                    filterType === FilterType.INSTANCE && (React.createElement("td", null,
+                                        React.createElement("input", { type: "checkbox", checked: processInstance.checked, onChange: function () { return toggleChecked(processInstance.id); } }))),
+                                    React.createElement("td", null,
+                                        React.createElement("a", { href: "#/process-instance/".concat(processInstance.id), target: "_blank" }, processInstance.id)),
+                                    React.createElement("td", null, processInstance.businessKey))); }))))))),
             React.createElement("div", { className: "model-footer", style: {
                     height: '4em',
                     paddingRight: '1em',
@@ -41678,20 +41690,261 @@ var ProcessInstanceSelectModal = function (_a) {
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                 } },
-                React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowInstanceModal(false); } }, "Close"),
+                React.createElement("button", { className: "btn btn-link", onClick: function () { return setShowModal(false); } }, "Cancel"),
                 React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: !processInstances.some(function (instance) { return instance.checked; }), onClick: function () {
-                        onCompleted(filterType, filterType === FilterType.INSTANCE ? processInstances
-                            .filter(function (instance) { return instance.checked; })
-                            .map(function (instance) { return instance.id; }) : undefined, filterType === FilterType.QUERY ? query : undefined);
-                        setShowInstanceModal(false);
+                        onCompleted(filterType, filterType === FilterType.INSTANCE
+                            ? processInstances
+                                .filter(function (instance) { return instance.checked; })
+                                .map(function (instance) { return instance.id; })
+                            : undefined, filterType === FilterType.QUERY ? query : undefined);
+                        setShowModal(false);
                     } },
                     "Modify selected instances (",
                     processInstances.filter(function (instance) { return instance.checked; }).length,
                     ")")))));
 };
 
+var BatchModificationConfirmationModal = function (_a) {
+    var api = _a.api, processDefinitionId = _a.processDefinitionId, instructions = _a.instructions, filterType = _a.filterType, selectedProcessInstances = _a.selectedProcessInstances, selectedQuery = _a.selectedQuery, showModal = _a.showModal, setShowModal = _a.setShowModal, onBack = _a.onBack, onExecuted = _a.onExecuted;
+    var _b = reactExports.useState(true), asynchronous = _b[0], setAsynchronous = _b[1];
+    var _c = reactExports.useState(true), onlyCancelCurrent = _c[0], setOnlyCancelCurrent = _c[1];
+    var _d = reactExports.useState(true), skipCustomListeners = _d[0], setSkipCustomListeners = _d[1];
+    var _e = reactExports.useState(true), skipIoMappings = _e[0], setSkipIoMappings = _e[1];
+    var _f = reactExports.useState(''), annotation = _f[0], setAnnotation = _f[1];
+    var _g = reactExports.useState(false), showRequestPayload = _g[0], setShowRequestPayload = _g[1];
+    var _h = reactExports.useState({}), payload = _h[0], setPayload = _h[1];
+    var _j = reactExports.useState(0), instanceCount = _j[0], setInstanceCount = _j[1];
+    var _k = reactExports.useState(false), showLoading = _k[0], setShowLoading = _k[1];
+    reactExports.useEffect(function () {
+        var newPayload = {
+            processDefinitionId: processDefinitionId,
+            processInstanceIds: filterType === FilterType.INSTANCE ? selectedProcessInstances : undefined,
+            processInstanceQuery: filterType === FilterType.QUERY
+                ? __assign({ processDefinitionId: processDefinitionId }, selectedQuery) : undefined,
+            skipCustomListeners: skipCustomListeners,
+            skipIoMappings: skipIoMappings,
+            annotation: annotation === '' ? undefined : annotation,
+            instructions: instructions.map(function (instruction) { return ({
+                type: instruction.type,
+                activityId: instruction.activityId,
+                cancelCurrentActiveActivityInstances: instruction.type === 'cancel' ? onlyCancelCurrent : undefined,
+            }); }),
+        };
+        setPayload(newPayload);
+    }, [
+        processDefinitionId,
+        filterType,
+        selectedProcessInstances,
+        selectedQuery,
+        onlyCancelCurrent,
+        skipCustomListeners,
+        skipIoMappings,
+        annotation,
+    ]);
+    reactExports.useEffect(function () {
+        (function () { return __awaiter(void 0, void 0, void 0, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(filterType === FilterType.QUERY)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, post(api, '/process-instance/count', {}, JSON.stringify(__assign({ processDefinitionId: processDefinitionId }, selectedQuery)))];
+                    case 1:
+                        response = _a.sent();
+                        setInstanceCount(response.count);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        setInstanceCount(selectedProcessInstances.length);
+                        _a.label = 3;
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); })();
+    }, [processDefinitionId, filterType, selectedProcessInstances, selectedQuery]);
+    function executeModification() {
+        var _this = this;
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            var url, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        setShowLoading(true);
+                        url = '/modification/execute';
+                        if (asynchronous) {
+                            url = '/modification/executeAsync';
+                        }
+                        return [4 /*yield*/, post(api, url, {}, JSON.stringify(payload))];
+                    case 1:
+                        response = _a.sent();
+                        setShowLoading(false);
+                        setShowModal(false);
+                        onExecuted(asynchronous, response);
+                        return [2 /*return*/];
+                }
+            });
+        }); })();
+    }
+    return (React.createElement(ReactModal, { className: "modal-dialog confirmation-modal", isOpen: showModal, style: {
+            content: {},
+            overlay: {
+                zIndex: 2000,
+            },
+        }, ariaHideApp: false },
+        React.createElement("div", { className: "modal-content", style: {
+                display: 'flex',
+                flexDirection: 'column',
+            } },
+            React.createElement("div", { className: "modal-header" },
+                React.createElement("h3", null, "Confirm modification")),
+            React.createElement("div", { className: "modal-body" },
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-12" },
+                        React.createElement("h3", null, "Options"),
+                        React.createElement("div", { className: "row" },
+                            React.createElement("div", { className: "col-md-6" },
+                                React.createElement("div", { className: "form-group" },
+                                    React.createElement("div", { className: "checkbox" },
+                                        React.createElement("label", null,
+                                            React.createElement("input", { type: "checkbox", checked: asynchronous, onChange: function (event) { return setAsynchronous(event.target.checked); } }),
+                                            React.createElement("strong", null, "Asynchronous"))),
+                                    React.createElement("span", { className: "help-block" }, "It is recommended to keep this checked if there is a significant amount of instances to modify."))),
+                            React.createElement("div", { className: "col-md-6" },
+                                React.createElement("div", { className: "form-group" },
+                                    React.createElement("div", { className: "checkbox" },
+                                        React.createElement("label", null,
+                                            React.createElement("input", { type: "checkbox", checked: onlyCancelCurrent, onChange: function (event) { return setOnlyCancelCurrent(event.target.checked); } }),
+                                            React.createElement("strong", null, "Only Cancel Currently Active Activity Instances"))),
+                                    React.createElement("span", { className: "help-block" }, "Can only be used with cancel instructions. It prevents the deletion of all new created activity instances.")))),
+                        React.createElement("div", { className: "row" },
+                            React.createElement("div", { className: "col-md-6" },
+                                React.createElement("div", { className: "form-group" },
+                                    React.createElement("div", { className: "checkbox" },
+                                        React.createElement("label", null,
+                                            React.createElement("input", { type: "checkbox", checked: skipCustomListeners, onChange: function (event) { return setSkipCustomListeners(event.target.checked); } }),
+                                            React.createElement("strong", null, "Skip Custom Listeners"))),
+                                    React.createElement("span", { className: "help-block" }, "Skip execution listener invocation for activities that are started or ended as part of this request."))),
+                            React.createElement("div", { className: "col-md-6" },
+                                React.createElement("div", { className: "form-group" },
+                                    React.createElement("div", { className: "checkbox" },
+                                        React.createElement("label", null,
+                                            React.createElement("input", { type: "checkbox", checked: skipIoMappings, onChange: function (event) { return setSkipIoMappings(event.target.checked); } }),
+                                            React.createElement("strong", null, "Skip IO Mappings"))),
+                                    React.createElement("span", { className: "help-block" }, "Skip execution of input/output variable mappings for activities that are started or ended as part of this request.")))),
+                        React.createElement("div", { className: "row" },
+                            React.createElement("div", { className: "col-md-6" },
+                                React.createElement("div", { className: "form-group" },
+                                    React.createElement("label", null, "Annotation"),
+                                    React.createElement("textarea", { className: "form-control", placeholder: "Why would you do that?", value: annotation, onChange: function (event) { return setAnnotation(event.target.value); } }))),
+                            React.createElement("div", { className: "col-md-6" })))),
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-12" },
+                        React.createElement("h3", null, "Summary"),
+                        React.createElement("p", null,
+                            "You are about to modify ",
+                            React.createElement("strong", null, instanceCount),
+                            " instances in the following way:"),
+                        React.createElement("table", { className: "cam-table" },
+                            React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
+                                React.createElement("td", null, instruction.type),
+                                React.createElement("td", null, instruction.name))); }))))),
+                React.createElement("div", { className: "row" },
+                    React.createElement("div", { className: "col-md-2" },
+                        React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowRequestPayload(!showRequestPayload); } },
+                            React.createElement("span", { className: "glyphicon ".concat(showRequestPayload ? 'glyphicon-eye-close' : 'glyphicon-eye-open') }))),
+                    showRequestPayload && (React.createElement("div", { className: "col-md-10" },
+                        React.createElement("p", null, "requestPayload"),
+                        React.createElement("div", { style: { maxHeight: '300px', overflowY: 'auto' } },
+                            React.createElement(v, { value: payload, theme: github })))))),
+            React.createElement("div", { className: "model-footer", style: {
+                    height: '4em',
+                    paddingRight: '1em',
+                    paddingLeft: '1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                } },
+                React.createElement("div", null,
+                    React.createElement("button", { className: "btn btn-danger", onClick: onBack }, "Back")),
+                React.createElement("div", null,
+                    React.createElement("button", { className: "btn btn-link", onClick: function () { return setShowModal(false); } }, "Cancel"),
+                    React.createElement("button", { className: "btn btn-default", style: { marginLeft: '1em' }, disabled: instanceCount === 0 || showLoading, onClick: executeModification }, "Execute modification"))))));
+};
+
+___$insertStylesToHeader(".modification-table td.instruction {\n  position: relative;\n  display: flex;\n  align-items: center;\n  padding: 0;\n}\n.modification-table td.instruction .color-bar {\n  position: absolute;\n  left: 0;\n  top: 0;\n  bottom: 0;\n  width: 15px;\n  display: inline-block;\n}\n.modification-table td.instruction.color-cancel {\n  border-top: 1px solid #db8b73;\n}\n.modification-table td.instruction.color-cancel .color-bar {\n  background-color: #db8b73;\n}\n.modification-table td.instruction.color-move {\n  border-top: 1px solid #3e71df;\n}\n.modification-table td.instruction.color-move .color-bar {\n  background-color: #3e71df;\n}\n.modification-table td.instruction .instruction-container {\n  padding-left: 30px;\n  padding-top: 5px;\n  height: 100px;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row {\n  display: flex;\n  align-items: center;\n}\n.modification-table td.instruction .instruction-container .instruction-container-row span {\n  margin-left: 20px;\n  font-size: 18px;\n}\n.modification-table td.remove {\n  padding: 0;\n}\n.modification-table td.remove div {\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.modification-table td.order {\n  position: relative;\n}\n.modification-table td.order .arrow-up {\n  position: absolute;\n  top: 10px;\n  left: 0;\n}\n.modification-table td.order .arrow-down {\n  position: absolute;\n  bottom: 10px;\n  left: 0;\n}");
+
+var ModificationTable = function (_a) {
+    var instructions = _a.instructions, setInstructions = _a.setInstructions;
+    function removeInstruction(activityId) {
+        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
+    }
+    function changeInstructionType(index, event) {
+        var updatedInstructions = instructions.map(function (instruction, i) {
+            if (i === index) {
+                instruction.type = event.target.value;
+            }
+            return instruction;
+        });
+        setInstructions(updatedInstructions);
+    }
+    function moveItemUp(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index - 1];
+        updatedInstructions[index - 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    function moveItemDown(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        var temp = updatedInstructions[index + 1];
+        updatedInstructions[index + 1] = updatedInstructions[index];
+        updatedInstructions[index] = temp;
+        setInstructions(updatedInstructions);
+    }
+    return (React.createElement("table", { className: "cam-table modification-table" },
+        React.createElement("thead", null,
+            React.createElement("tr", null,
+                React.createElement("th", null, "Remove"),
+                React.createElement("th", null, "Order"),
+                React.createElement("th", null, "Instruction"))),
+        React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
+            React.createElement("td", { className: "remove" },
+                React.createElement("div", null,
+                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return removeInstruction(instruction.activityId); } },
+                        React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
+            React.createElement("td", { className: "order" },
+                index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-up" }))),
+                index < instructions.length - 1 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-down", onClick: function () { return moveItemDown(index); } },
+                    React.createElement("span", { className: "glyphicon glyphicon-arrow-down" })))),
+            React.createElement("td", { className: "instruction ".concat(instruction.type === 'cancel' ? 'color-cancel' : 'color-move') },
+                React.createElement("div", { className: "color-bar" }),
+                React.createElement("div", { className: "instruction-container" },
+                    React.createElement("div", { className: "instruction-container-row" },
+                        React.createElement("select", { className: "form-control", style: { width: '200px' }, value: instruction.type, onChange: function (event) { return changeInstructionType(index, event); } },
+                            React.createElement("option", { value: "cancel" }, "cancel"),
+                            React.createElement("option", { value: "startBeforeActivity" }, "start before"),
+                            React.createElement("option", { value: "startAfterActivity" }, "start after")),
+                        React.createElement("span", null, instruction.name)))))); }))));
+};
+
+var Portal = function (_a) {
+    var children = _a.children, node = _a.node;
+    return ReactDOM.createPortal(children, node);
+};
+
 var initialState = {
-    instructions: [],
+    instructions: [
+    // {
+    //   activityId: "approveInvoice",
+    //   name: "Approve Invoice",
+    //   type: "cancel"
+    // } as ModificationInstruction,
+    // {
+    //   activityId: "assignApprover",
+    //   name: "Assign Approver Group",
+    //   type: "startBeforeActivity"
+    // } as ModificationInstruction
+    ],
     viewer: null,
     tabNode: null,
     elementEvent: null,
@@ -41704,33 +41957,24 @@ var hooks = {
 };
 var BatchModifyForm = function (_a) {
     var api = _a.api, processDefinitionId = _a.processDefinitionId;
-    var _b = reactExports.useState(true), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
-    var _c = reactExports.useState(initialState.viewer), viewer = _c[0], setViewer = _c[1];
-    var _d = reactExports.useState(initialState.instructions), instructions = _d[0], setInstructions = _d[1];
-    var _e = reactExports.useState(initialState.tabNode), tabNode = _e[0], setTabNode = _e[1];
-    var _f = reactExports.useState(initialState.elementEvent), elementEvent = _f[0], setElementEvent = _f[1];
-    var _g = reactExports.useState([]), badgeIds = _g[0], setBadgeIds = _g[1];
-    var _h = reactExports.useState(''), wrenchOverlayId = _h[0], setWrenchOverlayId = _h[1];
-    var _j = reactExports.useState(false), wrenchDropdownVisible = _j[0], setWrenchDropdownVisible = _j[1];
+    var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
+    var _c = reactExports.useState(false), showConfirmModal = _c[0], setShowConfirmModal = _c[1];
+    var _d = reactExports.useState(false), showInformationModal = _d[0], setShowInformationModal = _d[1];
+    var _e = reactExports.useState({}), batchResponse = _e[0], setBatchResponse = _e[1];
+    var _f = reactExports.useState(initialState.viewer), viewer = _f[0], setViewer = _f[1];
+    var _g = reactExports.useState(initialState.instructions), instructions = _g[0], setInstructions = _g[1];
+    var _h = reactExports.useState(initialState.tabNode), tabNode = _h[0], setTabNode = _h[1];
+    var _j = reactExports.useState(initialState.elementEvent), elementEvent = _j[0], setElementEvent = _j[1];
+    var _k = reactExports.useState([]), badgeIds = _k[0], setBadgeIds = _k[1];
+    var _l = reactExports.useState(''), wrenchOverlayId = _l[0], setWrenchOverlayId = _l[1];
+    var _m = reactExports.useState(false), wrenchDropdownVisible = _m[0], setWrenchDropdownVisible = _m[1];
+    var _o = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _o[0], setSelectedFilterType = _o[1];
+    var _p = reactExports.useState([]), selectedProcessInstances = _p[0], setSelectedProcessInstances = _p[1];
+    var _q = reactExports.useState({}), selectedQuery = _q[0], setSelectedQuery = _q[1];
     hooks.setViewer = setViewer;
     hooks.setTabNode = setTabNode;
     hooks.setInstructions = setInstructions;
     hooks.setElementEvent = setElementEvent;
-    function addInstruction(activityId, name, type) {
-        var update = instructions.find(function (instruction) { return instruction.activityId === activityId; });
-        if (update) {
-            update.type = type;
-            setInstructions(__spreadArray([], instructions, true));
-            return;
-        }
-        setInstructions(__spreadArray(__spreadArray([], instructions, true), [
-            {
-                activityId: activityId,
-                name: name !== null && name !== void 0 ? name : activityId,
-                type: type,
-            },
-        ], false));
-    }
     // badges
     reactExports.useEffect(function () {
         if (viewer) {
@@ -41802,6 +42046,44 @@ var BatchModifyForm = function (_a) {
             setWrenchOverlayId(overlayId);
         }
     }, [elementEvent, viewer]);
+    function addInstruction(activityId, name, type) {
+        var update = instructions.find(function (instruction) { return instruction.activityId === activityId; });
+        if (update) {
+            update.type = type;
+            setInstructions(__spreadArray([], instructions, true));
+            return;
+        }
+        setInstructions(__spreadArray(__spreadArray([], instructions, true), [
+            {
+                activityId: activityId,
+                name: name !== null && name !== void 0 ? name : activityId,
+                type: type,
+            },
+        ], false));
+    }
+    function completeProcessInstanceSelection(filterType, processInstanceIds, query) {
+        setSelectedFilterType(filterType);
+        if (filterType === FilterType.INSTANCE) {
+            setSelectedProcessInstances(processInstanceIds);
+            setSelectedQuery({});
+        }
+        else {
+            setSelectedQuery(query);
+            setSelectedProcessInstances([]);
+        }
+        setShowInstanceModal(false);
+        setShowConfirmModal(true);
+    }
+    function onModificationExecuted(asynchronous, response) {
+        setBatchResponse(response);
+        if (!asynchronous) {
+            window.location.reload();
+        }
+        else {
+            setShowConfirmModal(false);
+            setShowInformationModal(true);
+        }
+    }
     return (React.createElement(React.Fragment, null,
         tabNode && (React.createElement(Portal, { node: tabNode }, instructions.length === 0 ? (React.createElement("div", { style: { textAlign: 'center' } },
             React.createElement("span", { className: "glyphicon glyphicon-wrench", style: { marginRight: '10px' } }),
@@ -41815,9 +42097,12 @@ var BatchModifyForm = function (_a) {
                     justifyContent: 'flex-end',
                 } },
                 React.createElement("button", { className: "btn btn-danger", onClick: function () { return setShowInstanceModal(true); } }, "Select Instances")))))),
-        React.createElement(ProcessInstanceSelectModal, { setShowInstanceModal: setShowInstanceModal, showInstanceModal: showInstanceModal, api: api, processDefinitionId: processDefinitionId, onCompleted: function (queryType, processInstanceIds, query) {
-                console.log(queryType, processInstanceIds, query);
-            } })));
+        React.createElement(ProcessInstanceSelectModal, { api: api, setShowModal: setShowInstanceModal, showModal: showInstanceModal, processDefinitionId: processDefinitionId, onCompleted: completeProcessInstanceSelection }),
+        React.createElement(BatchModificationConfirmationModal, { api: api, showModal: showConfirmModal, setShowModal: setShowConfirmModal, processDefinitionId: processDefinitionId, instructions: instructions, filterType: selectedFilterType, selectedProcessInstances: selectedProcessInstances, selectedQuery: selectedQuery, onBack: function () {
+                setShowConfirmModal(false);
+                setShowInstanceModal(true);
+            }, onExecuted: onModificationExecuted }),
+        React.createElement(BatchInformationModal, { setShowModal: setShowInformationModal, showModal: showInformationModal, response: batchResponse, content: "Modification is being executed. A new batch with ID ".concat(batchResponse.id, " has been created.") })));
 };
 var definitionBatchModify = [
     {
@@ -41826,7 +42111,7 @@ var definitionBatchModify = [
         render: function (viewer) {
             hooks.setViewer(viewer);
             viewer.get('eventBus').on('element.hover', function (event) { return hooks.setElementEvent(event); });
-            hooks.setInstructions([]); // reset instructions when switching diagrams
+            hooks.setInstructions(initialState.instructions); // reset instructions when switching diagrams
         },
     },
     {
