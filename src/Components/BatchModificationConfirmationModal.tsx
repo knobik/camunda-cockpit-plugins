@@ -284,7 +284,7 @@ const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmation
           }}
         >
           <div>
-            <button className="btn btn-danger" onClick={onBack}>
+            <button className="btn btn-default" onClick={onBack}>
               Back
             </button>
           </div>
@@ -293,7 +293,7 @@ const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmation
               Cancel
             </button>
             <button
-              className="btn btn-default"
+              className="btn btn-danger"
               style={{ marginLeft: '1em' }}
               disabled={instanceCount === 0 || showLoading}
               onClick={executeModification}
