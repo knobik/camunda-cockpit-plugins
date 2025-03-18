@@ -41955,29 +41955,33 @@ var initialState = {
     viewer: null,
     tabNode: null,
     elementEvent: null,
+    processDefinitionId: null,
 };
 var hooks = {
     setViewer: function (viewer) { return (initialState.viewer = viewer); },
     setTabNode: function (node) { return (initialState.tabNode = node); },
     setInstructions: function (instructions) { return (initialState.instructions = instructions); },
     setElementEvent: function (elementEvent) { return (initialState.elementEvent = elementEvent); },
+    setProcessDefinitionId: function (processDefinitionId) { return (initialState.processDefinitionId = processDefinitionId); },
 };
 var BatchModifyForm = function (_a) {
-    var api = _a.api, processDefinitionId = _a.processDefinitionId;
+    var api = _a.api;
     var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(false), showConfirmModal = _c[0], setShowConfirmModal = _c[1];
     var _d = reactExports.useState(false), showInformationModal = _d[0], setShowInformationModal = _d[1];
     var _e = reactExports.useState({}), batchResponse = _e[0], setBatchResponse = _e[1];
-    var _f = reactExports.useState(initialState.viewer), viewer = _f[0], setViewer = _f[1];
-    var _g = reactExports.useState(initialState.instructions), instructions = _g[0], setInstructions = _g[1];
-    var _h = reactExports.useState(initialState.tabNode), tabNode = _h[0], setTabNode = _h[1];
-    var _j = reactExports.useState(initialState.elementEvent), elementEvent = _j[0], setElementEvent = _j[1];
-    var _k = reactExports.useState([]), badgeIds = _k[0], setBadgeIds = _k[1];
-    var _l = reactExports.useState(''), wrenchOverlayId = _l[0], setWrenchOverlayId = _l[1];
-    var _m = reactExports.useState(false), wrenchDropdownVisible = _m[0], setWrenchDropdownVisible = _m[1];
-    var _o = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _o[0], setSelectedFilterType = _o[1];
-    var _p = reactExports.useState([]), selectedProcessInstances = _p[0], setSelectedProcessInstances = _p[1];
-    var _q = reactExports.useState({}), selectedQuery = _q[0], setSelectedQuery = _q[1];
+    var _f = reactExports.useState(initialState.processDefinitionId), processDefinitionId = _f[0], setProcessDefinitionId = _f[1];
+    var _g = reactExports.useState(initialState.viewer), viewer = _g[0], setViewer = _g[1];
+    var _h = reactExports.useState(initialState.instructions), instructions = _h[0], setInstructions = _h[1];
+    var _j = reactExports.useState(initialState.tabNode), tabNode = _j[0], setTabNode = _j[1];
+    var _k = reactExports.useState(initialState.elementEvent), elementEvent = _k[0], setElementEvent = _k[1];
+    var _l = reactExports.useState([]), badgeIds = _l[0], setBadgeIds = _l[1];
+    var _m = reactExports.useState(''), wrenchOverlayId = _m[0], setWrenchOverlayId = _m[1];
+    var _o = reactExports.useState(false), wrenchDropdownVisible = _o[0], setWrenchDropdownVisible = _o[1];
+    var _p = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _p[0], setSelectedFilterType = _p[1];
+    var _q = reactExports.useState([]), selectedProcessInstances = _q[0], setSelectedProcessInstances = _q[1];
+    var _r = reactExports.useState({}), selectedQuery = _r[0], setSelectedQuery = _r[1];
+    hooks.setProcessDefinitionId = setProcessDefinitionId;
     hooks.setViewer = setViewer;
     hooks.setTabNode = setTabNode;
     hooks.setInstructions = setInstructions;
@@ -42136,6 +42140,7 @@ var definitionBatchModify = [
             var api = _a.api, processDefinitionId = _a.processDefinitionId;
             createRoot(node).render(React.createElement(React.StrictMode, null,
                 React.createElement(BatchModifyForm, { root: node, api: api, processDefinitionId: processDefinitionId })));
+            hooks.setProcessDefinitionId(processDefinitionId); // ugly hack to handle version change
         },
     },
 ];

@@ -27,6 +27,7 @@ const initialState: Record<string, any> = {
   viewer: null,
   tabNode: null,
   elementEvent: null,
+  processDefinitionId: null,
 };
 
 const hooks: Record<string, any> = {
@@ -34,14 +35,16 @@ const hooks: Record<string, any> = {
   setTabNode: (node: Element) => (initialState.tabNode = node),
   setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
   setElementEvent: (elementEvent: any) => (initialState.elementEvent = elementEvent),
+  setProcessDefinitionId: (processDefinitionId: string) => (initialState.processDefinitionId = processDefinitionId),
 };
 
-const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
+const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInformationModal, setShowInformationModal] = useState(false);
   const [batchResponse, setBatchResponse] = useState({} as any);
 
+  const [processDefinitionId, setProcessDefinitionId] = useState(initialState.processDefinitionId);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
@@ -54,6 +57,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api, processDefinit
   const [selectedProcessInstances, setSelectedProcessInstances] = useState([] as string[]);
   const [selectedQuery, setSelectedQuery] = useState({} as Record<string, any>);
 
+  hooks.setProcessDefinitionId = setProcessDefinitionId;
   hooks.setViewer = setViewer;
   hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
@@ -285,6 +289,8 @@ export default [
           <BatchModifyForm root={node} api={api} processDefinitionId={processDefinitionId} />
         </React.StrictMode>
       );
+
+      hooks.setProcessDefinitionId(processDefinitionId); // ugly hack to handle version change
     },
   },
 ];
