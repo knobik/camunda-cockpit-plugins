@@ -20194,16 +20194,16 @@ var Portal = function (_a) {
 
 var initialState = {
     instructions: [
-        {
-            activityId: "approveInvoice",
-            name: "Approve Invoice",
-            type: "cancel"
-        },
-        {
-            activityId: "assignApprover",
-            name: "Assign Approver Group",
-            type: "startBeforeActivity"
-        }
+    // {
+    //   activityId: "approveInvoice",
+    //   name: "Approve Invoice",
+    //   type: "cancel"
+    // } as ModificationInstruction,
+    // {
+    //   activityId: "assignApprover",
+    //   name: "Assign Approver Group",
+    //   type: "startBeforeActivity"
+    // } as ModificationInstruction
     ],
     viewer: null,
     tabNode: null,

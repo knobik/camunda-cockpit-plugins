@@ -13,16 +13,16 @@ import { DefinitionPluginParams } from './types';
 
 const initialState: Record<string, any> = {
   instructions: [
-    {
-      activityId: "approveInvoice",
-      name: "Approve Invoice",
-      type: "cancel"
-    } as ModificationInstruction,
-    {
-      activityId: "assignApprover",
-      name: "Assign Approver Group",
-      type: "startBeforeActivity"
-    } as ModificationInstruction
+    // {
+    //   activityId: "approveInvoice",
+    //   name: "Approve Invoice",
+    //   type: "cancel"
+    // } as ModificationInstruction,
+    // {
+    //   activityId: "assignApprover",
+    //   name: "Assign Approver Group",
+    //   type: "startBeforeActivity"
+    // } as ModificationInstruction
   ],
   viewer: null,
   tabNode: null,
