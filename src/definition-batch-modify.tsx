@@ -27,6 +27,7 @@ const initialState: Record<string, any> = {
   viewer: null,
   tabNode: null,
   elementEvent: null,
+  clickedElementEvent: null,
   processDefinitionId: null,
 };
 
@@ -35,6 +36,7 @@ const hooks: Record<string, any> = {
   setTabNode: (node: Element) => (initialState.tabNode = node),
   setInstructions: (instructions: ModificationInstruction[]) => (initialState.instructions = instructions),
   setElementEvent: (elementEvent: any) => (initialState.elementEvent = elementEvent),
+  setClickedElementEvent: (elementEvent: any) => (initialState.clickedElementEvent = elementEvent),
   setProcessDefinitionId: (processDefinitionId: string) => (initialState.processDefinitionId = processDefinitionId),
 };
 
@@ -45,10 +47,11 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   const [batchResponse, setBatchResponse] = useState({} as any);
 
   const [processDefinitionId, setProcessDefinitionId] = useState(initialState.processDefinitionId);
+  const [elementEvent, setElementEvent] = useState(initialState.elementEvent);
+  const [clickedElementEvent, setClickedElementEvent] = useState(initialState.clickedElementEvent);
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
-  const [elementEvent, setElementEvent] = useState(initialState.elementEvent);
   const [badgeIds, setBadgeIds] = useState([] as string[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
   const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
@@ -62,6 +65,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   hooks.setTabNode = setTabNode;
   hooks.setInstructions = setInstructions;
   hooks.setElementEvent = setElementEvent;
+  hooks.setClickedElementEvent = setClickedElementEvent;
 
   // badges
   useEffect(() => {
@@ -97,26 +101,33 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
 
   // wrench
   useEffect(() => {
+    const showOnActivities = [
+      'bpmn:CallActivity',
+      'bpmn:ExclusiveGateway',
+      'bpmn:UserTask',
+      'bpmn:ServiceTask',
+      'bpmn:BusinessRuleTask',
+      'bpmn:EndEvent',
+      'bpmn:StartEvent',
+    ];
+
     if (viewer && elementEvent) {
+
+      // if the user clicked on an element, use that element
+      let event = elementEvent;
+      if (clickedElementEvent && showOnActivities.includes(clickedElementEvent.element.type)) {
+        event = clickedElementEvent;
+      }
+
       if (wrenchDropdownVisible) {
         return;
       }
-
-      const hoverActivities = [
-        'bpmn:CallActivity',
-        'bpmn:ExclusiveGateway',
-        'bpmn:UserTask',
-        'bpmn:ServiceTask',
-        'bpmn:BusinessRuleTask',
-        'bpmn:EndEvent',
-        'bpmn:StartEvent',
-      ];
 
       if (wrenchOverlayId !== '') {
         viewer.get('overlays').remove(wrenchOverlayId);
       }
 
-      if (!hoverActivities.includes(elementEvent.element.type)) {
+      if (!showOnActivities.includes(event.element.type)) {
         return;
       }
 
@@ -125,7 +136,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
         <React.StrictMode>
           <Dropdown
             onSelect={(eventKey: string | null) =>
-              addInstruction(elementEvent.element.id, elementEvent.element.businessObject.name, eventKey as string)
+              addInstruction(event.element.id, event.element.businessObject.name, eventKey as string)
             }
             onToggle={isOpen => setWrenchDropdownVisible(isOpen)}
           >
@@ -142,7 +153,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
         </React.StrictMode>
       );
 
-      const overlayId: string = viewer.get('overlays').add(elementEvent.element, {
+      const overlayId: string = viewer.get('overlays').add(event.element, {
         position: {
           right: 20,
           bottom: 20,
@@ -152,7 +163,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
 
       setWrenchOverlayId(overlayId);
     }
-  }, [elementEvent, viewer]);
+  }, [elementEvent, clickedElementEvent, viewer]);
 
   function addInstruction(activityId: string, name: string, type: string) {
     const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
@@ -268,6 +279,7 @@ export default [
     pluginPoint: 'cockpit.processDefinition.diagram.plugin',
     render: (viewer: any) => {
       hooks.setViewer(viewer);
+      viewer.get('eventBus').on('element.click', (event: any) => hooks.setClickedElementEvent(event));
       viewer.get('eventBus').on('element.hover', (event: any) => hooks.setElementEvent(event));
       hooks.setInstructions(initialState.instructions); // reset instructions when switching diagrams
     },

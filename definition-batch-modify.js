@@ -6754,6 +6754,7 @@ var initialState = {
     viewer: null,
     tabNode: null,
     elementEvent: null,
+    clickedElementEvent: null,
     processDefinitionId: null,
 };
 var hooks = {
@@ -6761,6 +6762,7 @@ var hooks = {
     setTabNode: function (node) { return (initialState.tabNode = node); },
     setInstructions: function (instructions) { return (initialState.instructions = instructions); },
     setElementEvent: function (elementEvent) { return (initialState.elementEvent = elementEvent); },
+    setClickedElementEvent: function (elementEvent) { return (initialState.clickedElementEvent = elementEvent); },
     setProcessDefinitionId: function (processDefinitionId) { return (initialState.processDefinitionId = processDefinitionId); },
 };
 var BatchModifyForm = function (_a) {
@@ -6770,21 +6772,23 @@ var BatchModifyForm = function (_a) {
     var _d = reactExports.useState(false), showInformationModal = _d[0], setShowInformationModal = _d[1];
     var _e = reactExports.useState({}), batchResponse = _e[0], setBatchResponse = _e[1];
     var _f = reactExports.useState(initialState.processDefinitionId), processDefinitionId = _f[0], setProcessDefinitionId = _f[1];
-    var _g = reactExports.useState(initialState.viewer), viewer = _g[0], setViewer = _g[1];
-    var _h = reactExports.useState(initialState.instructions), instructions = _h[0], setInstructions = _h[1];
-    var _j = reactExports.useState(initialState.tabNode), tabNode = _j[0], setTabNode = _j[1];
-    var _k = reactExports.useState(initialState.elementEvent), elementEvent = _k[0], setElementEvent = _k[1];
-    var _l = reactExports.useState([]), badgeIds = _l[0], setBadgeIds = _l[1];
-    var _m = reactExports.useState(''), wrenchOverlayId = _m[0], setWrenchOverlayId = _m[1];
-    var _o = reactExports.useState(false), wrenchDropdownVisible = _o[0], setWrenchDropdownVisible = _o[1];
-    var _p = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _p[0], setSelectedFilterType = _p[1];
-    var _q = reactExports.useState([]), selectedProcessInstances = _q[0], setSelectedProcessInstances = _q[1];
-    var _r = reactExports.useState({}), selectedQuery = _r[0], setSelectedQuery = _r[1];
+    var _g = reactExports.useState(initialState.elementEvent), elementEvent = _g[0], setElementEvent = _g[1];
+    var _h = reactExports.useState(initialState.clickedElementEvent), clickedElementEvent = _h[0], setClickedElementEvent = _h[1];
+    var _j = reactExports.useState(initialState.viewer), viewer = _j[0], setViewer = _j[1];
+    var _k = reactExports.useState(initialState.instructions), instructions = _k[0], setInstructions = _k[1];
+    var _l = reactExports.useState(initialState.tabNode), tabNode = _l[0], setTabNode = _l[1];
+    var _m = reactExports.useState([]), badgeIds = _m[0], setBadgeIds = _m[1];
+    var _o = reactExports.useState(''), wrenchOverlayId = _o[0], setWrenchOverlayId = _o[1];
+    var _p = reactExports.useState(false), wrenchDropdownVisible = _p[0], setWrenchDropdownVisible = _p[1];
+    var _q = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _q[0], setSelectedFilterType = _q[1];
+    var _r = reactExports.useState([]), selectedProcessInstances = _r[0], setSelectedProcessInstances = _r[1];
+    var _s = reactExports.useState({}), selectedQuery = _s[0], setSelectedQuery = _s[1];
     hooks.setProcessDefinitionId = setProcessDefinitionId;
     hooks.setViewer = setViewer;
     hooks.setTabNode = setTabNode;
     hooks.setInstructions = setInstructions;
     hooks.setElementEvent = setElementEvent;
+    hooks.setClickedElementEvent = setClickedElementEvent;
     // badges
     reactExports.useEffect(function () {
         if (viewer) {
@@ -6816,29 +6820,34 @@ var BatchModifyForm = function (_a) {
     }, [instructions, viewer]);
     // wrench
     reactExports.useEffect(function () {
+        var showOnActivities = [
+            'bpmn:CallActivity',
+            'bpmn:ExclusiveGateway',
+            'bpmn:UserTask',
+            'bpmn:ServiceTask',
+            'bpmn:BusinessRuleTask',
+            'bpmn:EndEvent',
+            'bpmn:StartEvent',
+        ];
         if (viewer && elementEvent) {
+            // if the user clicked on an element, use that element
+            var event_1 = elementEvent;
+            if (clickedElementEvent && showOnActivities.includes(clickedElementEvent.element.type)) {
+                event_1 = clickedElementEvent;
+            }
             if (wrenchDropdownVisible) {
                 return;
             }
-            var hoverActivities = [
-                'bpmn:CallActivity',
-                'bpmn:ExclusiveGateway',
-                'bpmn:UserTask',
-                'bpmn:ServiceTask',
-                'bpmn:BusinessRuleTask',
-                'bpmn:EndEvent',
-                'bpmn:StartEvent',
-            ];
             if (wrenchOverlayId !== '') {
                 viewer.get('overlays').remove(wrenchOverlayId);
             }
-            if (!hoverActivities.includes(elementEvent.element.type)) {
+            if (!showOnActivities.includes(event_1.element.type)) {
                 return;
             }
             var button = document.createElement('div');
             createRoot(button).render(React.createElement(React.StrictMode, null,
                 React.createElement(Dropdown$1, { onSelect: function (eventKey) {
-                        return addInstruction(elementEvent.element.id, elementEvent.element.businessObject.name, eventKey);
+                        return addInstruction(event_1.element.id, event_1.element.businessObject.name, eventKey);
                     }, onToggle: function (isOpen) { return setWrenchDropdownVisible(isOpen); } },
                     React.createElement(Dropdown$1.Toggle, { variant: "default", size: "sm" },
                         React.createElement("span", { className: "glyphicon glyphicon-wrench" })),
@@ -6846,7 +6855,7 @@ var BatchModifyForm = function (_a) {
                         React.createElement(Dropdown$1.Item, { eventKey: "cancel" }, "Cancel"),
                         React.createElement(Dropdown$1.Item, { eventKey: "startBeforeActivity" }, "Start Before"),
                         React.createElement(Dropdown$1.Item, { eventKey: "startAfterActivity" }, "Start After")))));
-            var overlayId = viewer.get('overlays').add(elementEvent.element, {
+            var overlayId = viewer.get('overlays').add(event_1.element, {
                 position: {
                     right: 20,
                     bottom: 20,
@@ -6855,7 +6864,7 @@ var BatchModifyForm = function (_a) {
             });
             setWrenchOverlayId(overlayId);
         }
-    }, [elementEvent, viewer]);
+    }, [elementEvent, clickedElementEvent, viewer]);
     function addInstruction(activityId, name, type) {
         var update = instructions.find(function (instruction) { return instruction.activityId === activityId; });
         if (update) {
@@ -6920,6 +6929,7 @@ var definitionBatchModify = [
         pluginPoint: 'cockpit.processDefinition.diagram.plugin',
         render: function (viewer) {
             hooks.setViewer(viewer);
+            viewer.get('eventBus').on('element.click', function (event) { return hooks.setClickedElementEvent(event); });
             viewer.get('eventBus').on('element.hover', function (event) { return hooks.setElementEvent(event); });
             hooks.setInstructions(initialState.instructions); // reset instructions when switching diagrams
         },
