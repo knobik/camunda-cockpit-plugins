@@ -41,7 +41,7 @@ const hooks: Record<string, any> = {
 };
 
 const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
-  const [showInstanceModal, setShowInstanceModal] = useState(true);
+  const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showInformationModal, setShowInformationModal] = useState(false);
   const [batchResponse, setBatchResponse] = useState({} as any);

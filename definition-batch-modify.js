@@ -20221,7 +20221,7 @@ var hooks = {
 };
 var BatchModifyForm = function (_a) {
     var api = _a.api;
-    var _b = reactExports.useState(true), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
+    var _b = reactExports.useState(false), showInstanceModal = _b[0], setShowInstanceModal = _b[1];
     var _c = reactExports.useState(false), showConfirmModal = _c[0], setShowConfirmModal = _c[1];
     var _d = reactExports.useState(false), showInformationModal = _d[0], setShowInformationModal = _d[1];
     var _e = reactExports.useState({}), batchResponse = _e[0], setBatchResponse = _e[1];
