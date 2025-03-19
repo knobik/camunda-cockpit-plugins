@@ -61,6 +61,7 @@ const CamundaFilterBoxDatetimeValue: React.FC<CamundaFilterBoxDatetimeValueProps
               onChange={(date: Date) => {
                 const dateString = date ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : '';
                 setValue(dateString);
+                submitChange(dateString);
               }}
               inline
             />

@@ -7,7 +7,7 @@ import CamundaFilterBox, {
   Expression,
   ExpressionDefinition,
   Operator,
-  isValidExpression,
+  isValidExpression, castValue,
 } from './FilterBox/CamundaFilterBox';
 
 const expressionDefinitions: ExpressionDefinition[] = [
@@ -80,21 +80,6 @@ export interface ProcessInstanceSelectModalProps {
   showModal: boolean;
   processDefinitionId: string;
   onCompleted: (queryType: FilterType, processInstanceIds?: string[], query?: Record<string, any>) => void;
-}
-
-function castValue(value: string): any {
-  let result: any = value;
-
-  if (!isNaN(Number(value))) {
-    result = Number(value);
-  }
-
-  // cast boolean
-  if (value === 'true' || value === 'false') {
-    result = value === 'true';
-  }
-
-  return result;
 }
 
 const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({

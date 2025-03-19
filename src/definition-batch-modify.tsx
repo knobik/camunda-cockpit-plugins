@@ -122,9 +122,9 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
       'bpmn:ReceiveTask',
     ];
 
-    if (viewer && elementEvent) {
+    // console.log(viewer, elementEvent);
 
-      // console.log(elementEvent.element.type);
+    if (viewer && elementEvent) {
 
       // if the user clicked on an element, use that element
       let event = elementEvent;

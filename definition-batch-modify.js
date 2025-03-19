@@ -19638,6 +19638,7 @@ var CamundaFilterBoxDatetimeValue = function (_a) {
             React.createElement(zt, { selected: !isNaN(new Date(value).getTime()) ? new Date(value) : new Date(), onChange: function (date) {
                     var dateString = date ? moment(date).format('YYYY-MM-DDTHH:mm:ss') : '';
                     setValue(dateString);
+                    submitChange(dateString);
                 }, inline: true })))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, initialValue !== '' ? initialValue : '??'))));
 };
 
@@ -19653,6 +19654,17 @@ var Operator;
     Operator["before"] = "before";
     Operator["after"] = "after";
 })(Operator || (Operator = {}));
+function castValue(value) {
+    var result = value;
+    if (!isNaN(Number(value))) {
+        result = Number(value);
+    }
+    // cast boolean
+    if (value === 'true' || value === 'false') {
+        result = value === 'true';
+    }
+    return result;
+}
 function operatorToText(o) {
     switch (o) {
         case Operator.eq:
@@ -19806,17 +19818,6 @@ var FilterType;
     FilterType["INSTANCE"] = "instance";
     FilterType["QUERY"] = "query";
 })(FilterType || (FilterType = {}));
-function castValue(value) {
-    var result = value;
-    if (!isNaN(Number(value))) {
-        result = Number(value);
-    }
-    // cast boolean
-    if (value === 'true' || value === 'false') {
-        result = value === 'true';
-    }
-    return result;
-}
 var ProcessInstanceSelectModal = function (_a) {
     var setShowModal = _a.setShowModal, showModal = _a.showModal, api = _a.api, processDefinitionId = _a.processDefinitionId, onCompleted = _a.onCompleted;
     var _b = reactExports.useState({}), query = _b[0], setQuery = _b[1];
@@ -20294,8 +20295,8 @@ var BatchModifyForm = function (_a) {
             'bpmn:SendTask',
             'bpmn:ReceiveTask',
         ];
+        // console.log(viewer, elementEvent);
         if (viewer && elementEvent) {
-            // console.log(elementEvent.element.type);
             // if the user clicked on an element, use that element
             var event_1 = elementEvent;
             if (clickedElementEvent && showOnActivities.includes(clickedElementEvent.element.type)) {

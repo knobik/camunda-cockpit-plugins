@@ -5,7 +5,6 @@ import './instance-route-history.scss';
 import { Allotment } from 'allotment';
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Expression, GridDataAutoCompleteHandler } from 'react-filter-box';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 
 import AuditLogTable from './Components/AuditLogTable';
@@ -13,68 +12,92 @@ import BPMN from './Components/BPMN';
 import BreadcrumbsPanel from './Components/BreadcrumbsPanel';
 import { Clippy } from './Components/Clippy';
 import Container from './Components/Container';
-import FilterBox from './Components/FilterBox';
+import CamundaFilterBox, {
+  Expression,
+  ExpressionDefinition,
+  Operator,
+  castValue,
+  isValidExpression,
+} from './Components/FilterBox/CamundaFilterBox';
 import HistoryTable from './Components/HistoryTable';
 import Page from './Components/Page';
+import Pagination from './Components/Pagination';
 import Portal from './Components/Portal';
 import { ToggleHistoryViewButton } from './Components/ToggleHistoryViewButton';
 import VariablesTable from './Components/VariablesTable';
 import { DefinitionPluginParams, RoutePluginParams } from './types';
 import { get, post } from './utils/api';
-import { PluginSettings, loadSettings, saveSettings } from './utils/misc';
-import Pagination from "./Components/Pagination";
+import { loadSettings, saveSettings } from './utils/misc';
 
-class InstanceQueryAutoCompleteHandler extends GridDataAutoCompleteHandler {
-  query = '';
-
-  setQuery(query: string) {
-    this.query = query;
-  }
-
-  hasCategory(category: string) {
-    return true;
-  }
-
-  needCategories(): string[] {
-    return super
-      .needCategories()
-      .filter((value: string) => !(['key', 'started', 'finished'].includes(value) && this.query.includes(value)));
-  }
-
-  needOperators(parsedCategory: string) {
-    if (parsedCategory === 'started') {
-      return ['after'];
-    }
-    if (parsedCategory === 'finished') {
-      return ['before'];
-    }
-    if (parsedCategory === 'key') {
-      return ['==', 'like'];
-    }
-    return ['==', 'like', 'ilike'];
-  }
-
-  needValues(parsedCategory: string, parsedOperator: string) {
-    if (parsedOperator === 'after' || parsedOperator === 'before') {
-      return [{ customType: 'date' }];
-    }
-    return super.needValues(parsedCategory, parsedOperator);
-  }
-}
-
-const InstanceQueryOptions = [
+const availableExpressions: ExpressionDefinition[] = [
   {
-    columnField: 'started',
-    type: 'date',
-  },
+    label: 'Business Key',
+    type: 'processInstanceBusinessKey',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: false,
+  } as ExpressionDefinition,
   {
-    columnField: 'finished',
-    type: 'date',
-  },
+    label: 'Executed Activity ID',
+    type: 'executedActivityIdIn',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: false,
+  } as ExpressionDefinition,
   {
-    columnField: 'key',
-    type: 'string',
-  },
+    label: 'Start Date',
+    type: 'startedDate',
+    availableOperators: [Operator.before, Operator.after],
+    defaultOperator: Operator.before,
+    requiresValue: true,
+    requiresName: false,
+    fieldType: 'datetime',
+  } as ExpressionDefinition,
+  {
+    label: 'Finished Date',
+    type: 'finishedDate',
+    availableOperators: [Operator.before, Operator.after],
+    defaultOperator: Operator.before,
+    requiresValue: true,
+    requiresName: false,
+    fieldType: 'datetime',
+  } as ExpressionDefinition,
+  {
+    label: 'Variable',
+    type: 'variable',
+    availableOperators: [
+      Operator.eq,
+      Operator.neq,
+      Operator.gt,
+      Operator.gteq,
+      Operator.lt,
+      Operator.lteq,
+      Operator.like,
+    ],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: true,
+  } as ExpressionDefinition,
+  {
+    label: 'Finished',
+    type: 'finished',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    defaultValue: 'true',
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'Unfinished',
+    type: 'unfinished',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    defaultValue: 'true',
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
 ];
 
 const initialState: Record<string, any> = {
@@ -86,7 +109,6 @@ const hooks: Record<string, any> = {
 };
 
 const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinitionId }) => {
-  const [autoCompleteHandler] = useState(new InstanceQueryAutoCompleteHandler([], InstanceQueryOptions));
   const [expressions, setExpressions] = useState([] as Expression[]);
   const [query, setQuery] = useState({} as Record<string, string | number | null>);
   const [historyTabNode, setHistoryTabNode] = useState(initialState.historyTabNode);
@@ -95,68 +117,85 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
 
   const [instances, setInstances]: any = useState([] as any[]);
   const [instancesCount, setInstancesCount] = useState(0);
-  const [currentPage, setCurrentPage]  = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(50);
   const [firstResult, setFirstResult] = useState(0);
-  // FETCH
 
+  // FETCH
   useEffect(() => {
     (async () => {
-      setInstancesCount(
-        (await get(api, '/history/process-instance/count', { processDefinitionId })).count
-      )
+      const body = JSON.stringify({
+        sortBy: 'endTime',
+        sortOrder: 'desc',
+        processDefinitionId,
+        ...query,
+      });
+
+      setInstancesCount((await post(api, '/history/process-instance/count', {}, body)).count);
 
       setInstances(
-        await post(
-          api,
-          '/history/process-instance',
-          { maxResults: `${perPage}`, firstResult: `${firstResult}` },
-          JSON.stringify({
-            sortBy: 'endTime',
-            sortOrder: 'desc',
-            processDefinitionId,
-            ...query,
-          })
-        )
+        await post(api, '/history/process-instance', { maxResults: `${perPage}`, firstResult: `${firstResult}` }, body)
       );
     })();
   }, [query, firstResult]);
 
   useEffect(() => {
-    const query: any = {};
-    const variables = [];
-    for (const { category, operator, value } of expressions) {
-      if (category === 'started' && operator === 'after' && !isNaN(new Date(`${value}`).getTime())) {
-        query['startedAfter'] = `${value}T00:00:00.000+0000`;
-      } else if (category === 'finished' && operator === 'before' && !isNaN(new Date(`${value}`).getTime())) {
-        query['finishedBefore'] = `${value}T00:00:00.000+0000`;
-      } else if (category === 'key' && operator === '==') {
-        query.processInstanceBusinessKey = value;
-      } else if (category === 'key' && operator === 'like') {
-        query.processInstanceBusinessKeyLike = value;
-      } else if (operator === '==') {
-        variables.push({
-          name: category,
-          operator: 'eq',
-          value: value,
-        });
-      } else if (operator === 'like' || operator === 'ilike') {
-        variables.push({
-          name: category,
-          operator: 'like',
-          value: value,
-        });
-      }
-      if (operator === 'ilike') {
-        query.variableNamesIgnoreCase = true;
-        query.variableValuesIgnoreCase = true;
-      }
+    const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
+
+    const variableExpressions: any[] = validExpressions
+      .filter((expression: Expression) => expression.definition.type === 'variable')
+      .map((expression: Expression) => {
+        return {
+          name: expression.name,
+          operator: expression.operator as string,
+          value: castValue(expression.value),
+        };
+      });
+
+    const activityIdInExpressions: string[] = validExpressions
+      .filter((expression: Expression) => expression.definition.type === 'executedActivityIdIn')
+      .map((expression: Expression) => {
+        return expression.value;
+      });
+
+    const startedDateExpression: Expression | undefined = validExpressions.find(
+      (expression: Expression) => expression.definition.type === 'startedDate'
+    );
+    const finishedDateExpression: Expression | undefined = validExpressions.find(
+      (expression: Expression) => expression.definition.type === 'finishedDate'
+    );
+
+    const rest = validExpressions.filter(
+      (expression: Expression) =>
+        ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate'].indexOf(expression.definition.type) === -1
+    );
+
+    let newQuery: any = {};
+    rest.map((expression: Expression) => {
+      newQuery[expression.definition.type] = castValue(expression.value);
+    });
+
+    if (startedDateExpression) {
+      newQuery['startedBefore'] = startedDateExpression.operator === Operator.before ? castValue(startedDateExpression.value) + '.000+0000' : undefined;
+      newQuery['startedAfter'] = startedDateExpression.operator === Operator.after ? castValue(startedDateExpression.value) + '.000+0000' : undefined;
     }
-    if (variables.length) {
-      query['variables'] = variables;
+
+    if (finishedDateExpression) {
+      newQuery['finishedBefore'] = finishedDateExpression.operator === Operator.before ? castValue(finishedDateExpression.value) + '.000+0000': undefined;
+      newQuery['finishedAfter'] = finishedDateExpression.operator === Operator.after ? castValue(finishedDateExpression.value) + '.000+0000' : undefined;
     }
-    setQuery(query);
-  }, [expressions]);
+
+    if (activityIdInExpressions.length > 0) {
+      newQuery['executedActivityIdIn'] = activityIdInExpressions;
+    }
+    if (variableExpressions.length > 0) {
+      newQuery['variables'] = variableExpressions;
+    }
+
+    if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
+      setQuery(newQuery);
+    }
+  }, [expressions, processDefinitionId]);
 
   // Hack to ensure long living HTML node for filter box
   if (historyTabNode && !Array.from(historyTabNode.children).includes(root)) {
@@ -165,17 +204,22 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
 
   const pageClicked = (firstResult: number, page: number) => {
     setCurrentPage(page);
-    setFirstResult(firstResult)
+    setFirstResult(firstResult);
   };
 
   return historyTabNode ? (
     <Portal node={root}>
-      <FilterBox
-        options={InstanceQueryOptions}
-        autoCompleteHandler={autoCompleteHandler}
-        onParseOk={setExpressions}
-        defaultQuery={(): string => ''}
+      <CamundaFilterBox
+        availableExpressions={availableExpressions}
+        expressions={expressions}
+        setExpressions={setExpressions}
       />
+      {/*<FilterBoxInstanceQueryOptions*/}
+      {/*  options={InstanceQueryOptions}*/}
+      {/*  autoCompleteHandler={autoCompleteHandler}*/}
+      {/*  onParseOk={setExpressions}*/}
+      {/*  defaultQuery={(): string => ''}*/}
+      {/*/>*/}
       {instances.length ? <HistoryTable instances={instances} /> : null}
       <Pagination currentPage={currentPage} perPage={perPage} total={instancesCount} onPage={pageClicked}></Pagination>
     </Portal>
@@ -347,10 +391,10 @@ export default [
                               </dt>
                               <dd>
                                 {(instance.superProcessInstanceId && (
-                                    <a href={`#/history/process-instance/${instance.superProcessInstanceId}`}>
-                                      {instance.superProcessInstanceId}
-                                    </a>
-                                  )) ||
+                                  <a href={`#/history/process-instance/${instance.superProcessInstanceId}`}>
+                                    {instance.superProcessInstanceId}
+                                  </a>
+                                )) ||
                                   'null'}
                               </dd>
                               <dt>

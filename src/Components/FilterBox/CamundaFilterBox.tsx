@@ -37,6 +37,21 @@ export interface Expression {
   value: string;
 }
 
+export function castValue(value: string): any {
+  let result: any = value;
+
+  if (!isNaN(Number(value))) {
+    result = Number(value);
+  }
+
+  // cast boolean
+  if (value === 'true' || value === 'false') {
+    result = value === 'true';
+  }
+
+  return result;
+}
+
 export function operatorToText(o: Operator): string {
   switch (o) {
     case Operator.eq:
