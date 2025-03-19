@@ -176,13 +176,13 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
     });
 
     if (startedDateExpression) {
-      newQuery['startedBefore'] = startedDateExpression.operator === Operator.before ? castValue(startedDateExpression.value) + '.000+0000' : undefined;
-      newQuery['startedAfter'] = startedDateExpression.operator === Operator.after ? castValue(startedDateExpression.value) + '.000+0000' : undefined;
+      newQuery['startedBefore'] = startedDateExpression.operator === Operator.before ? startedDateExpression.value + '.000+0000' : undefined;
+      newQuery['startedAfter'] = startedDateExpression.operator === Operator.after ? startedDateExpression.value + '.000+0000' : undefined;
     }
 
     if (finishedDateExpression) {
-      newQuery['finishedBefore'] = finishedDateExpression.operator === Operator.before ? castValue(finishedDateExpression.value) + '.000+0000': undefined;
-      newQuery['finishedAfter'] = finishedDateExpression.operator === Operator.after ? castValue(finishedDateExpression.value) + '.000+0000' : undefined;
+      newQuery['finishedBefore'] = finishedDateExpression.operator === Operator.before ? finishedDateExpression.value + '.000+0000' : undefined;
+      newQuery['finishedAfter'] = finishedDateExpression.operator === Operator.after ? finishedDateExpression.value + '.000+0000' : undefined;
     }
 
     if (activityIdInExpressions.length > 0) {
