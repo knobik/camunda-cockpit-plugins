@@ -104,14 +104,27 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
     const showOnActivities = [
       'bpmn:CallActivity',
       'bpmn:ExclusiveGateway',
+      'bpmn:ParallelGateway',
+      'bpmn:EventBasedGateway',
+      'bpmn:InclusiveGateway',
       'bpmn:UserTask',
       'bpmn:ServiceTask',
       'bpmn:BusinessRuleTask',
       'bpmn:EndEvent',
       'bpmn:StartEvent',
+      'bpmn:IntermediateCatchEvent',
+      'bpmn:Task',
+      'bpmn:ScriptTask',
+      'bpmn:SubProcess',
+      'bpmn:IntermediateThrowEvent',
+      'bpmn:ManualTask',
+      'bpmn:SendTask',
+      'bpmn:ReceiveTask',
     ];
 
     if (viewer && elementEvent) {
+
+      // console.log(elementEvent.element.type);
 
       // if the user clicked on an element, use that element
       let event = elementEvent;
