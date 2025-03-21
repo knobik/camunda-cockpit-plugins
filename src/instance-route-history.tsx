@@ -33,7 +33,7 @@ import { loadSettings, saveSettings } from './utils/misc';
 const availableExpressions: ExpressionDefinition[] = [
   {
     label: 'Business Key',
-    type: 'processInstanceBusinessKey',
+    type: 'processInstanceBusinessKeyIn',
     availableOperators: [Operator.eq],
     defaultOperator: Operator.eq,
     requiresValue: true,
@@ -165,6 +165,12 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
         return expression.value;
       });
 
+    const processInstanceBusinessKeyInExpressions: string[] = validExpressions
+      .filter((expression: Expression) => expression.definition.type === 'processInstanceBusinessKeyIn')
+      .map((expression: Expression) => {
+        return expression.value;
+      });
+
     const startedDateExpression: Expression | undefined = validExpressions.find(
       (expression: Expression) => expression.definition.type === 'startedDate'
     );
@@ -174,7 +180,9 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
 
     const rest = validExpressions.filter(
       (expression: Expression) =>
-        ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate'].indexOf(expression.definition.type) === -1
+        ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate', 'processInstanceBusinessKeyIn'].indexOf(
+          expression.definition.type
+        ) === -1
     );
 
     let newQuery: any = {};
@@ -198,6 +206,9 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
 
     if (activityIdInExpressions.length > 0) {
       newQuery['executedActivityIdIn'] = activityIdInExpressions;
+    }
+    if (processInstanceBusinessKeyInExpressions.length > 0) {
+      newQuery['processInstanceBusinessKeyIn'] = processInstanceBusinessKeyInExpressions;
     }
     if (variableExpressions.length > 0) {
       newQuery['variables'] = variableExpressions;

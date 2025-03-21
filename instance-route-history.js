@@ -112999,7 +112999,7 @@ var VariablesTable = function (_a) {
 var availableExpressions = [
     {
         label: 'Business Key',
-        type: 'processInstanceBusinessKey',
+        type: 'processInstanceBusinessKeyIn',
         availableOperators: [Operator.eq],
         defaultOperator: Operator.eq,
         requiresValue: true,
@@ -113126,10 +113126,15 @@ var Plugin = function (_a) {
             .map(function (expression) {
             return expression.value;
         });
+        var processInstanceBusinessKeyInExpressions = validExpressions
+            .filter(function (expression) { return expression.definition.type === 'processInstanceBusinessKeyIn'; })
+            .map(function (expression) {
+            return expression.value;
+        });
         var startedDateExpression = validExpressions.find(function (expression) { return expression.definition.type === 'startedDate'; });
         var finishedDateExpression = validExpressions.find(function (expression) { return expression.definition.type === 'finishedDate'; });
         var rest = validExpressions.filter(function (expression) {
-            return ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate'].indexOf(expression.definition.type) === -1;
+            return ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate', 'processInstanceBusinessKeyIn'].indexOf(expression.definition.type) === -1;
         });
         var newQuery = {};
         rest.map(function (expression) {
@@ -113149,6 +113154,9 @@ var Plugin = function (_a) {
         }
         if (activityIdInExpressions.length > 0) {
             newQuery['executedActivityIdIn'] = activityIdInExpressions;
+        }
+        if (processInstanceBusinessKeyInExpressions.length > 0) {
+            newQuery['processInstanceBusinessKeyIn'] = processInstanceBusinessKeyInExpressions;
         }
         if (variableExpressions.length > 0) {
             newQuery['variables'] = variableExpressions;
