@@ -41348,57 +41348,6 @@ var post = function (api, path, params, payload) { return __awaiter(void 0, void
 
 ___$insertStylesToHeader(".camunda-filter-box-container {\n  position: relative;\n  height: auto;\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  flex-wrap: wrap;\n  padding: 0 0 5px 0;\n}\n.camunda-filter-box-container .datetime-picker {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  transform: translateY(100%);\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker {\n  margin-bottom: 0px;\n  background-color: #ffffff;\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker__aria-live {\n  display: none;\n}\n.camunda-filter-box-container .dropdown {\n  display: inline;\n}\n.camunda-filter-box-container .dropdown.show {\n  display: inline-block !important;\n}\n.camunda-filter-box-container .expression {\n  display: inline;\n  font-weight: inherit;\n  font-size: inherit;\n  padding: 0 3px;\n  border-radius: 3px;\n  color: #155cb5;\n  background-color: #fafafa;\n  border: 1px solid #e5e5e5;\n  margin: 5px 0 0 5px;\n}\n.camunda-filter-box-container .expression.invalid {\n  background-color: #f2dede;\n  border-color: #ebccd1;\n  color: #a94442;\n}\n.camunda-filter-box-container .expression .dropdown {\n  margin-right: 5px;\n}\n.camunda-filter-box-container .expression .dropdown span {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span {\n  margin-right: 5px;\n  cursor: pointer;\n}\n.camunda-filter-box-container .expression span:last-child {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span.non-editable {\n  cursor: default;\n}\n.camunda-filter-box-container .expression span .form-control {\n  width: auto;\n  min-width: 40px;\n  max-width: 100%;\n  margin-bottom: -1px;\n  height: auto;\n}\n.camunda-filter-box-container.form-control .search-input {\n  border: 0;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container.form-control .search-input:focus {\n  outline: none;\n}\n.camunda-filter-box-container .actions {\n  position: absolute;\n  bottom: 4px;\n  right: 10px;\n}\n.camunda-filter-box-container .actions a {\n  height: 16px;\n  margin-left: 10px;\n  color: #545454;\n}");
 
-var CamundaFilterBoxSelectValue = function (_a) {
-    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, options = _a.options, translator = _a.translator, defaultValue = _a.defaultValue;
-    var value = '';
-    if (defaultValue) {
-        value = defaultValue;
-    }
-    if (expression && field) {
-        value = expression[field];
-    }
-    var CustomToggle = React.forwardRef(function (_a, ref) {
-        var children = _a.children, onClick = _a.onClick;
-        return (React.createElement("span", { ref: ref, onClick: function (e) {
-                e.preventDefault();
-                onClick(e);
-            } }, children));
-    });
-    function submitChange(newValue) {
-        if (expression && field) {
-            expression[field] = newValue;
-        }
-        updateExpression(expression, newValue);
-    }
-    return (React.createElement(React.Fragment, null,
-        React.createElement(Dropdown$1, { onSelect: function (eventKey) { return submitChange(eventKey); } },
-            React.createElement(Dropdown$1.Toggle, { as: CustomToggle }, value !== '' ? (translator ? translator(value) : value) : '??'),
-            React.createElement(Dropdown$1.Menu, null, options.map(function (option, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: option }, translator ? translator(option) : option)); })))));
-};
-
-var CamundaFilterBoxTextValue = function (_a) {
-    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, openEditing = _a.openEditing;
-    var _b = reactExports.useState(openEditing !== null && openEditing !== void 0 ? openEditing : true), isEditing = _b[0], setIsEditing = _b[1];
-    var value = expression[field];
-    var _c = reactExports.useState(''), newValue = _c[0], setNewValue = _c[1];
-    function submitChange(changed) {
-        setIsEditing(false);
-        expression[field] = changed;
-        updateExpression(expression, changed);
-    }
-    return (React.createElement(React.Fragment, null, isEditing ? (React.createElement("div", { style: { display: 'inline-block', position: 'relative' } },
-        React.createElement("input", { autoFocus: true, defaultValue: value, onChange: function (e) { return setNewValue(e.target.value); }, onKeyDown: function (e) {
-                if (e.key === 'Enter') {
-                    submitChange(newValue);
-                }
-            } }),
-        React.createElement("div", { className: "btn-group", style: { position: 'absolute', right: '0', top: '0', transform: 'translateY(-100%)' } },
-            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return submitChange(newValue); } },
-                React.createElement("span", { className: "glyphicon glyphicon-ok" })),
-            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return setIsEditing(false); } },
-                React.createElement("span", { className: "glyphicon glyphicon-remove" }))))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, value !== '' ? value : '??'))));
-};
-
 function _typeof(o) {
   "@babel/helpers - typeof";
 
@@ -54840,6 +54789,57 @@ var CamundaFilterBoxDatetimeValue = function (_a) {
                     setValue(dateString);
                     submitChange(dateString);
                 }, inline: true })))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, initialValue !== '' ? initialValue : '??'))));
+};
+
+var CamundaFilterBoxSelectValue = function (_a) {
+    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, options = _a.options, translator = _a.translator, defaultValue = _a.defaultValue;
+    var value = '';
+    if (defaultValue) {
+        value = defaultValue;
+    }
+    if (expression && field) {
+        value = expression[field];
+    }
+    var CustomToggle = React.forwardRef(function (_a, ref) {
+        var children = _a.children, onClick = _a.onClick;
+        return (React.createElement("span", { ref: ref, onClick: function (e) {
+                e.preventDefault();
+                onClick(e);
+            } }, children));
+    });
+    function submitChange(newValue) {
+        if (expression && field) {
+            expression[field] = newValue;
+        }
+        updateExpression(expression, newValue);
+    }
+    return (React.createElement(React.Fragment, null,
+        React.createElement(Dropdown$1, { onSelect: function (eventKey) { return submitChange(eventKey); } },
+            React.createElement(Dropdown$1.Toggle, { as: CustomToggle }, value !== '' ? (translator ? translator(value) : value) : '??'),
+            React.createElement(Dropdown$1.Menu, null, options.map(function (option, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: option }, translator ? translator(option) : option)); })))));
+};
+
+var CamundaFilterBoxTextValue = function (_a) {
+    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, openEditing = _a.openEditing;
+    var _b = reactExports.useState(openEditing !== null && openEditing !== void 0 ? openEditing : true), isEditing = _b[0], setIsEditing = _b[1];
+    var value = expression[field];
+    var _c = reactExports.useState(''), newValue = _c[0], setNewValue = _c[1];
+    function submitChange(changed) {
+        setIsEditing(false);
+        expression[field] = changed;
+        updateExpression(expression, changed);
+    }
+    return (React.createElement(React.Fragment, null, isEditing ? (React.createElement("div", { style: { display: 'inline-block', position: 'relative' } },
+        React.createElement("input", { autoFocus: true, defaultValue: value, onChange: function (e) { return setNewValue(e.target.value); }, onKeyDown: function (e) {
+                if (e.key === 'Enter') {
+                    submitChange(newValue);
+                }
+            } }),
+        React.createElement("div", { className: "btn-group", style: { position: 'absolute', right: '0', top: '0', transform: 'translateY(-100%)' } },
+            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return submitChange(newValue); } },
+                React.createElement("span", { className: "glyphicon glyphicon-ok" })),
+            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return setIsEditing(false); } },
+                React.createElement("span", { className: "glyphicon glyphicon-remove" }))))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, value !== '' ? value : '??'))));
 };
 
 var Operator;

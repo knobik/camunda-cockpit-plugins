@@ -1,11 +1,11 @@
 import './camunda-filter-box.scss';
 
-import React, { forwardRef, ReactElement, useState } from 'react';
+import React, { ReactElement, forwardRef, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import CamundaFilterBoxDatetimeValue from './CamundaFilterBoxDatetimeValue';
 import CamundaFilterBoxSelectValue from './CamundaFilterBoxSelectValue';
 import CamundaFilterBoxTextValue from './CamundaFilterBoxTextValue';
-import CamundaFilterBoxDatetimeValue from './CamundaFilterBoxDatetimeValue';
 
 export enum Operator {
   eq = 'eq', // =
@@ -71,6 +71,22 @@ export function operatorToText(o: Operator): string {
     default:
       return Operator[o];
   }
+}
+
+export function getExpressionValues(
+  expressions: Expression[],
+  type: string,
+  valueCallback: (expression: Expression) => any
+): any[] {
+  return expressions
+    .filter((expression: Expression) => expression.definition.type === type)
+    .map((expression: Expression) => valueCallback(expression));
+}
+
+export function getFirstExpression(expressions: Expression[], type: string): Expression | undefined {
+  return expressions.find(
+    (expression: Expression) => expression.definition.type === type
+  )
 }
 
 export function isValidExpression(expression: Expression): boolean {

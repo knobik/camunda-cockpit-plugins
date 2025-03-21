@@ -18,7 +18,8 @@ import CamundaFilterBox, {
   ExpressionDefinition,
   Operator,
   castValue,
-  isValidExpression,
+  getExpressionValues,
+  isValidExpression, getFirstExpression,
 } from './Components/FilterBox/CamundaFilterBox';
 import HistoryTable from './Components/HistoryTable';
 import Page from './Components/Page';
@@ -149,38 +150,32 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
   useEffect(() => {
     const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
 
-    const variableExpressions: any[] = validExpressions
-      .filter((expression: Expression) => expression.definition.type === 'variable')
-      .map((expression: Expression) => {
-        return {
-          name: expression.name,
-          operator: expression.operator as string,
-          value: castValue(expression.value),
-        };
-      });
+    const variableExpressions: any[] = getExpressionValues(validExpressions, 'variable', (e: Expression) => {
+      return {
+        name: e.name,
+        operator: e.operator as string,
+        value: castValue(e.value),
+      };
+    });
 
-    const activityIdInExpressions: string[] = validExpressions
-      .filter((expression: Expression) => expression.definition.type === 'executedActivityIdIn')
-      .map((expression: Expression) => {
-        return expression.value;
-      });
-
-    const processInstanceBusinessKeyInExpressions: string[] = validExpressions
-      .filter((expression: Expression) => expression.definition.type === 'processInstanceBusinessKeyIn')
-      .map((expression: Expression) => {
-        return expression.value;
-      });
-
-    const startedDateExpression: Expression | undefined = validExpressions.find(
-      (expression: Expression) => expression.definition.type === 'startedDate'
+    const activityIdInExpressions: string[] = getExpressionValues(
+      validExpressions,
+      'executedActivityIdIn',
+      (e: Expression) => e.value
     );
-    const finishedDateExpression: Expression | undefined = validExpressions.find(
-      (expression: Expression) => expression.definition.type === 'finishedDate'
+
+    const processInstanceBusinessKeyInExpressions: string[] = getExpressionValues(
+      validExpressions,
+      'processInstanceBusinessKeyIn',
+      (e: Expression) => e.value
     );
+
+    const startedDateExpression: Expression | undefined = getFirstExpression(validExpressions, 'startedDate');
+    const finishedDateExpression: Expression | undefined = getFirstExpression(validExpressions, 'finishedDate');
 
     const rest = validExpressions.filter(
       (expression: Expression) =>
-        ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate', 'processInstanceBusinessKeyIn'].indexOf(
+        ['variable', 'executedActivityIdIn', 'processInstanceBusinessKeyIn', 'startedDate', 'finishedDate'].indexOf(
           expression.definition.type
         ) === -1
     );

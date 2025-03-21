@@ -104726,57 +104726,6 @@ var Dropdown$1 = Object.assign(Dropdown, {
   Header: DropdownHeader$1
 });
 
-var CamundaFilterBoxSelectValue = function (_a) {
-    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, options = _a.options, translator = _a.translator, defaultValue = _a.defaultValue;
-    var value = '';
-    if (defaultValue) {
-        value = defaultValue;
-    }
-    if (expression && field) {
-        value = expression[field];
-    }
-    var CustomToggle = React.forwardRef(function (_a, ref) {
-        var children = _a.children, onClick = _a.onClick;
-        return (React.createElement("span", { ref: ref, onClick: function (e) {
-                e.preventDefault();
-                onClick(e);
-            } }, children));
-    });
-    function submitChange(newValue) {
-        if (expression && field) {
-            expression[field] = newValue;
-        }
-        updateExpression(expression, newValue);
-    }
-    return (React.createElement(React.Fragment, null,
-        React.createElement(Dropdown$1, { onSelect: function (eventKey) { return submitChange(eventKey); } },
-            React.createElement(Dropdown$1.Toggle, { as: CustomToggle }, value !== '' ? (translator ? translator(value) : value) : '??'),
-            React.createElement(Dropdown$1.Menu, null, options.map(function (option, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: option }, translator ? translator(option) : option)); })))));
-};
-
-var CamundaFilterBoxTextValue = function (_a) {
-    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, openEditing = _a.openEditing;
-    var _b = reactExports.useState(openEditing !== null && openEditing !== void 0 ? openEditing : true), isEditing = _b[0], setIsEditing = _b[1];
-    var value = expression[field];
-    var _c = reactExports.useState(''), newValue = _c[0], setNewValue = _c[1];
-    function submitChange(changed) {
-        setIsEditing(false);
-        expression[field] = changed;
-        updateExpression(expression, changed);
-    }
-    return (React.createElement(React.Fragment, null, isEditing ? (React.createElement("div", { style: { display: 'inline-block', position: 'relative' } },
-        React.createElement("input", { autoFocus: true, defaultValue: value, onChange: function (e) { return setNewValue(e.target.value); }, onKeyDown: function (e) {
-                if (e.key === 'Enter') {
-                    submitChange(newValue);
-                }
-            } }),
-        React.createElement("div", { className: "btn-group", style: { position: 'absolute', right: '0', top: '0', transform: 'translateY(-100%)' } },
-            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return submitChange(newValue); } },
-                React.createElement("span", { className: "glyphicon glyphicon-ok" })),
-            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return setIsEditing(false); } },
-                React.createElement("span", { className: "glyphicon glyphicon-remove" }))))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, value !== '' ? value : '??'))));
-};
-
 function _typeof(o) {
   "@babel/helpers - typeof";
 
@@ -112532,6 +112481,57 @@ var CamundaFilterBoxDatetimeValue = function (_a) {
                 }, inline: true })))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, initialValue !== '' ? initialValue : '??'))));
 };
 
+var CamundaFilterBoxSelectValue = function (_a) {
+    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, options = _a.options, translator = _a.translator, defaultValue = _a.defaultValue;
+    var value = '';
+    if (defaultValue) {
+        value = defaultValue;
+    }
+    if (expression && field) {
+        value = expression[field];
+    }
+    var CustomToggle = React.forwardRef(function (_a, ref) {
+        var children = _a.children, onClick = _a.onClick;
+        return (React.createElement("span", { ref: ref, onClick: function (e) {
+                e.preventDefault();
+                onClick(e);
+            } }, children));
+    });
+    function submitChange(newValue) {
+        if (expression && field) {
+            expression[field] = newValue;
+        }
+        updateExpression(expression, newValue);
+    }
+    return (React.createElement(React.Fragment, null,
+        React.createElement(Dropdown$1, { onSelect: function (eventKey) { return submitChange(eventKey); } },
+            React.createElement(Dropdown$1.Toggle, { as: CustomToggle }, value !== '' ? (translator ? translator(value) : value) : '??'),
+            React.createElement(Dropdown$1.Menu, null, options.map(function (option, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: option }, translator ? translator(option) : option)); })))));
+};
+
+var CamundaFilterBoxTextValue = function (_a) {
+    var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, openEditing = _a.openEditing;
+    var _b = reactExports.useState(openEditing !== null && openEditing !== void 0 ? openEditing : true), isEditing = _b[0], setIsEditing = _b[1];
+    var value = expression[field];
+    var _c = reactExports.useState(''), newValue = _c[0], setNewValue = _c[1];
+    function submitChange(changed) {
+        setIsEditing(false);
+        expression[field] = changed;
+        updateExpression(expression, changed);
+    }
+    return (React.createElement(React.Fragment, null, isEditing ? (React.createElement("div", { style: { display: 'inline-block', position: 'relative' } },
+        React.createElement("input", { autoFocus: true, defaultValue: value, onChange: function (e) { return setNewValue(e.target.value); }, onKeyDown: function (e) {
+                if (e.key === 'Enter') {
+                    submitChange(newValue);
+                }
+            } }),
+        React.createElement("div", { className: "btn-group", style: { position: 'absolute', right: '0', top: '0', transform: 'translateY(-100%)' } },
+            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return submitChange(newValue); } },
+                React.createElement("span", { className: "glyphicon glyphicon-ok" })),
+            React.createElement("button", { className: "btn btn-default btn-xs", onClick: function () { return setIsEditing(false); } },
+                React.createElement("span", { className: "glyphicon glyphicon-remove" }))))) : (React.createElement("span", { onClick: function () { return setIsEditing(true); } }, value !== '' ? value : '??'))));
+};
+
 var Operator;
 (function (Operator) {
     Operator["eq"] = "eq";
@@ -112574,6 +112574,14 @@ function operatorToText(o) {
         default:
             return Operator[o];
     }
+}
+function getExpressionValues(expressions, type, valueCallback) {
+    return expressions
+        .filter(function (expression) { return expression.definition.type === type; })
+        .map(function (expression) { return valueCallback(expression); });
+}
+function getFirstExpression(expressions, type) {
+    return expressions.find(function (expression) { return expression.definition.type === type; });
 }
 function isValidExpression(expression) {
     if (expression.definition.requiresValue && expression.value === '') {
@@ -113112,29 +113120,19 @@ var Plugin = function (_a) {
     }, [query, firstResult]);
     reactExports.useEffect(function () {
         var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
-        var variableExpressions = validExpressions
-            .filter(function (expression) { return expression.definition.type === 'variable'; })
-            .map(function (expression) {
+        var variableExpressions = getExpressionValues(validExpressions, 'variable', function (e) {
             return {
-                name: expression.name,
-                operator: expression.operator,
-                value: castValue(expression.value),
+                name: e.name,
+                operator: e.operator,
+                value: castValue(e.value),
             };
         });
-        var activityIdInExpressions = validExpressions
-            .filter(function (expression) { return expression.definition.type === 'executedActivityIdIn'; })
-            .map(function (expression) {
-            return expression.value;
-        });
-        var processInstanceBusinessKeyInExpressions = validExpressions
-            .filter(function (expression) { return expression.definition.type === 'processInstanceBusinessKeyIn'; })
-            .map(function (expression) {
-            return expression.value;
-        });
-        var startedDateExpression = validExpressions.find(function (expression) { return expression.definition.type === 'startedDate'; });
-        var finishedDateExpression = validExpressions.find(function (expression) { return expression.definition.type === 'finishedDate'; });
+        var activityIdInExpressions = getExpressionValues(validExpressions, 'executedActivityIdIn', function (e) { return e.value; });
+        var processInstanceBusinessKeyInExpressions = getExpressionValues(validExpressions, 'processInstanceBusinessKeyIn', function (e) { return e.value; });
+        var startedDateExpression = getFirstExpression(validExpressions, 'startedDate');
+        var finishedDateExpression = getFirstExpression(validExpressions, 'finishedDate');
         var rest = validExpressions.filter(function (expression) {
-            return ['variable', 'executedActivityIdIn', 'startedDate', 'finishedDate', 'processInstanceBusinessKeyIn'].indexOf(expression.definition.type) === -1;
+            return ['variable', 'executedActivityIdIn', 'processInstanceBusinessKeyIn', 'startedDate', 'finishedDate'].indexOf(expression.definition.type) === -1;
         });
         var newQuery = {};
         rest.map(function (expression) {
