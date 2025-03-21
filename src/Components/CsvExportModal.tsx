@@ -174,7 +174,6 @@ const CsvExportModal: React.FC<Props> = ({
                             value={ResultSet.SELECTED}
                             checked={resultSet === ResultSet.SELECTED}
                             onChange={() => changeResultSet(ResultSet.SELECTED)}
-                            disabled={selectedInstances.length === 0}
                           />
                         </label>
                       </div>
@@ -267,7 +266,7 @@ const CsvExportModal: React.FC<Props> = ({
           <button className="btn btn-link" onClick={() => setShowModal(false)}>
             Close
           </button>
-          <button className="btn btn-danger" style={{ marginLeft: '1em' }} onClick={exportCsv} disabled={exporting}>
+          <button className="btn btn-danger" style={{ marginLeft: '1em' }} onClick={exportCsv} disabled={exporting || (resultSet === ResultSet.SELECTED && selectedInstances.length === 0)}>
             Export CSV {exporting && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
           </button>
         </div>

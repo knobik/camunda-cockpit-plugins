@@ -99670,7 +99670,7 @@ var CsvExportModal = function (_a) {
                                 React.createElement("div", { className: "col-sm-5" },
                                     React.createElement("div", { className: "radio" },
                                         React.createElement("label", null,
-                                            React.createElement("input", { id: "resultSet-selected", type: "radio", name: "resultSet", value: ResultSet.SELECTED, checked: resultSet === ResultSet.SELECTED, onChange: function () { return changeResultSet(ResultSet.SELECTED); }, disabled: selectedInstances.length === 0 }))))),
+                                            React.createElement("input", { id: "resultSet-selected", type: "radio", name: "resultSet", value: ResultSet.SELECTED, checked: resultSet === ResultSet.SELECTED, onChange: function () { return changeResultSet(ResultSet.SELECTED); } }))))),
                             React.createElement("div", { className: "form-group" },
                                 React.createElement("label", { htmlFor: "resultSet-page", className: "col-sm-5 control-label" }, "Current page"),
                                 React.createElement("div", { className: "col-sm-5" },
@@ -99709,7 +99709,7 @@ var CsvExportModal = function (_a) {
                     justifyContent: 'flex-end',
                 } },
                 React.createElement("button", { className: "btn btn-link", onClick: function () { return setShowModal(false); } }, "Close"),
-                React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, onClick: exportCsv, disabled: exporting },
+                React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, onClick: exportCsv, disabled: exporting || (resultSet === ResultSet.SELECTED && selectedInstances.length === 0) },
                     "Export CSV ",
                     exporting && React.createElement("span", { className: "loader", style: { marginLeft: '0.7em' } }))))));
 };
