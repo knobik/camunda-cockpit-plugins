@@ -95,7 +95,7 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
-___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}\n\n.modal-dialog.process-select-modal {\n  width: 90rem !important;\n}\n.modal-dialog.batch-modification-confirmation-modal {\n  width: 90rem !important;\n}");
+___$insertStylesToHeader(".dropdown-item {\n  display: block;\n  padding: 3px 5px;\n  margin-left: 1px;\n  font-size: 14px;\n  color: #333;\n  border-left: 3px solid transparent;\n}\n.dropdown-item:hover {\n  border-left-color: #3853AD;\n}\n\n.modal-dialog.process-select-modal {\n  width: 90rem !important;\n}\n.modal-dialog.batch-modification-confirmation-modal {\n  width: 90rem !important;\n}\n.modal-dialog.csv-export-modal {\n  width: 60rem !important;\n}\n\n.loader {\n  width: 12px;\n  height: 12px;\n  border: 2px solid #FFF;\n  border-bottom-color: transparent;\n  border-radius: 50%;\n  display: inline-block;\n  box-sizing: border-box;\n  animation: rotation 1s linear infinite;\n}\n\n@keyframes rotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}");
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -6145,7 +6145,7 @@ var post = function (api, path, params, payload) { return __awaiter(void 0, void
     });
 }); };
 
-___$insertStylesToHeader(".camunda-filter-box-container {\n  height: auto;\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  flex-wrap: wrap;\n  padding: 0 0 5px 0;\n}\n.camunda-filter-box-container .datetime-picker {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  transform: translateY(100%);\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker {\n  margin-bottom: 0px;\n  background-color: #ffffff;\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker__aria-live {\n  display: none;\n}\n.camunda-filter-box-container .dropdown {\n  display: inline;\n}\n.camunda-filter-box-container .dropdown.show {\n  display: inline-block !important;\n}\n.camunda-filter-box-container .expression {\n  display: inline;\n  font-weight: inherit;\n  font-size: inherit;\n  padding: 0 3px;\n  border-radius: 3px;\n  color: #155cb5;\n  background-color: #fafafa;\n  border: 1px solid #e5e5e5;\n  margin: 5px 0 0 5px;\n}\n.camunda-filter-box-container .expression.invalid {\n  background-color: #f2dede;\n  border-color: #ebccd1;\n  color: #a94442;\n}\n.camunda-filter-box-container .expression .dropdown {\n  margin-right: 5px;\n}\n.camunda-filter-box-container .expression .dropdown span {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span {\n  margin-right: 5px;\n  cursor: pointer;\n}\n.camunda-filter-box-container .expression span:last-child {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span.non-editable {\n  cursor: default;\n}\n.camunda-filter-box-container .expression span .form-control {\n  width: auto;\n  min-width: 40px;\n  max-width: 100%;\n  margin-bottom: -1px;\n  height: auto;\n}\n.camunda-filter-box-container.form-control .search-input {\n  border: 0;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container.form-control .search-input:focus {\n  outline: none;\n}");
+___$insertStylesToHeader(".camunda-filter-box-container {\n  position: relative;\n  height: auto;\n  display: flex;\n  justify-content: flex-start;\n  align-items: center;\n  flex-wrap: wrap;\n  padding: 0 0 5px 0;\n}\n.camunda-filter-box-container .datetime-picker {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  transform: translateY(100%);\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker {\n  margin-bottom: 0px;\n  background-color: #ffffff;\n}\n.camunda-filter-box-container .datetime-picker .react-datepicker__aria-live {\n  display: none;\n}\n.camunda-filter-box-container .dropdown {\n  display: inline;\n}\n.camunda-filter-box-container .dropdown.show {\n  display: inline-block !important;\n}\n.camunda-filter-box-container .expression {\n  display: inline;\n  font-weight: inherit;\n  font-size: inherit;\n  padding: 0 3px;\n  border-radius: 3px;\n  color: #155cb5;\n  background-color: #fafafa;\n  border: 1px solid #e5e5e5;\n  margin: 5px 0 0 5px;\n}\n.camunda-filter-box-container .expression.invalid {\n  background-color: #f2dede;\n  border-color: #ebccd1;\n  color: #a94442;\n}\n.camunda-filter-box-container .expression .dropdown {\n  margin-right: 5px;\n}\n.camunda-filter-box-container .expression .dropdown span {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span {\n  margin-right: 5px;\n  cursor: pointer;\n}\n.camunda-filter-box-container .expression span:last-child {\n  margin-right: 0;\n}\n.camunda-filter-box-container .expression span.non-editable {\n  cursor: default;\n}\n.camunda-filter-box-container .expression span .form-control {\n  width: auto;\n  min-width: 40px;\n  max-width: 100%;\n  margin-bottom: -1px;\n  height: auto;\n}\n.camunda-filter-box-container.form-control .search-input {\n  border: 0;\n  margin: 5px 10px 0 5px;\n}\n.camunda-filter-box-container.form-control .search-input:focus {\n  outline: none;\n}\n.camunda-filter-box-container .actions {\n  position: absolute;\n  bottom: 4px;\n  right: 10px;\n}\n.camunda-filter-box-container .actions a {\n  height: 16px;\n  margin-left: 10px;\n  color: #545454;\n}");
 
 var CamundaFilterBoxSelectValue = function (_a) {
     var expression = _a.expression, field = _a.field, updateExpression = _a.updateExpression, options = _a.options, translator = _a.translator, defaultValue = _a.defaultValue;
@@ -19617,7 +19617,6 @@ var CamundaFilterBoxDatetimeValue = function (_a) {
     var _b = reactExports.useState(openEditing !== null && openEditing !== void 0 ? openEditing : true), isEditing = _b[0], setIsEditing = _b[1];
     var initialValue = expression[field];
     var _c = reactExports.useState(initialValue), value = _c[0], setValue = _c[1];
-    // const [newValue, setNewValue] = useState('');
     function submitChange(changed) {
         setIsEditing(false);
         expression[field] = changed;
@@ -19695,7 +19694,7 @@ function isValidExpression(expression) {
     return true;
 }
 var CamundaFilterBox = function (_a) {
-    var placeholder = _a.placeholder, availableExpressions = _a.availableExpressions, expressions = _a.expressions, setExpressions = _a.setExpressions;
+    var children = _a.children, placeholder = _a.placeholder, availableExpressions = _a.availableExpressions, expressions = _a.expressions, setExpressions = _a.setExpressions;
     var CustomToggle = React.forwardRef(function (_a, ref) {
         var onClick = _a.onClick;
         return (React.createElement("input", { ref: ref, autoComplete: "off", className: "search-input", placeholder: placeholder !== null && placeholder !== void 0 ? placeholder : 'Add criteria...', onClick: function (e) {
@@ -19744,6 +19743,7 @@ var CamundaFilterBox = function (_a) {
         setExpressions(expressions.filter(function (_, i) { return i !== index; }));
     }
     return (React.createElement("div", { className: "camunda-filter-box-container form-control" },
+        React.createElement("div", { className: "actions" }, children),
         expressions.map(function (expression, index) { return (React.createElement("div", { className: "expression ".concat(!isValidExpression(expression) ? 'invalid' : ''), key: index },
             React.createElement("span", { className: "glyphicon glyphicon-remove", onClick: function () { return removeExpression(index); } }),
             React.createElement(CamundaFilterBoxSelectValue, { options: availableExpressions.map(function (def) { return def.label; }), defaultValue: expression.definition.label, updateExpression: function (_, newValue) { return changeExpressionDefinition(index, expression, newValue); } }),
@@ -19916,10 +19916,10 @@ var ProcessInstanceSelectModal = function (_a) {
                         React.createElement("h4", null, "Choose selection type"),
                         React.createElement("div", null,
                             React.createElement("label", { className: "radio-inline" },
-                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.INSTANCE, defaultChecked: filterType === FilterType.INSTANCE, onChange: function (event) { return changeFilterType(FilterType.INSTANCE); } }),
+                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.INSTANCE, checked: filterType === FilterType.INSTANCE, onChange: function () { return changeFilterType(FilterType.INSTANCE); } }),
                                 React.createElement("strong", null, "Instance")),
                             React.createElement("label", { className: "radio-inline" },
-                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.QUERY, defaultChecked: filterType === FilterType.QUERY, onChange: function (event) { return changeFilterType(FilterType.QUERY); } }),
+                                React.createElement("input", { type: "radio", name: "filterType", value: FilterType.QUERY, checked: filterType === FilterType.QUERY, onChange: function () { return changeFilterType(FilterType.QUERY); } }),
                                 React.createElement("strong", null, "Query"))))),
                 React.createElement("div", { className: "row", style: { marginTop: '1em' } },
                     React.createElement("div", { className: "col-md-12" },

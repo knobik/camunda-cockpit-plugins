@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 
 import { Expression } from './CamundaFilterBox';
 
-export interface CamundaFilterBoxTextValueProps {
+export interface Props {
   field: string;
   expression: Expression;
   updateExpression: (expression: Expression, newValue: string) => void;
   openEditing?: boolean;
 }
 
-const CamundaFilterBoxTextValue: React.FC<CamundaFilterBoxTextValueProps> = ({
+const CamundaFilterBoxTextValue: React.FC<Props> = ({
   expression,
   field,
   updateExpression,

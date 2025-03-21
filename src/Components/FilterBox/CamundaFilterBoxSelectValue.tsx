@@ -3,7 +3,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 import { Expression, ExpressionDefinition } from './CamundaFilterBox';
 
-export interface CamundaFilterBoxSelectValueProps {
+export interface Props {
   field?: string;
   expression?: Expression;
   updateExpression: (expression: Expression, newValue: string) => void;
@@ -12,7 +12,7 @@ export interface CamundaFilterBoxSelectValueProps {
   defaultValue?: string;
 }
 
-const CamundaFilterBoxSelectValue: React.FC<CamundaFilterBoxSelectValueProps> = ({
+const CamundaFilterBoxSelectValue: React.FC<Props> = ({
   expression,
   field,
   updateExpression,

@@ -1,6 +1,6 @@
 import './camunda-filter-box.scss';
 
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, ReactElement, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import CamundaFilterBoxSelectValue from './CamundaFilterBoxSelectValue';
@@ -86,13 +86,14 @@ export function isValidExpression(expression: Expression): boolean {
 }
 
 export interface CamundaFilterBoxProps {
+  children?: ReactElement | ReactElement[];
   placeholder?: string;
   availableExpressions: ExpressionDefinition[];
   expressions: Expression[];
   setExpressions: (expressions: Expression[]) => void;
 }
 
-const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availableExpressions, expressions, setExpressions }) => {
+const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ children, placeholder, availableExpressions, expressions, setExpressions }) => {
 
   const CustomToggle = React.forwardRef<
     HTMLInputElement,
@@ -161,6 +162,9 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ placeholder, availa
 
   return (
     <div className="camunda-filter-box-container form-control">
+      <div className="actions">
+        {children}
+      </div>
       {expressions.map((expression, index) => (
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>

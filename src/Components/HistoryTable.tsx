@@ -5,12 +5,15 @@ import { TiMinus } from 'react-icons/ti';
 import { useSortBy, useTable } from 'react-table';
 
 import { Clippy } from './Clippy';
+import { FilteredProcessInstance } from './ProcessInstanceSelectModal';
 
 interface Props {
   instances: any[];
+  selectedInstances: string[];
+  setSelectedInstances: (selectedInstances: string[]) => void;
 }
 
-const HistoryTable: React.FC<Props> = ({ instances }) => {
+const HistoryTable: React.FC<Props> = ({ instances, selectedInstances, setSelectedInstances }) => {
   const columns = React.useMemo(
     () => [
       {
@@ -69,11 +72,35 @@ const HistoryTable: React.FC<Props> = ({ instances }) => {
   );
   const tableInstance = useTable({ columns: columns as any, data }, useSortBy);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
+
+  function toggleSelected(id: string) {
+    if (selectedInstances.includes(id)) {
+      setSelectedInstances(selectedInstances.filter(i => i !== id));
+    } else {
+      setSelectedInstances([...selectedInstances, id]);
+    }
+  }
+
+  function toggleAll() {
+    if (selectedInstances.length === instances.length) {
+      setSelectedInstances([]);
+    } else {
+      setSelectedInstances(instances.map((instance: any) => instance.id));
+    }
+  }
+
   return (
     <table className="cam-table" {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
+            <th>
+              <input
+                type="checkbox"
+                checked={selectedInstances.length === instances.length}
+                onChange={toggleAll}
+              />
+            </th>
             {headerGroup.headers.map(column => (
               /* @ts-ignore */
               <th {...column.getHeaderProps(column.getSortByToggleProps())}>
@@ -103,6 +130,13 @@ const HistoryTable: React.FC<Props> = ({ instances }) => {
           prepareRow(row);
           return (
             <tr {...row.getRowProps()}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedInstances.includes(row.original.id)}
+                  onChange={() => toggleSelected(row.original.id)}
+                />
+              </td>
               {row.cells.map(cell => {
                 return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
               })}

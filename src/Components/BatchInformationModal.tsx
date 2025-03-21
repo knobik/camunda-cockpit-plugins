@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 
-export interface BatchInformationModalProps {
+export interface Props {
   setShowModal: (showModal: boolean) => void;
   showModal: boolean;
   content: string;
   response: any;
 }
 
-const BatchInformationModal: React.FC<BatchInformationModalProps> = ({ setShowModal, showModal, response, content }) => {
+const BatchInformationModal: React.FC<Props> = ({ setShowModal, showModal, response, content }) => {
   function gotoBatch(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
     e.preventDefault();
     setShowModal(false);

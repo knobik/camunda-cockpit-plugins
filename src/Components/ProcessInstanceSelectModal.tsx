@@ -217,8 +217,8 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                     type="radio"
                     name="filterType"
                     value={FilterType.INSTANCE}
-                    defaultChecked={filterType === FilterType.INSTANCE}
-                    onChange={event => changeFilterType(FilterType.INSTANCE)}
+                    checked={filterType === FilterType.INSTANCE}
+                    onChange={() => changeFilterType(FilterType.INSTANCE)}
                   />
                   <strong>Instance</strong>
                 </label>
@@ -227,8 +227,8 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                     type="radio"
                     name="filterType"
                     value={FilterType.QUERY}
-                    defaultChecked={filterType === FilterType.QUERY}
-                    onChange={event => changeFilterType(FilterType.QUERY)}
+                    checked={filterType === FilterType.QUERY}
+                    onChange={() => changeFilterType(FilterType.QUERY)}
                   />
                   <strong>Query</strong>
                 </label>

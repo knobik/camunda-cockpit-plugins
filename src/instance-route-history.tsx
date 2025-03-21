@@ -12,6 +12,7 @@ import BPMN from './Components/BPMN';
 import BreadcrumbsPanel from './Components/BreadcrumbsPanel';
 import { Clippy } from './Components/Clippy';
 import Container from './Components/Container';
+import CsvExportModal from './Components/CsvExportModal';
 import CamundaFilterBox, {
   Expression,
   ExpressionDefinition,
@@ -118,8 +119,10 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
   const [instances, setInstances]: any = useState([] as any[]);
   const [instancesCount, setInstancesCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(50);
+  const [perPage] = useState(50);
   const [firstResult, setFirstResult] = useState(0);
+  const [showCsvExportModal, setShowCsvExportModal] = useState(false);
+  const [selectedInstances, setSelectedInstances] = useState([] as string[]);
 
   // FETCH
   useEffect(() => {
@@ -176,13 +179,17 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
     });
 
     if (startedDateExpression) {
-      newQuery['startedBefore'] = startedDateExpression.operator === Operator.before ? startedDateExpression.value + '.000+0000' : undefined;
-      newQuery['startedAfter'] = startedDateExpression.operator === Operator.after ? startedDateExpression.value + '.000+0000' : undefined;
+      newQuery['startedBefore'] =
+        startedDateExpression.operator === Operator.before ? startedDateExpression.value + '.000+0000' : undefined;
+      newQuery['startedAfter'] =
+        startedDateExpression.operator === Operator.after ? startedDateExpression.value + '.000+0000' : undefined;
     }
 
     if (finishedDateExpression) {
-      newQuery['finishedBefore'] = finishedDateExpression.operator === Operator.before ? finishedDateExpression.value + '.000+0000' : undefined;
-      newQuery['finishedAfter'] = finishedDateExpression.operator === Operator.after ? finishedDateExpression.value + '.000+0000' : undefined;
+      newQuery['finishedBefore'] =
+        finishedDateExpression.operator === Operator.before ? finishedDateExpression.value + '.000+0000' : undefined;
+      newQuery['finishedAfter'] =
+        finishedDateExpression.operator === Operator.after ? finishedDateExpression.value + '.000+0000' : undefined;
     }
 
     if (activityIdInExpressions.length > 0) {
@@ -207,21 +214,48 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
     setFirstResult(firstResult);
   };
 
+  function updateExpressions(expressions: Expression[]) {
+    setExpressions(expressions);
+    setSelectedInstances([]); // Reset selection when filtering
+  }
+
   return historyTabNode ? (
     <Portal node={root}>
       <CamundaFilterBox
         availableExpressions={availableExpressions}
         expressions={expressions}
-        setExpressions={setExpressions}
-      />
-      {/*<FilterBoxInstanceQueryOptions*/}
-      {/*  options={InstanceQueryOptions}*/}
-      {/*  autoCompleteHandler={autoCompleteHandler}*/}
-      {/*  onParseOk={setExpressions}*/}
-      {/*  defaultQuery={(): string => ''}*/}
-      {/*/>*/}
-      {instances.length ? <HistoryTable instances={instances} /> : null}
+        setExpressions={updateExpressions}
+      >
+        <a
+          href="#"
+          title="Export to CSV"
+          onClick={e => {
+            e.preventDefault();
+            setShowCsvExportModal(true);
+          }}
+        >
+          <span className="glyphicon glyphicon-export"></span>
+        </a>
+      </CamundaFilterBox>
+      {instances.length ? (
+        <HistoryTable
+          instances={instances}
+          selectedInstances={selectedInstances}
+          setSelectedInstances={setSelectedInstances}
+        />
+      ) : null}
       <Pagination currentPage={currentPage} perPage={perPage} total={instancesCount} onPage={pageClicked}></Pagination>
+      <CsvExportModal
+        setShowModal={setShowCsvExportModal}
+        showModal={showCsvExportModal}
+        instances={instances}
+        selectedInstances={selectedInstances}
+        perPage={perPage}
+        total={instancesCount}
+        query={query}
+        api={api}
+        processDefinitionId={processDefinitionId}
+      />
     </Portal>
   ) : null;
 };

@@ -7,12 +7,12 @@ export interface ModificationInstruction {
   activityId: string;
 }
 
-export interface ModificationTableProps {
+export interface Props {
   instructions: ModificationInstruction[];
   setInstructions: any;
 }
 
-const ModificationTable: React.FC<ModificationTableProps> = ({ instructions, setInstructions }) => {
+const ModificationTable: React.FC<Props> = ({ instructions, setInstructions }) => {
   function removeInstruction(activityId: string) {
     setInstructions(instructions.filter((instruction: ModificationInstruction) => instruction.activityId !== activityId));
   }

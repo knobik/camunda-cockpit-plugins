@@ -10,7 +10,7 @@ import { post } from '../utils/api';
 import { ModificationInstruction } from './ModificationTable';
 import { FilterType } from './ProcessInstanceSelectModal';
 
-export interface BatchModificationConfirmationModalProps {
+export interface Props {
   api: API;
   processDefinitionId: string;
   instructions: ModificationInstruction[];
@@ -23,7 +23,7 @@ export interface BatchModificationConfirmationModalProps {
   onExecuted: (asynchronous: boolean, response: any) => void;
 }
 
-const BatchModificationConfirmationModal: React.FC<BatchModificationConfirmationModalProps> = ({
+const BatchModificationConfirmationModal: React.FC<Props> = ({
   api,
   processDefinitionId,
   instructions,
