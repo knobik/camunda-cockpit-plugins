@@ -7,7 +7,7 @@ import CamundaFilterBox, {
   Expression,
   ExpressionDefinition,
   Operator,
-  isValidExpression, castValue,
+  isValidExpression, castValue, getExpressionValues,
 } from './FilterBox/CamundaFilterBox';
 
 const expressionDefinitions: ExpressionDefinition[] = [
@@ -121,21 +121,19 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
   useEffect(() => {
     const validExpressions: Expression[] = expressions.filter(expression => isValidExpression(expression));
 
-    const variableExpressions: any[] = validExpressions
-      .filter((expression: Expression) => expression.definition.type === 'variable')
-      .map((expression: Expression) => {
-        return {
-          name: expression.name,
-          operator: expression.operator as string,
-          value: castValue(expression.value),
-        };
-      });
+    const variableExpressions: any[] = getExpressionValues(validExpressions, 'variable', (e: Expression) => {
+      return {
+        name: e.name,
+        operator: e.operator as string,
+        value: castValue(e.value),
+      };
+    });
 
-    const activityIdInExpressions: string[] = validExpressions
-      .filter((expression: Expression) => expression.definition.type === 'activityIdIn')
-      .map((expression: Expression) => {
-        return expression.value;
-      });
+    const activityIdInExpressions: string[] = getExpressionValues(
+      validExpressions,
+      'activityIdIn',
+      (e: Expression) => e.value
+    );
 
     const rest = validExpressions.filter(
       (expression: Expression) =>

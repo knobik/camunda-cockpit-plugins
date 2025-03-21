@@ -19,7 +19,8 @@ import CamundaFilterBox, {
   Operator,
   castValue,
   getExpressionValues,
-  isValidExpression, getFirstExpression,
+  getFirstExpression,
+  isValidExpression,
 } from './Components/FilterBox/CamundaFilterBox';
 import HistoryTable from './Components/HistoryTable';
 import Page from './Components/Page';

@@ -1,105 +1,97 @@
-import alias from "@rollup/plugin-alias";
-import commonjs from "@rollup/plugin-commonjs";
-import image from "@rollup/plugin-image";
-import json from "@rollup/plugin-json";
-import replace from "@rollup/plugin-replace";
-import resolve from "@rollup/plugin-node-resolve";
+import alias from '@rollup/plugin-alias';
+import commonjs from '@rollup/plugin-commonjs';
+import image from '@rollup/plugin-image';
+import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
+import resolve from '@rollup/plugin-node-resolve';
 import scss from 'rollup-plugin-scss';
-import typescript from "@rollup/plugin-typescript";
+import typescript from '@rollup/plugin-typescript';
 
 const plugins = [
   replace({
     preventAssignment: true,
-    "process.env.NODE_ENV": process.env.NODE_ENV === "production" ? JSON.stringify("production") : null,
+    'process.env.NODE_ENV': process.env.NODE_ENV === 'production' ? JSON.stringify('production') : null,
     '"use client";': '',
-    "'use client';": ''
+    '\'use client\';': '',
   }),
   alias({
-    entries: [{ find: "inherits", replacement: "inherits/inherits_browser" }],
+    entries: [{ find: 'inherits', replacement: 'inherits/inherits_browser' }],
   }),
   resolve(),
   commonjs({
-    include: "node_modules/**",
+    include: 'node_modules/**',
   }),
   typescript(),
   image(),
   json(),
   scss({
-    insert: true
+    insert: true,
   }),
 ];
 
+function onwarn(warning, superOnWarn) {
+  if (
+    warning.code === 'THIS_IS_UNDEFINED' ||
+    warning.message.includes('Module level directives')
+  ) {
+    return;
+  }
+  superOnWarn(warning);
+}
+
 export default [
   {
-    input: "src/RobotModule/index.ts",
+    input: 'src/RobotModule/index.ts',
     output: {
-      file: "robot-module.js",
+      file: 'robot-module.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/instance-historic-activities.tsx",
+    onwarn,
+    input: 'src/instance-historic-activities.tsx',
     output: {
-      file: "instance-historic-activities.js",
+      file: 'instance-historic-activities.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/definition-historic-activities.tsx",
+    onwarn,
+    input: 'src/definition-historic-activities.tsx',
     output: {
-      file: "definition-historic-activities.js",
+      file: 'definition-historic-activities.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/instance-route-history.tsx",
+    onwarn,
+    input: 'src/instance-route-history.tsx',
     output: {
-      file: "instance-route-history.js",
+      file: 'instance-route-history.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/tasklist-audit-log.tsx",
+    onwarn,
+    input: 'src/tasklist-audit-log.tsx',
     output: {
-      file: "tasklist-audit-log.js",
+      file: 'tasklist-audit-log.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/instance-tab-modify.tsx",
+    onwarn,
+    input: 'src/instance-tab-modify.tsx',
     output: {
-      file: "instance-tab-modify.js",
+      file: 'instance-tab-modify.js',
     },
     plugins,
   },
   {
-    onwarn: function(warning, superOnWarn) {
-      if (warning.code === 'THIS_IS_UNDEFINED') { return; }
-      superOnWarn(warning);
-    },
-    input: "src/definition-batch-modify.tsx",
+    onwarn,
+    input: 'src/definition-batch-modify.tsx',
     output: {
-      file: "definition-batch-modify.js",
+      file: 'definition-batch-modify.js',
     },
     plugins,
   },
