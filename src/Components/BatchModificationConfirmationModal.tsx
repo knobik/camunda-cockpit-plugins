@@ -298,7 +298,7 @@ const BatchModificationConfirmationModal: React.FC<Props> = ({
               disabled={instanceCount === 0 || showLoading}
               onClick={executeModification}
             >
-              Execute modification
+              Execute modification {showLoading && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
             </button>
           </div>
         </div>
