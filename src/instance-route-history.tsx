@@ -103,17 +103,21 @@ const availableExpressions: ExpressionDefinition[] = [
 
 const initialState: Record<string, any> = {
   historyTabNode: null,
+  processDefinitionId: null,
 };
 
 const hooks: Record<string, any> = {
   setHistoryTabNode: (node: Element) => (initialState.historyTabNode = node),
+  setProcessDefinitionId: (id: string) => (initialState.processDefinitionId = id),
 };
 
-const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinitionId }) => {
+const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
+  const [processDefinitionId, setProcessDefinitionId] = useState(initialState.processDefinitionId);
   const [expressions, setExpressions] = useState([] as Expression[]);
   const [query, setQuery] = useState({} as Record<string, string | number | null>);
   const [historyTabNode, setHistoryTabNode] = useState(initialState.historyTabNode);
 
+  hooks.setProcessDefinitionId = setProcessDefinitionId;
   hooks.setHistoryTabNode = setHistoryTabNode;
 
   const [instances, setInstances]: any = useState([] as any[]);
@@ -226,6 +230,7 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
         expressions={expressions}
         setExpressions={updateExpressions}
       >
+        <span title="Process Instance Count">{instancesCount}</span>
         <a
           href="#"
           title="Export to CSV"
@@ -273,6 +278,8 @@ export default [
     id: 'definitionHistoricInstancesPlugin',
     pluginPoint: 'cockpit.processDefinition.runtime.action',
     render: (node: Element, { api, processDefinitionId }: DefinitionPluginParams) => {
+      hooks.setProcessDefinitionId(processDefinitionId); // ugly hack to handle version change
+
       createRoot(node!).render(
         <React.StrictMode>
           <Plugin root={node} api={api} processDefinitionId={processDefinitionId} />

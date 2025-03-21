@@ -243,7 +243,9 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
                 setExpressions={setExpressions}
                 availableExpressions={expressionDefinitions}
                 placeholder="Filter available instances..."
-              />
+              >
+                <span title="Process Instance Count">{processInstances.length}</span>
+              </CamundaFilterBox>
               <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
                 <table className="cam-table">
                   <thead>
