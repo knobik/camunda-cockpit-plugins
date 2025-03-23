@@ -59214,6 +59214,11 @@ var Container = function (_a) {
         React.createElement("div", { className: "ctn-content-container" }, children)));
 };
 
+var q$1;(function(x){x["csv"]="text/csv";x["tsv"]="text/tab-separated-values";x["plain"]="text/plain";})(q$1||(q$1={}));var X=(W)=>W,z=(W)=>W,Z=X,_=X,Y=X,N=X,V=X;var h$1={fieldSeparator:",",decimalSeparator:".",quoteStrings:!0,quoteCharacter:'"',showTitle:!1,title:"My Generated Report",filename:"generated",showColumnHeaders:!0,useTextFile:!1,fileExtension:"csv",mediaType:q$1.csv,useBom:!0,columnHeaders:[],useKeysAsHeaders:!1,boolDisplay:{true:"TRUE",false:"FALSE"},replaceUndefinedWith:""},F$1="\r\n",R="\uFEFF",G=(W)=>Object.assign({},h$1,W);let K$1 = class K extends Error{constructor(W){super(W);this.name="CsvGenerationError";}};class B extends Error{constructor(W){super(W);this.name="EmptyHeadersError";}}class L extends Error{constructor(W){super(W);this.name="CsvDownloadEnvironmentError";}}class P extends Error{constructor(W){super(W);this.name="UnsupportedDataFormatError";}}var s$1=function(W,$){if($=='"'&&W.indexOf('"')>-1)return W.replace(/"/g,'""');return W},w=(W)=>typeof W==="object"?N(W.key):N(W),y$1=(W)=>typeof W==="object"?V(W.displayLabel):V(W),T=(W,...$)=>$.reduce((j,x)=>x(j),W),E$1=(W)=>($)=>W.useBom?_(z($)+R):$,M=(W)=>($)=>W.showTitle?S(_(z($)+W.title))(Y("")):$,S=(W)=>($)=>_(z(W)+z($)+F$1),O=(W)=>($,j)=>l$2(W)(Y(z($)+z(j))),l$2=(W)=>($)=>X(z($)+W.fieldSeparator),b$1=(W,$)=>(j)=>{if(!W.showColumnHeaders)return j;if($.length<1)throw new B("Option to show headers but none supplied. Make sure there are keys in your collection or that you've supplied headers through the config options.");let x=Y("");for(let A=0;A<$.length;A++){const J=y$1($[A]);x=O(W)(x,v$1(W,z(J)));}return x=Y(z(x).slice(0,-1)),S(j)(x)},C$1=(W,$,j)=>(x)=>{let A=x;for(var J=0;J<j.length;J++){let I=Y("");for(let U=0;U<$.length;U++){const H=w($[U]),D=j[J][z(H)];I=O(W)(I,v$1(W,D));}I=Y(z(I).slice(0,-1)),A=S(A)(I);}return A},m$2=(W)=>+W===W&&(!isFinite(W)||Boolean(W%1)),p$1=(W,$)=>{if(m$2($)){if(W.decimalSeparator==="locale")return Z($.toLocaleString());if(W.decimalSeparator)return Z($.toString().replace(".",W.decimalSeparator))}return Z($.toString())},Q=(W,$)=>{let j=$;if(W.quoteStrings||W.fieldSeparator&&$.indexOf(W.fieldSeparator)>-1||W.quoteCharacter&&$.indexOf(W.quoteCharacter)>-1||$.indexOf("\n")>-1||$.indexOf("\r")>-1)j=W.quoteCharacter+s$1($,W.quoteCharacter)+W.quoteCharacter;return Z(j)},g$1=(W,$)=>{const j=$?"true":"false";return Z(W.boolDisplay[j])},r$1=(W,$)=>{if(typeof $==="undefined"&&W.replaceUndefinedWith!==void 0)return Q(W,W.replaceUndefinedWith+"");if($===null)return Q(W,"null");return Q(W,"")},v$1=(W,$)=>{if(typeof $==="number")return p$1(W,$);if(typeof $==="string")return Q(W,$);if(typeof $==="boolean"&&W.boolDisplay)return g$1(W,$);if($===null||typeof $==="undefined")return r$1(W,$);throw new P(`
+    typeof ${typeof $} isn't supported. Only number, string, boolean, null and undefined are supported.
+    Please convert the data in your object to one of those before generating the CSV.
+    `)};var BW=(W)=>($)=>{const j=G(W),x=j.useKeysAsHeaders?Object.keys($[0]):j.columnHeaders;let A=T(_(""),E$1(j),M(j),b$1(j,x),C$1(j,x,$));if(z(A).length<1)throw new K$1("Output is empty. Is your data formatted correctly?");return A},f$2=(W)=>($)=>{const j=G(W),x=z($),A=j.useTextFile?"text/plain":j.mediaType;return new Blob([x],{type:`${A};charset=utf8;`})},LW=(W)=>($)=>{if(!window)throw new L("Downloading only supported in a browser environment.");const j=f$2(W)($),x=G(W),A=x.useTextFile?"txt":x.fileExtension,J=`${x.filename}.${A}`,I=document.createElement("a");I.download=J,I.href=URL.createObjectURL(j),I.setAttribute("visibility","hidden"),document.body.appendChild(I),I.click(),document.body.removeChild(I);};
+
 var lib = {exports: {}};
 
 var Modal$2 = {};
@@ -61023,11 +61028,6 @@ var post = function (api, path, params, payload) { return __awaiter(void 0, void
     });
 }); };
 
-var q$1;(function(x){x["csv"]="text/csv";x["tsv"]="text/tab-separated-values";x["plain"]="text/plain";})(q$1||(q$1={}));var X=(W)=>W,z=(W)=>W,Z=X,_=X,Y=X,N=X,V=X;var h$1={fieldSeparator:",",decimalSeparator:".",quoteStrings:!0,quoteCharacter:'"',showTitle:!1,title:"My Generated Report",filename:"generated",showColumnHeaders:!0,useTextFile:!1,fileExtension:"csv",mediaType:q$1.csv,useBom:!0,columnHeaders:[],useKeysAsHeaders:!1,boolDisplay:{true:"TRUE",false:"FALSE"},replaceUndefinedWith:""},F$1="\r\n",R="\uFEFF",G=(W)=>Object.assign({},h$1,W);let K$1 = class K extends Error{constructor(W){super(W);this.name="CsvGenerationError";}};class B extends Error{constructor(W){super(W);this.name="EmptyHeadersError";}}class L extends Error{constructor(W){super(W);this.name="CsvDownloadEnvironmentError";}}class P extends Error{constructor(W){super(W);this.name="UnsupportedDataFormatError";}}var s$1=function(W,$){if($=='"'&&W.indexOf('"')>-1)return W.replace(/"/g,'""');return W},w=(W)=>typeof W==="object"?N(W.key):N(W),y$1=(W)=>typeof W==="object"?V(W.displayLabel):V(W),T=(W,...$)=>$.reduce((j,x)=>x(j),W),E$1=(W)=>($)=>W.useBom?_(z($)+R):$,M=(W)=>($)=>W.showTitle?S(_(z($)+W.title))(Y("")):$,S=(W)=>($)=>_(z(W)+z($)+F$1),O=(W)=>($,j)=>l$2(W)(Y(z($)+z(j))),l$2=(W)=>($)=>X(z($)+W.fieldSeparator),b$1=(W,$)=>(j)=>{if(!W.showColumnHeaders)return j;if($.length<1)throw new B("Option to show headers but none supplied. Make sure there are keys in your collection or that you've supplied headers through the config options.");let x=Y("");for(let A=0;A<$.length;A++){const J=y$1($[A]);x=O(W)(x,v$1(W,z(J)));}return x=Y(z(x).slice(0,-1)),S(j)(x)},C$1=(W,$,j)=>(x)=>{let A=x;for(var J=0;J<j.length;J++){let I=Y("");for(let U=0;U<$.length;U++){const H=w($[U]),D=j[J][z(H)];I=O(W)(I,v$1(W,D));}I=Y(z(I).slice(0,-1)),A=S(A)(I);}return A},m$2=(W)=>+W===W&&(!isFinite(W)||Boolean(W%1)),p$1=(W,$)=>{if(m$2($)){if(W.decimalSeparator==="locale")return Z($.toLocaleString());if(W.decimalSeparator)return Z($.toString().replace(".",W.decimalSeparator))}return Z($.toString())},Q=(W,$)=>{let j=$;if(W.quoteStrings||W.fieldSeparator&&$.indexOf(W.fieldSeparator)>-1||W.quoteCharacter&&$.indexOf(W.quoteCharacter)>-1||$.indexOf("\n")>-1||$.indexOf("\r")>-1)j=W.quoteCharacter+s$1($,W.quoteCharacter)+W.quoteCharacter;return Z(j)},g$1=(W,$)=>{const j=$?"true":"false";return Z(W.boolDisplay[j])},r$1=(W,$)=>{if(typeof $==="undefined"&&W.replaceUndefinedWith!==void 0)return Q(W,W.replaceUndefinedWith+"");if($===null)return Q(W,"null");return Q(W,"")},v$1=(W,$)=>{if(typeof $==="number")return p$1(W,$);if(typeof $==="string")return Q(W,$);if(typeof $==="boolean"&&W.boolDisplay)return g$1(W,$);if($===null||typeof $==="undefined")return r$1(W,$);throw new P(`
-    typeof ${typeof $} isn't supported. Only number, string, boolean, null and undefined are supported.
-    Please convert the data in your object to one of those before generating the CSV.
-    `)};var BW=(W)=>($)=>{const j=G(W),x=j.useKeysAsHeaders?Object.keys($[0]):j.columnHeaders;let A=T(_(""),E$1(j),M(j),b$1(j,x),C$1(j,x,$));if(z(A).length<1)throw new K$1("Output is empty. Is your data formatted correctly?");return A},f$2=(W)=>($)=>{const j=G(W),x=z($),A=j.useTextFile?"text/plain":j.mediaType;return new Blob([x],{type:`${A};charset=utf8;`})},LW=(W)=>($)=>{if(!window)throw new L("Downloading only supported in a browser environment.");const j=f$2(W)($),x=G(W),A=x.useTextFile?"txt":x.fileExtension,J=`${x.filename}.${A}`,I=document.createElement("a");I.download=J,I.href=URL.createObjectURL(j),I.setAttribute("visibility","hidden"),document.body.appendChild(I),I.click(),document.body.removeChild(I);};
-
 var ResultSet;
 (function (ResultSet) {
     ResultSet["SELECTED"] = "selected";
@@ -61045,7 +61045,7 @@ var CsvExportModal = function (_a) {
     function exportCsv() {
         var _this = this;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var fetchedInstances, i, part, variableList, csvConfig, csv;
+            var fetchedInstances, i, part, variableList, variablePerPage, variableCount, variablePageCount, i, items, csvConfig, csv;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -61080,23 +61080,43 @@ var CsvExportModal = function (_a) {
                         return [3 /*break*/, 3];
                     case 6:
                         variableList = [];
-                        if (!(variables.length > 0)) return [3 /*break*/, 8];
+                        if (!(variables.length > 0)) return [3 /*break*/, 12];
+                        variablePerPage = 100;
+                        return [4 /*yield*/, post(api, '/history/variable-instance/count', {}, JSON.stringify({
+                                processInstanceIdIn: fetchedInstances.map(function (i) { return i.id; }),
+                                variableNameIn: variables,
+                            }))];
+                    case 7:
+                        variableCount = (_a.sent()).count;
+                        variablePageCount = Math.ceil(variableCount / variablePerPage);
+                        i = 0;
+                        _a.label = 8;
+                    case 8:
+                        if (!(i < variablePageCount)) return [3 /*break*/, 11];
                         return [4 /*yield*/, post(api, '/history/variable-instance', {
+                                firstResult: (i * variablePerPage).toString(),
+                                maxResults: variablePerPage.toString(),
                                 deserializeValues: 'true',
                             }, JSON.stringify({
                                 processInstanceIdIn: fetchedInstances.map(function (i) { return i.id; }),
                                 variableNameIn: variables,
                             }))];
-                    case 7:
-                        variableList = _a.sent();
+                    case 9:
+                        items = _a.sent();
+                        variableList.push.apply(variableList, items);
+                        _a.label = 10;
+                    case 10:
+                        i++;
+                        return [3 /*break*/, 8];
+                    case 11:
                         variableList.map(function (variable) {
                             var instance = fetchedInstances.find(function (i) { return i.id === variable.processInstanceId; });
                             if (instance) {
                                 instance[variable.name] = variable.value;
                             }
                         });
-                        _a.label = 8;
-                    case 8:
+                        _a.label = 12;
+                    case 12:
                         csvConfig = G({ useKeysAsHeaders: true, filename: 'exported' });
                         csv = BW(csvConfig)(fetchedInstances);
                         LW(csvConfig)(csv);

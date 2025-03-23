@@ -1,9 +1,9 @@
+import { download, generateCsv, mkConfig } from 'export-to-csv';
 import React, { useMemo, useState } from 'react';
 import ReactModal from 'react-modal';
 
 import { API } from '../types';
 import { post } from '../utils/api';
-import { mkConfig, generateCsv, download } from "export-to-csv";
 
 enum ResultSet {
   SELECTED = 'selected',
@@ -71,7 +71,7 @@ const CsvExportModal: React.FC<Props> = ({
               firstResult: (i * perPage).toString(),
               maxResults: perPage.toString(),
             },
-            JSON.stringify({processDefinitionId, ...query})
+            JSON.stringify({ processDefinitionId, ...query })
           );
           fetchedInstances.push(...part);
         }
@@ -79,17 +79,34 @@ const CsvExportModal: React.FC<Props> = ({
 
       let variableList = [] as any[];
       if (variables.length > 0) {
-        variableList = await post(
+        const variablePerPage = 100;
+        const variableCount = (await post(
           api,
-          '/history/variable-instance',
-          {
-            deserializeValues: 'true',
-          },
+          '/history/variable-instance/count',
+          {},
           JSON.stringify({
             processInstanceIdIn: fetchedInstances.map(i => i.id),
             variableNameIn: variables,
           })
-        );
+        )).count;
+        const variablePageCount = Math.ceil(variableCount / variablePerPage);
+
+        for (let i = 0; i < variablePageCount; i++) {
+          const items = await post(
+            api,
+            '/history/variable-instance',
+            {
+              firstResult: (i * variablePerPage).toString(),
+              maxResults: variablePerPage.toString(),
+              deserializeValues: 'true',
+            },
+            JSON.stringify({
+              processInstanceIdIn: fetchedInstances.map(i => i.id),
+              variableNameIn: variables,
+            })
+          );
+          variableList.push(...items);
+        }
 
         variableList.map(variable => {
           const instance = fetchedInstances.find(i => i.id === variable.processInstanceId);
@@ -160,25 +177,25 @@ const CsvExportModal: React.FC<Props> = ({
               <h3>Result Set</h3>
               <p>Process instances to be exported:</p>
               <div className="form-horizontal">
-                  <div className="form-group">
-                    <label htmlFor="resultSet-selected" className="col-sm-5 control-label">
-                      Selected instances ({selectedInstances.length})
-                    </label>
-                    <div className="col-sm-5">
-                      <div className="radio">
-                        <label>
-                          <input
-                            id="resultSet-selected"
-                            type="radio"
-                            name="resultSet"
-                            value={ResultSet.SELECTED}
-                            checked={resultSet === ResultSet.SELECTED}
-                            onChange={() => changeResultSet(ResultSet.SELECTED)}
-                          />
-                        </label>
-                      </div>
+                <div className="form-group">
+                  <label htmlFor="resultSet-selected" className="col-sm-5 control-label">
+                    Selected instances ({selectedInstances.length})
+                  </label>
+                  <div className="col-sm-5">
+                    <div className="radio">
+                      <label>
+                        <input
+                          id="resultSet-selected"
+                          type="radio"
+                          name="resultSet"
+                          value={ResultSet.SELECTED}
+                          checked={resultSet === ResultSet.SELECTED}
+                          onChange={() => changeResultSet(ResultSet.SELECTED)}
+                        />
+                      </label>
                     </div>
                   </div>
+                </div>
                 <div className="form-group">
                   <label htmlFor="resultSet-page" className="col-sm-5 control-label">
                     Current page
@@ -266,7 +283,12 @@ const CsvExportModal: React.FC<Props> = ({
           <button className="btn btn-link" onClick={() => setShowModal(false)}>
             Close
           </button>
-          <button className="btn btn-danger" style={{ marginLeft: '1em' }} onClick={exportCsv} disabled={exporting || (resultSet === ResultSet.SELECTED && selectedInstances.length === 0)}>
+          <button
+            className="btn btn-danger"
+            style={{ marginLeft: '1em' }}
+            onClick={exportCsv}
+            disabled={exporting || (resultSet === ResultSet.SELECTED && selectedInstances.length === 0)}
+          >
             Export CSV {exporting && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
           </button>
         </div>
