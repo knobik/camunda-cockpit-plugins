@@ -50,6 +50,14 @@ const availableExpressions: ExpressionDefinition[] = [
     requiresName: false,
   } as ExpressionDefinition,
   {
+    label: 'Active Activity ID',
+    type: 'activeActivityIdIn',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    requiresValue: true,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
     label: 'Start Date',
     type: 'startedDate',
     availableOperators: [Operator.before, Operator.after],
@@ -98,6 +106,24 @@ const availableExpressions: ExpressionDefinition[] = [
     availableOperators: [Operator.eq],
     defaultOperator: Operator.eq,
     defaultValue: 'true',
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'With Incidents',
+    type: 'withIncidents',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    defaultValue: 'true',
+    requiresValue: false,
+    requiresName: false,
+  } as ExpressionDefinition,
+  {
+    label: 'Without Incidents',
+    type: 'withIncidents',
+    availableOperators: [Operator.eq],
+    defaultOperator: Operator.eq,
+    defaultValue: 'false',
     requiresValue: false,
     requiresName: false,
   } as ExpressionDefinition,
@@ -159,9 +185,15 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
       };
     });
 
-    const activityIdInExpressions: string[] = getExpressionValues(
+    const executedActivityIdInExpressions: string[] = getExpressionValues(
       validExpressions,
       'executedActivityIdIn',
+      (e: Expression) => e.value
+    );
+
+    const activeActivityIdInExpressions: string[] = getExpressionValues(
+      validExpressions,
+      'activeActivityIdIn',
       (e: Expression) => e.value
     );
 
@@ -200,8 +232,11 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api }) => {
         finishedDateExpression.operator === Operator.after ? finishedDateExpression.value + '.000+0000' : undefined;
     }
 
-    if (activityIdInExpressions.length > 0) {
-      newQuery['executedActivityIdIn'] = activityIdInExpressions;
+    if (executedActivityIdInExpressions.length > 0) {
+      newQuery['executedActivityIdIn'] = executedActivityIdInExpressions;
+    }
+    if (activeActivityIdInExpressions.length > 0) {
+      newQuery['activeActivityIdIn'] = activeActivityIdInExpressions;
     }
     if (processInstanceBusinessKeyInExpressions.length > 0) {
       newQuery['processInstanceBusinessKeyIn'] = processInstanceBusinessKeyInExpressions;

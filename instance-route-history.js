@@ -73177,6 +73177,14 @@ var availableExpressions = [
         requiresName: false,
     },
     {
+        label: 'Active Activity ID',
+        type: 'activeActivityIdIn',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        requiresValue: true,
+        requiresName: false,
+    },
+    {
         label: 'Start Date',
         type: 'startedDate',
         availableOperators: [Operator.before, Operator.after],
@@ -73225,6 +73233,24 @@ var availableExpressions = [
         availableOperators: [Operator.eq],
         defaultOperator: Operator.eq,
         defaultValue: 'true',
+        requiresValue: false,
+        requiresName: false,
+    },
+    {
+        label: 'With Incidents',
+        type: 'withIncidents',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        defaultValue: 'true',
+        requiresValue: false,
+        requiresName: false,
+    },
+    {
+        label: 'Without Incidents',
+        type: 'withIncidents',
+        availableOperators: [Operator.eq],
+        defaultOperator: Operator.eq,
+        defaultValue: 'false',
         requiresValue: false,
         requiresName: false,
     },
@@ -73282,7 +73308,8 @@ var Plugin = function (_a) {
                 value: castValue(e.value),
             };
         });
-        var activityIdInExpressions = getExpressionValues(validExpressions, 'executedActivityIdIn', function (e) { return e.value; });
+        var executedActivityIdInExpressions = getExpressionValues(validExpressions, 'executedActivityIdIn', function (e) { return e.value; });
+        var activeActivityIdInExpressions = getExpressionValues(validExpressions, 'activeActivityIdIn', function (e) { return e.value; });
         var processInstanceBusinessKeyInExpressions = getExpressionValues(validExpressions, 'processInstanceBusinessKeyIn', function (e) { return e.value; });
         var startedDateExpression = getFirstExpression(validExpressions, 'startedDate');
         var finishedDateExpression = getFirstExpression(validExpressions, 'finishedDate');
@@ -73305,8 +73332,11 @@ var Plugin = function (_a) {
             newQuery['finishedAfter'] =
                 finishedDateExpression.operator === Operator.after ? finishedDateExpression.value + '.000+0000' : undefined;
         }
-        if (activityIdInExpressions.length > 0) {
-            newQuery['executedActivityIdIn'] = activityIdInExpressions;
+        if (executedActivityIdInExpressions.length > 0) {
+            newQuery['executedActivityIdIn'] = executedActivityIdInExpressions;
+        }
+        if (activeActivityIdInExpressions.length > 0) {
+            newQuery['activeActivityIdIn'] = activeActivityIdInExpressions;
         }
         if (processInstanceBusinessKeyInExpressions.length > 0) {
             newQuery['processInstanceBusinessKeyIn'] = processInstanceBusinessKeyInExpressions;
