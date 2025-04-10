@@ -20137,8 +20137,10 @@ ___$insertStylesToHeader(".modification-table td.instruction {\n  position: rela
 
 var ModificationTable = function (_a) {
     var instructions = _a.instructions, setInstructions = _a.setInstructions;
-    function removeInstruction(activityId) {
-        setInstructions(instructions.filter(function (instruction) { return instruction.activityId !== activityId; }));
+    function removeInstruction(index) {
+        var updatedInstructions = __spreadArray([], instructions, true);
+        updatedInstructions.splice(index, 1);
+        setInstructions(updatedInstructions);
     }
     function changeInstructionType(index, event) {
         var updatedInstructions = instructions.map(function (instruction, i) {
@@ -20172,7 +20174,7 @@ var ModificationTable = function (_a) {
         React.createElement("tbody", null, instructions.map(function (instruction, index) { return (React.createElement("tr", { key: index },
             React.createElement("td", { className: "remove" },
                 React.createElement("div", null,
-                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return removeInstruction(instruction.activityId); } },
+                    React.createElement("button", { className: "btn btn-danger", onClick: function () { return removeInstruction(index); } },
                         React.createElement("span", { className: "glyphicon glyphicon-trash" })))),
             React.createElement("td", { className: "order" },
                 index > 0 && (React.createElement("button", { className: "btn btn-sm btn-default arrow-up", onClick: function () { return moveItemUp(index); } },
@@ -20250,12 +20252,13 @@ var BatchModifyForm = function (_a) {
     reactExports.useEffect(function () {
         if (viewer) {
             for (var _i = 0, badgeIds_1 = badgeIds; _i < badgeIds_1.length; _i++) {
-                var badgeId = badgeIds_1[_i];
-                viewer.get('overlays').remove(badgeId);
+                var badge = badgeIds_1[_i];
+                viewer.get('overlays').remove(badge.badgeId);
             }
             var overlays_1 = viewer.get('overlays');
-            var update_1 = [];
+            var newBadges_1 = [];
             instructions.map(function (instruction) {
+                var activityId = instruction.activityId.split('#')[0];
                 var position = {
                     left: -10,
                     top: -10,
@@ -20266,13 +20269,16 @@ var BatchModifyForm = function (_a) {
                         top: -10,
                     };
                 }
-                var badgeId = overlays_1.add(instruction.activityId.split('#')[0], {
+                var badgeId = overlays_1.add(activityId, {
                     position: position,
                     html: "<span class=\"badge badge-warning\">".concat(instruction.type === 'cancel' ? '-' : '+', "</span>"),
                 });
-                update_1.push(badgeId);
+                newBadges_1.push({
+                    activityId: activityId,
+                    badgeId: badgeId,
+                });
             });
-            setBadgeIds(update_1);
+            setBadgeIds(newBadges_1);
         }
     }, [instructions, viewer]);
     // wrench
@@ -20335,12 +20341,6 @@ var BatchModifyForm = function (_a) {
         }
     }, [elementEvent, clickedElementEvent, viewer]);
     function addInstruction(activityId, name, type) {
-        var update = instructions.find(function (instruction) { return instruction.activityId === activityId; });
-        if (update) {
-            update.type = type;
-            setInstructions(__spreadArray([], instructions, true));
-            return;
-        }
         setInstructions(__spreadArray(__spreadArray([], instructions, true), [
             {
                 activityId: activityId,

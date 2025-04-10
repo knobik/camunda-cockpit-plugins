@@ -11,6 +11,11 @@ import Portal from './Components/Portal';
 import ProcessInstanceSelectModal, { FilterType } from './Components/ProcessInstanceSelectModal';
 import { DefinitionPluginParams } from './types';
 
+interface Badge {
+  activityId: string;
+  badgeId: string;
+}
+
 const initialState: Record<string, any> = {
   instructions: [
     // {
@@ -52,7 +57,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
-  const [badgeIds, setBadgeIds] = useState([] as string[]);
+  const [badgeIds, setBadgeIds] = useState([] as Badge[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
   const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
 
@@ -70,13 +75,14 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   // badges
   useEffect(() => {
     if (viewer) {
-      for (const badgeId of badgeIds) {
-        viewer.get('overlays').remove(badgeId);
+      for (const badge of badgeIds) {
+        viewer.get('overlays').remove(badge.badgeId);
       }
 
       const overlays = viewer.get('overlays');
-      const update: string[] = [];
+      const newBadges: Badge[] = [];
       instructions.map((instruction: ModificationInstruction) => {
+        const activityId = instruction.activityId.split('#')[0];
         let position: any = {
           left: -10,
           top: -10,
@@ -88,14 +94,17 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
           };
         }
 
-        const badgeId = overlays.add(instruction.activityId.split('#')[0], {
+        const badgeId = overlays.add(activityId, {
           position,
           html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
         });
-        update.push(badgeId);
+        newBadges.push({
+          activityId,
+          badgeId,
+        } as Badge);
       });
 
-      setBadgeIds(update);
+      setBadgeIds(newBadges);
     }
   }, [instructions, viewer]);
 
@@ -179,13 +188,6 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   }, [elementEvent, clickedElementEvent, viewer]);
 
   function addInstruction(activityId: string, name: string, type: string) {
-    const update = instructions.find((instruction: ModificationInstruction) => instruction.activityId === activityId);
-    if (update) {
-      update.type = type;
-      setInstructions([...instructions]);
-      return;
-    }
-
     setInstructions([
       ...instructions,
       {

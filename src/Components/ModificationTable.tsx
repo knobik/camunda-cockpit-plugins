@@ -13,8 +13,10 @@ export interface Props {
 }
 
 const ModificationTable: React.FC<Props> = ({ instructions, setInstructions }) => {
-  function removeInstruction(activityId: string) {
-    setInstructions(instructions.filter((instruction: ModificationInstruction) => instruction.activityId !== activityId));
+  function removeInstruction(index: number) {
+    const updatedInstructions = [...instructions];
+    updatedInstructions.splice(index, 1);
+    setInstructions(updatedInstructions);
   }
 
   function changeInstructionType(index: number, event: any) {
@@ -57,7 +59,7 @@ const ModificationTable: React.FC<Props> = ({ instructions, setInstructions }) =
           <tr key={index}>
             <td className="remove">
               <div>
-                <button className="btn btn-danger" onClick={() => removeInstruction(instruction.activityId)}>
+                <button className="btn btn-danger" onClick={() => removeInstruction(index)}>
                   <span className="glyphicon glyphicon-trash"></span>
                 </button>
               </div>

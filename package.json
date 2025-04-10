@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "build": "NODE_ENV=production rollup -c",
-    "watch": "rollup -w -c --sourcemap",
+    "build": "NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production rollup -c",
+    "watch": "NODE_OPTIONS=--max-old-space-size=4096 rollup -w -c --sourcemap",
     "prettier:check": "prettier --check \"src/**/{*.ts,*.tsx}\"",
     "prettier:format": "prettier --write \"src/**/{*.ts,*.tsx}\"",
     "upgrade": "npx npm-check-updates -u"
