@@ -14,6 +14,7 @@ import { DefinitionPluginParams } from './types';
 interface Badge {
   activityId: string;
   badgeId: string;
+  label: string;
 }
 
 const initialState: Record<string, any> = {
@@ -57,7 +58,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   const [viewer, setViewer] = useState(initialState.viewer);
   const [instructions, setInstructions] = useState(initialState.instructions as ModificationInstruction[]);
   const [tabNode, setTabNode] = useState(initialState.tabNode);
-  const [badgeIds, setBadgeIds] = useState([] as Badge[]);
+  const [badges, setBadges] = useState([] as Badge[]);
   const [wrenchOverlayId, setWrenchOverlayId] = useState('');
   const [wrenchDropdownVisible, setWrenchDropdownVisible] = useState(false);
 
@@ -75,7 +76,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
   // badges
   useEffect(() => {
     if (viewer) {
-      for (const badge of badgeIds) {
+      for (const badge of badges) {
         viewer.get('overlays').remove(badge.badgeId);
       }
 
@@ -83,28 +84,27 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
       const newBadges: Badge[] = [];
       instructions.map((instruction: ModificationInstruction) => {
         const activityId = instruction.activityId.split('#')[0];
-        let position: any = {
-          left: -10,
-          top: -10,
-        };
-        if (instruction.type === 'startAfterActivity') {
-          position = {
-            right: 10,
-            top: -10,
-          };
-        }
+        const label = instruction.type === 'cancel' ? '-' : '+';
 
+        const existingBadges = newBadges.filter(badge => badge.activityId === activityId);
+        existingBadges.forEach(badge => overlays.remove(badge.badgeId));
+
+        let labels: string[] = [...existingBadges.map(badge => badge.label), label];
         const badgeId = overlays.add(activityId, {
-          position,
-          html: `<span class="badge badge-warning">${instruction.type === 'cancel' ? '-' : '+'}</span>`,
+          position: {
+            left: -10,
+            top: -10,
+          },
+          html: `<span class="badge badge-warning">${labels.join(', ')}</span>`,
         });
         newBadges.push({
           activityId,
           badgeId,
+          label,
         } as Badge);
       });
 
-      setBadgeIds(newBadges);
+      setBadges(newBadges);
     }
   }, [instructions, viewer]);
 

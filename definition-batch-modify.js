@@ -20236,7 +20236,7 @@ var BatchModifyForm = function (_a) {
     var _j = reactExports.useState(initialState.viewer), viewer = _j[0], setViewer = _j[1];
     var _k = reactExports.useState(initialState.instructions), instructions = _k[0], setInstructions = _k[1];
     var _l = reactExports.useState(initialState.tabNode), tabNode = _l[0], setTabNode = _l[1];
-    var _m = reactExports.useState([]), badgeIds = _m[0], setBadgeIds = _m[1];
+    var _m = reactExports.useState([]), badges = _m[0], setBadges = _m[1];
     var _o = reactExports.useState(''), wrenchOverlayId = _o[0], setWrenchOverlayId = _o[1];
     var _p = reactExports.useState(false), wrenchDropdownVisible = _p[0], setWrenchDropdownVisible = _p[1];
     var _q = reactExports.useState(FilterType.INSTANCE), selectedFilterType = _q[0], setSelectedFilterType = _q[1];
@@ -20251,34 +20251,32 @@ var BatchModifyForm = function (_a) {
     // badges
     reactExports.useEffect(function () {
         if (viewer) {
-            for (var _i = 0, badgeIds_1 = badgeIds; _i < badgeIds_1.length; _i++) {
-                var badge = badgeIds_1[_i];
+            for (var _i = 0, badges_1 = badges; _i < badges_1.length; _i++) {
+                var badge = badges_1[_i];
                 viewer.get('overlays').remove(badge.badgeId);
             }
             var overlays_1 = viewer.get('overlays');
             var newBadges_1 = [];
             instructions.map(function (instruction) {
                 var activityId = instruction.activityId.split('#')[0];
-                var position = {
-                    left: -10,
-                    top: -10,
-                };
-                if (instruction.type === 'startAfterActivity') {
-                    position = {
-                        right: 10,
-                        top: -10,
-                    };
-                }
+                var label = instruction.type === 'cancel' ? '-' : '+';
+                var existingBadges = newBadges_1.filter(function (badge) { return badge.activityId === activityId; });
+                existingBadges.forEach(function (badge) { return overlays_1.remove(badge.badgeId); });
+                var labels = __spreadArray(__spreadArray([], existingBadges.map(function (badge) { return badge.label; }), true), [label], false);
                 var badgeId = overlays_1.add(activityId, {
-                    position: position,
-                    html: "<span class=\"badge badge-warning\">".concat(instruction.type === 'cancel' ? '-' : '+', "</span>"),
+                    position: {
+                        left: -10,
+                        top: -10,
+                    },
+                    html: "<span class=\"badge badge-warning\">".concat(labels.join(', '), "</span>"),
                 });
                 newBadges_1.push({
                     activityId: activityId,
                     badgeId: badgeId,
+                    label: label,
                 });
             });
-            setBadgeIds(newBadges_1);
+            setBadges(newBadges_1);
         }
     }, [instructions, viewer]);
     // wrench
