@@ -18,6 +18,7 @@ export interface DefinitionPluginParams {
 }
 
 export interface InstancePluginParams {
+  root?: Element;
   api: API;
   processInstanceId: string;
 }

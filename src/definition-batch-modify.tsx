@@ -18,18 +18,7 @@ interface Badge {
 }
 
 const initialState: Record<string, any> = {
-  instructions: [
-    // {
-    //   activityId: "approveInvoice",
-    //   name: "Approve Invoice",
-    //   type: "cancel"
-    // } as ModificationInstruction,
-    // {
-    //   activityId: "assignApprover",
-    //   name: "Assign Approver Group",
-    //   type: "startBeforeActivity"
-    // } as ModificationInstruction
-  ],
+  instructions: [],
   viewer: null,
   tabNode: null,
   elementEvent: null,
@@ -238,7 +227,7 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
             </div>
           ) : (
             <div>
-              <ModificationTable instructions={instructions} setInstructions={setInstructions} />
+              <ModificationTable batch={true} instructions={instructions} setInstructions={setInstructions} />
               <div
                 style={{
                   height: '4em',
