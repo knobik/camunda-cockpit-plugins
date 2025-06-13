@@ -73257,35 +73257,31 @@ var availableExpressions = [
 ];
 var initialState = {
     historyTabNode: null,
-    processDefinitionId: null,
 };
 var hooks = {
     setHistoryTabNode: function (node) { return (initialState.historyTabNode = node); },
-    setProcessDefinitionId: function (id) { return (initialState.processDefinitionId = id); },
 };
 var Plugin = function (_a) {
-    var root = _a.root, api = _a.api;
-    var _b = reactExports.useState(initialState.processDefinitionId), processDefinitionId = _b[0], setProcessDefinitionId = _b[1];
-    var _c = reactExports.useState([]), expressions = _c[0], setExpressions = _c[1];
-    var _d = reactExports.useState({}), query = _d[0], setQuery = _d[1];
-    var _e = reactExports.useState(initialState.historyTabNode), historyTabNode = _e[0], setHistoryTabNode = _e[1];
-    hooks.setProcessDefinitionId = setProcessDefinitionId;
+    var root = _a.root, api = _a.api, processDefinitionId = _a.processDefinitionId;
+    var _b = reactExports.useState([]), expressions = _b[0], setExpressions = _b[1];
+    var _c = reactExports.useState({}), query = _c[0], setQuery = _c[1];
+    var _d = reactExports.useState(initialState.historyTabNode), historyTabNode = _d[0], setHistoryTabNode = _d[1];
     hooks.setHistoryTabNode = setHistoryTabNode;
-    var _f = reactExports.useState([]), instances = _f[0], setInstances = _f[1];
-    var _g = reactExports.useState(0), instancesCount = _g[0], setInstancesCount = _g[1];
-    var _h = reactExports.useState(1), currentPage = _h[0], setCurrentPage = _h[1];
+    var _e = reactExports.useState([]), instances = _e[0], setInstances = _e[1];
+    var _f = reactExports.useState(0), instancesCount = _f[0], setInstancesCount = _f[1];
+    var _g = reactExports.useState(1), currentPage = _g[0], setCurrentPage = _g[1];
     var perPage = reactExports.useState(50)[0];
-    var _j = reactExports.useState(0), firstResult = _j[0], setFirstResult = _j[1];
-    var _k = reactExports.useState(false), showCsvExportModal = _k[0], setShowCsvExportModal = _k[1];
-    var _l = reactExports.useState([]), selectedInstances = _l[0], setSelectedInstances = _l[1];
+    var _h = reactExports.useState(0), firstResult = _h[0], setFirstResult = _h[1];
+    var _j = reactExports.useState(false), showCsvExportModal = _j[0], setShowCsvExportModal = _j[1];
+    var _k = reactExports.useState([]), selectedInstances = _k[0], setSelectedInstances = _k[1];
     // FETCH
     reactExports.useEffect(function () {
-        (function () { return __awaiter(void 0, void 0, void 0, function () {
+        (function (currentProcessDefinitionId) { return __awaiter(void 0, void 0, void 0, function () {
             var body, _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        body = JSON.stringify(__assign$1({ sortBy: 'endTime', sortOrder: 'desc', processDefinitionId: processDefinitionId }, query));
+                        body = JSON.stringify(__assign$1({ sortBy: 'endTime', sortOrder: 'desc', processDefinitionId: currentProcessDefinitionId }, query));
                         _a = setInstancesCount;
                         return [4 /*yield*/, post(api, '/history/process-instance/count', {}, body)];
                     case 1:
@@ -73297,8 +73293,8 @@ var Plugin = function (_a) {
                         return [2 /*return*/];
                 }
             });
-        }); })();
-    }, [query, firstResult]);
+        }); })(processDefinitionId);
+    }, [query, firstResult, processDefinitionId]);
     reactExports.useEffect(function () {
         var validExpressions = expressions.filter(function (expression) { return isValidExpression(expression); });
         var variableExpressions = getExpressionValues(validExpressions, 'variable', function (e) {
@@ -73347,7 +73343,7 @@ var Plugin = function (_a) {
         if (JSON.stringify(newQuery) !== JSON.stringify(query)) {
             setQuery(newQuery);
         }
-    }, [expressions, processDefinitionId]);
+    }, [expressions]);
     // Hack to ensure long living HTML node for filter box
     if (historyTabNode && !Array.from(historyTabNode.children).includes(root)) {
         historyTabNode.appendChild(root);
@@ -73386,7 +73382,6 @@ var instanceRouteHistory = [
         pluginPoint: 'cockpit.processDefinition.runtime.action',
         render: function (node, _a) {
             var api = _a.api, processDefinitionId = _a.processDefinitionId;
-            hooks.setProcessDefinitionId(processDefinitionId); // ugly hack to handle version change
             createRoot$2(node).render(React.createElement(React.StrictMode, null,
                 React.createElement(Plugin, { root: node, api: api, processDefinitionId: processDefinitionId })));
         },
