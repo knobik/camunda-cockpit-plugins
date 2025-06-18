@@ -95,4 +95,12 @@ export default [
     },
     plugins,
   },
+  {
+    onwarn,
+    input: 'src/definition-batch-retry.tsx',
+    output: {
+      file: 'definition-batch-retry.js',
+    },
+    plugins,
+  },
 ];

@@ -30,6 +30,7 @@ export default {
           'scripts/instance-route-history.js',
           // 'scripts/instance-tab-modify.js',
           'scripts/definition-batch-modify.js',
+          'scripts/definition-batch-retry.js',
      ],
   // requireJsConfig: {
   //   // AngularJS module names
