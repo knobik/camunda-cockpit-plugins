@@ -2,26 +2,31 @@ import React, { useMemo, useState } from 'react';
 import ReactModal from 'react-modal';
 import { post, put } from '../utils/api';
 import { API } from '../types';
+import { Incident } from '../definition-batch-retry';
 
 export interface Props {
   setShowModal: (showModal: boolean) => void;
   showModal: boolean;
-  jobs: any[]
+  incidents: Incident[]
   api: API,
   onExecuted: () => void;
 }
 
-const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal, jobs, api, onExecuted }) => {
+const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal, incidents, api, onExecuted }) => {
 
   const [showLoading, setShowLoading] = useState(false);
+  const [retriedCount, setRetriedCount] = useState(0);
 
   function executeRetry() {
     (async () => {
       setShowLoading(true);
 
+      let count = 0;
       // foreach job, increment the number of retries
-      for (const job of jobs) {
-        await put(api, `/job/${job.id}/retries`, {}, JSON.stringify({ retries: 1 }));
+      for (const incident of incidents) {
+        await put(api, `/${incident.type as string}/${incident.id}/retries`, {}, JSON.stringify({ retries: 1 }));
+        count++;
+        setRetriedCount(count);
       }
 
       setShowLoading(false);
@@ -56,7 +61,7 @@ const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal,
           <div className="row">
             <div className="col-md-12">
               <p>
-                The number of retries of all failed jobs associated with the selected process definition will be incremented.
+                The number of retries of all failed jobs and external-tasks associated with the selected process definition will be incremented.
               </p>
               <p>
                 Are you sure you want to increment the number of retries? This will effectively retry all incidents.
@@ -83,7 +88,11 @@ const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal,
             disabled={showLoading}
             onClick={executeRetry}
           >
-            Retry ({jobs.length}) {showLoading && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
+            Retry ({showLoading && (
+              <>
+                {retriedCount}/
+              </>
+            )}{incidents.length}) {showLoading && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
           </button>
         </div>
       </div>

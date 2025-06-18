@@ -1,19 +1,44 @@
 import './bootstrap.scss';
 import { createRoot } from 'react-dom/client';
-import { DefinitionPluginParams } from './types';
+import { API, DefinitionPluginParams } from './types';
 import React, { useEffect } from 'react';
 import { get } from './utils/api';
 import BatchRetryConfirmationModal from './Components/BatchRetryConfirmationModal';
 
+enum IncidentType {
+  JOB = 'job',
+  EXTERNAL_TASK = 'external-task',
+}
+
+
+export interface Incident {
+  type: IncidentType;
+  id: string;
+}
+
 const Plugin: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) => {
 
   const [showInformationModal, setShowInformationModal] = React.useState(false);
-  const [jobs, setJobs] = React.useState<any[]>([]);
+  const [incidents, setIncidents] = React.useState<Incident[]>([]);
 
   useEffect(() => {
     (async() => {
-      const data = await get(api, '/job', { noRetriesLeft: 'true', processDefinitionId });
-      setJobs(data);
+      const jobs = await get(api, '/job', { noRetriesLeft: 'true', processDefinitionId });
+      const newJobs: Incident[] = jobs.map((job: any) => ({
+        type: IncidentType.JOB,
+        id: job.id
+      } as Incident));
+
+      const externalTasks = await get(api, '/external-task', { noRetriesLeft: 'true', processDefinitionId });
+      const newExternalTasks: Incident[] = externalTasks.map((externalTask: any) => ({
+        type: IncidentType.EXTERNAL_TASK,
+        id: externalTask.id
+      } as Incident));
+
+      setIncidents([
+        ...newJobs,
+        ...newExternalTasks
+      ]);
     })();
   }, [processDefinitionId]);
 
@@ -22,7 +47,7 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) 
       <button
         title="Batch Increment Number of Retries"
         className="btn btn-default action-button" style={{marginTop: '5px'}}
-        disabled={jobs.length === 0}
+        disabled={incidents.length === 0}
         onClick={() => setShowInformationModal(true)}
       >
         <span className="glyphicon glyphicon-repeat"></span>
@@ -31,7 +56,7 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ api, processDefinitionId }) 
         api={api}
         setShowModal={setShowInformationModal}
         showModal={showInformationModal}
-        jobs={jobs}
+        incidents={incidents}
         onExecuted={() => window.location.reload()}
       />
     </>

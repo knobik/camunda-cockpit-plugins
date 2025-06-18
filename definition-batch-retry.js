@@ -69,6 +69,16 @@ function __generator(thisArg, body) {
     }
 }
 
+function __spreadArray(to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+}
+
 typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
     var e = new Error(message);
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
@@ -2432,24 +2442,28 @@ var libExports = lib.exports;
 var ReactModal = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
 var BatchRetryConfirmationModal = function (_a) {
-    var setShowModal = _a.setShowModal, showModal = _a.showModal, jobs = _a.jobs, api = _a.api, onExecuted = _a.onExecuted;
+    var setShowModal = _a.setShowModal, showModal = _a.showModal, incidents = _a.incidents, api = _a.api, onExecuted = _a.onExecuted;
     var _b = reactExports.useState(false), showLoading = _b[0], setShowLoading = _b[1];
+    var _c = reactExports.useState(0), retriedCount = _c[0], setRetriedCount = _c[1];
     function executeRetry() {
         var _this = this;
         (function () { return __awaiter(_this, void 0, void 0, function () {
-            var _i, jobs_1, job;
+            var count, _i, incidents_1, incident;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         setShowLoading(true);
-                        _i = 0, jobs_1 = jobs;
+                        count = 0;
+                        _i = 0, incidents_1 = incidents;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < jobs_1.length)) return [3 /*break*/, 4];
-                        job = jobs_1[_i];
-                        return [4 /*yield*/, put(api, "/job/".concat(job.id, "/retries"), {}, JSON.stringify({ retries: 1 }))];
+                        if (!(_i < incidents_1.length)) return [3 /*break*/, 4];
+                        incident = incidents_1[_i];
+                        return [4 /*yield*/, put(api, "/".concat(incident.type, "/").concat(incident.id, "/retries"), {}, JSON.stringify({ retries: 1 }))];
                     case 2:
                         _a.sent();
+                        count++;
+                        setRetriedCount(count);
                         _a.label = 3;
                     case 3:
                         _i++;
@@ -2478,7 +2492,7 @@ var BatchRetryConfirmationModal = function (_a) {
             React.createElement("div", { className: "modal-body" },
                 React.createElement("div", { className: "row" },
                     React.createElement("div", { className: "col-md-12" },
-                        React.createElement("p", null, "The number of retries of all failed jobs associated with the selected process definition will be incremented."),
+                        React.createElement("p", null, "The number of retries of all failed jobs and external-tasks associated with the selected process definition will be incremented."),
                         React.createElement("p", null, "Are you sure you want to increment the number of retries? This will effectively retry all incidents.")))),
             React.createElement("div", { className: "model-footer", style: {
                     height: '4em',
@@ -2490,33 +2504,52 @@ var BatchRetryConfirmationModal = function (_a) {
                 React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowModal(false); } }, "Cancel"),
                 React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: showLoading, onClick: executeRetry },
                     "Retry (",
-                    jobs.length,
+                    showLoading && (React.createElement(React.Fragment, null,
+                        retriedCount,
+                        "/")),
+                    incidents.length,
                     ") ",
                     showLoading && React.createElement("span", { className: "loader", style: { marginLeft: '0.7em' } }))))));
 };
 
+var IncidentType;
+(function (IncidentType) {
+    IncidentType["JOB"] = "job";
+    IncidentType["EXTERNAL_TASK"] = "external-task";
+})(IncidentType || (IncidentType = {}));
 var Plugin = function (_a) {
     var api = _a.api, processDefinitionId = _a.processDefinitionId;
     var _b = React.useState(false), showInformationModal = _b[0], setShowInformationModal = _b[1];
-    var _c = React.useState([]), jobs = _c[0], setJobs = _c[1];
+    var _c = React.useState([]), incidents = _c[0], setIncidents = _c[1];
     reactExports.useEffect(function () {
         (function () { return __awaiter(void 0, void 0, void 0, function () {
-            var data;
+            var jobs, newJobs, externalTasks, newExternalTasks;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, get(api, '/job', { noRetriesLeft: 'true', processDefinitionId: processDefinitionId })];
                     case 1:
-                        data = _a.sent();
-                        setJobs(data);
+                        jobs = _a.sent();
+                        newJobs = jobs.map(function (job) { return ({
+                            type: IncidentType.JOB,
+                            id: job.id
+                        }); });
+                        return [4 /*yield*/, get(api, '/external-task', { noRetriesLeft: 'true', processDefinitionId: processDefinitionId })];
+                    case 2:
+                        externalTasks = _a.sent();
+                        newExternalTasks = externalTasks.map(function (externalTask) { return ({
+                            type: IncidentType.EXTERNAL_TASK,
+                            id: externalTask.id
+                        }); });
+                        setIncidents(__spreadArray(__spreadArray([], newJobs, true), newExternalTasks, true));
                         return [2 /*return*/];
                 }
             });
         }); })();
     }, [processDefinitionId]);
     return (React.createElement(React.Fragment, null,
-        React.createElement("button", { title: "Batch Increment Number of Retries", className: "btn btn-default action-button", style: { marginTop: '5px' }, disabled: jobs.length === 0, onClick: function () { return setShowInformationModal(true); } },
+        React.createElement("button", { title: "Batch Increment Number of Retries", className: "btn btn-default action-button", style: { marginTop: '5px' }, disabled: incidents.length === 0, onClick: function () { return setShowInformationModal(true); } },
             React.createElement("span", { className: "glyphicon glyphicon-repeat" })),
-        React.createElement(BatchRetryConfirmationModal, { api: api, setShowModal: setShowInformationModal, showModal: showInformationModal, jobs: jobs, onExecuted: function () { return window.location.reload(); } })));
+        React.createElement(BatchRetryConfirmationModal, { api: api, setShowModal: setShowInformationModal, showModal: showInformationModal, incidents: incidents, onExecuted: function () { return window.location.reload(); } })));
 };
 var definitionBatchRetry = [
     {
