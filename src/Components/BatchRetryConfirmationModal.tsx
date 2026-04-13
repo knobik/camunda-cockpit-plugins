@@ -1,19 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import ReactModal from 'react-modal';
-import { post, put } from '../utils/api';
-import { API } from '../types';
+
 import { Incident } from '../definition-batch-retry';
+import { API } from '../types';
+import { post, put } from '../utils/api';
 
 export interface Props {
   setShowModal: (showModal: boolean) => void;
   showModal: boolean;
-  incidents: Incident[]
-  api: API,
+  incidents: Incident[];
+  api: API;
   onExecuted: () => void;
 }
 
 const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal, incidents, api, onExecuted }) => {
-
   const [showLoading, setShowLoading] = useState(false);
   const [retriedCount, setRetriedCount] = useState(0);
 
@@ -61,7 +61,8 @@ const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal,
           <div className="row">
             <div className="col-md-12">
               <p>
-                The number of retries of all failed jobs and external-tasks associated with the selected process definition will be incremented.
+                The number of retries of all failed jobs and external-tasks associated with the selected process
+                definition will be incremented.
               </p>
               <p>
                 Are you sure you want to increment the number of retries? This will effectively retry all incidents.
@@ -88,11 +89,8 @@ const BatchRetryConfirmationModal: React.FC<Props> = ({ setShowModal, showModal,
             disabled={showLoading}
             onClick={executeRetry}
           >
-            Retry ({showLoading && (
-              <>
-                {retriedCount}/
-              </>
-            )}{incidents.length}) {showLoading && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
+            Retry ({showLoading && <>{retriedCount}/</>}
+            {incidents.length}) {showLoading && <span className="loader" style={{ marginLeft: '0.7em' }}></span>}
           </button>
         </div>
       </div>

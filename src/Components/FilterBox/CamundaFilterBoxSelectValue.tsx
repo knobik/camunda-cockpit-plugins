@@ -18,9 +18,8 @@ const CamundaFilterBoxSelectValue: React.FC<Props> = ({
   updateExpression,
   options,
   translator,
-  defaultValue
+  defaultValue,
 }) => {
-
   let value: string = '';
 
   if (defaultValue) {
@@ -59,12 +58,12 @@ const CamundaFilterBoxSelectValue: React.FC<Props> = ({
     <>
       <Dropdown onSelect={(eventKey: string | null) => submitChange(eventKey as string)}>
         <Dropdown.Toggle as={CustomToggle}>
-          {value !== '' ? (translator ? translator(value as string) : value as string) : '??'}
+          {value !== '' ? (translator ? translator(value as string) : (value as string)) : '??'}
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {options.map((option: any, index: number) => (
             <Dropdown.Item key={index} eventKey={option}>
-              {translator ? translator(option as string) : option as string}
+              {translator ? translator(option as string) : (option as string)}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>

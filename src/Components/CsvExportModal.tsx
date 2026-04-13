@@ -80,15 +80,17 @@ const CsvExportModal: React.FC<Props> = ({
       let variableList = [] as any[];
       if (variables.length > 0) {
         const variablePerPage = 100;
-        const variableCount = (await post(
-          api,
-          '/history/variable-instance/count',
-          {},
-          JSON.stringify({
-            processInstanceIdIn: fetchedInstances.map(i => i.id),
-            variableNameIn: variables,
-          })
-        )).count;
+        const variableCount = (
+          await post(
+            api,
+            '/history/variable-instance/count',
+            {},
+            JSON.stringify({
+              processInstanceIdIn: fetchedInstances.map(i => i.id),
+              variableNameIn: variables,
+            })
+          )
+        ).count;
         const variablePageCount = Math.ceil(variableCount / variablePerPage);
 
         for (let i = 0; i < variablePageCount; i++) {

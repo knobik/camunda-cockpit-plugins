@@ -84,9 +84,7 @@ export function getExpressionValues(
 }
 
 export function getFirstExpression(expressions: Expression[], type: string): Expression | undefined {
-  return expressions.find(
-    (expression: Expression) => expression.definition.type === type
-  )
+  return expressions.find((expression: Expression) => expression.definition.type === type);
 }
 
 export function isValidExpression(expression: Expression): boolean {
@@ -109,8 +107,13 @@ export interface CamundaFilterBoxProps {
   setExpressions: (expressions: Expression[]) => void;
 }
 
-const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ children, placeholder, availableExpressions, expressions, setExpressions }) => {
-
+const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({
+  children,
+  placeholder,
+  availableExpressions,
+  expressions,
+  setExpressions,
+}) => {
   const CustomToggle = React.forwardRef<
     HTMLInputElement,
     {
@@ -167,7 +170,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ children, placehold
     expression.definition = definition;
     expression.operator = definition.defaultOperator;
     expression.name = definition.requiresName ? expression.name : '';
-    expression.value = definition.requiresValue ? expression.value : (definition.defaultValue ?? '');
+    expression.value = definition.requiresValue ? expression.value : definition.defaultValue ?? '';
 
     updateExpression(index, expression);
   }
@@ -178,9 +181,7 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ children, placehold
 
   return (
     <div className="camunda-filter-box-container form-control">
-      <div className="actions">
-        {children}
-      </div>
+      <div className="actions">{children}</div>
       {expressions.map((expression, index) => (
         <div className={`expression ${!isValidExpression(expression) ? 'invalid' : ''}`} key={index}>
           <span className="glyphicon glyphicon-remove" onClick={() => removeExpression(index)}></span>
@@ -212,22 +213,22 @@ const CamundaFilterBox: React.FC<CamundaFilterBoxProps> = ({ children, placehold
                   updateExpression={changed => updateExpression(index, changed)}
                 />
               )}
-              {(!expression.definition.fieldType || expression.definition.fieldType === 'text') &&
+              {(!expression.definition.fieldType || expression.definition.fieldType === 'text') && (
                 <CamundaFilterBoxTextValue
                   openEditing={expression.value === ''}
                   expression={expression}
                   field="value"
                   updateExpression={changed => updateExpression(index, changed)}
                 />
-              }
-              {expression.definition.fieldType === 'datetime' &&
+              )}
+              {expression.definition.fieldType === 'datetime' && (
                 <CamundaFilterBoxDatetimeValue
                   openEditing={expression.value === ''}
                   expression={expression}
                   field="value"
                   updateExpression={changed => updateExpression(index, changed)}
                 />
-              }
+              )}
             </>
           )}
         </div>

@@ -7,7 +7,9 @@ import CamundaFilterBox, {
   Expression,
   ExpressionDefinition,
   Operator,
-  isValidExpression, castValue, getExpressionValues,
+  castValue,
+  getExpressionValues,
+  isValidExpression,
 } from './FilterBox/CamundaFilterBox';
 
 const expressionDefinitions: ExpressionDefinition[] = [
@@ -233,7 +235,7 @@ const ProcessInstanceSelectModal: React.FC<ProcessInstanceSelectModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="row" style={{ marginTop: '1em'}}>
+          <div className="row" style={{ marginTop: '1em' }}>
             <div className="col-md-12">
               <h4>Filter for running process instances</h4>
               <CamundaFilterBox

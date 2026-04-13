@@ -31,6 +31,7 @@ export default {
           // 'scripts/instance-tab-modify.js',
           'scripts/definition-batch-modify.js',
           'scripts/definition-batch-retry.js',
+          'scripts/definition-batch-migration.js',
      ],
   // requireJsConfig: {
   //   // AngularJS module names

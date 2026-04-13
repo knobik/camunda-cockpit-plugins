@@ -103,4 +103,12 @@ export default [
     },
     plugins,
   },
+  {
+    onwarn,
+    input: 'src/definition-batch-migration.tsx',
+    output: {
+      file: 'definition-batch-migration.js',
+    },
+    plugins,
+  },
 ];

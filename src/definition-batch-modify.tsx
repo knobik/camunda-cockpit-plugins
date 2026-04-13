@@ -125,7 +125,6 @@ const BatchModifyForm: React.FC<DefinitionPluginParams> = ({ api }) => {
     // console.log(viewer, elementEvent);
 
     if (viewer && elementEvent) {
-
       // if the user clicked on an element, use that element
       let event = elementEvent;
       if (clickedElementEvent && showOnActivities.includes(clickedElementEvent.element.type)) {

@@ -1,4 +1,5 @@
 import './definition-batch-modify-table.scss';
+
 import React from 'react';
 
 export interface ModificationInstruction {
@@ -14,7 +15,9 @@ export interface Props {
 
 const ModificationTable: React.FC<Props> = ({ instructions, setInstructions }) => {
   function removeInstruction(activityId: string) {
-    setInstructions(instructions.filter((instruction: ModificationInstruction) => instruction.activityId !== activityId));
+    setInstructions(
+      instructions.filter((instruction: ModificationInstruction) => instruction.activityId !== activityId)
+    );
   }
 
   function changeInstructionType(index: number, event: any) {

@@ -154,7 +154,7 @@ const Plugin: React.FC<DefinitionPluginParams> = ({ root, api, processDefinition
 
   // FETCH
   useEffect(() => {
-    (async (currentProcessDefinitionId) => {
+    (async currentProcessDefinitionId => {
       const body = JSON.stringify({
         sortBy: 'endTime',
         sortOrder: 'desc',

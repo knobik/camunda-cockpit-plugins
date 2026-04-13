@@ -112655,7 +112655,7 @@ var CamundaFilterBox = function (_a) {
         expression.definition = definition;
         expression.operator = definition.defaultOperator;
         expression.name = definition.requiresName ? expression.name : '';
-        expression.value = definition.requiresValue ? expression.value : ((_a = definition.defaultValue) !== null && _a !== void 0 ? _a : '');
+        expression.value = definition.requiresValue ? expression.value : (_a = definition.defaultValue) !== null && _a !== void 0 ? _a : '';
         updateExpression(index, expression);
     }
     function removeExpression(index) {
@@ -112671,10 +112671,8 @@ var CamundaFilterBox = function (_a) {
                 React.createElement(CamundaFilterBoxTextValue, { expression: expression, field: "name", updateExpression: function (changed) { return updateExpression(index, changed); } }))),
             expression.definition.requiresValue && (React.createElement(React.Fragment, null,
                 expression.definition.availableOperators.length === 1 ? (React.createElement("span", { className: "non-editable" }, operatorToText(expression.operator))) : (React.createElement(CamundaFilterBoxSelectValue, { options: expression.definition.availableOperators, expression: expression, field: "operator", translator: operatorToText, updateExpression: function (changed) { return updateExpression(index, changed); } })),
-                (!expression.definition.fieldType || expression.definition.fieldType === 'text') &&
-                    React.createElement(CamundaFilterBoxTextValue, { openEditing: expression.value === '', expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } }),
-                expression.definition.fieldType === 'datetime' &&
-                    React.createElement(CamundaFilterBoxDatetimeValue, { openEditing: expression.value === '', expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } }))))); }),
+                (!expression.definition.fieldType || expression.definition.fieldType === 'text') && (React.createElement(CamundaFilterBoxTextValue, { openEditing: expression.value === '', expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } })),
+                expression.definition.fieldType === 'datetime' && (React.createElement(CamundaFilterBoxDatetimeValue, { openEditing: expression.value === '', expression: expression, field: "value", updateExpression: function (changed) { return updateExpression(index, changed); } })))))); }),
         React.createElement(Dropdown$1, { onSelect: function (eventKey) { return addExpression(eventKey); } },
             React.createElement(Dropdown$1.Toggle, { as: CustomToggle }),
             React.createElement(Dropdown$1.Menu, null, availableExpressions.map(function (definition, index) { return (React.createElement(Dropdown$1.Item, { key: index, eventKey: definition.label }, definition.label)); })))));
@@ -112806,8 +112804,8 @@ var PageLink = function (_a) {
             onPage(page);
         }
     };
-    return (React.createElement("li", { role: "menuitem", className: "pagination-page ".concat(isActive ? "active" : "", " ").concat(isDisabled ? "disabled" : ""), key: label },
-        React.createElement("a", { href: "#", className: isDisabled ? "disabled" : "", onClick: function (e) { return pageClicked(e, page); } }, label)));
+    return (React.createElement("li", { role: "menuitem", className: "pagination-page ".concat(isActive ? 'active' : '', " ").concat(isDisabled ? 'disabled' : ''), key: label },
+        React.createElement("a", { href: "#", className: isDisabled ? 'disabled' : '', onClick: function (e) { return pageClicked(e, page); } }, label)));
 };
 
 var Pagination = function (_a) {
@@ -112824,7 +112822,7 @@ var Pagination = function (_a) {
             return range(1, pageCount);
         }
         if (currentPage > pageCount - Math.floor(showPages / 2)) {
-            return range((pageCount - showPages) + 1, pageCount);
+            return range(pageCount - showPages + 1, pageCount);
         }
         if (currentPage > Math.floor(showPages / 2)) {
             return range(currentPage - Math.floor(showPages / 2), currentPage + Math.floor(showPages / 2));
@@ -112834,12 +112832,12 @@ var Pagination = function (_a) {
     var pageClicked = function (page) {
         onPage((page - 1) * perPage, page);
     };
-    return (React.createElement("nav", null, pageCount > 1 && React.createElement("ul", { className: "pagination-sm pagination", role: "menu" },
+    return (React.createElement("nav", null, pageCount > 1 && (React.createElement("ul", { className: "pagination-sm pagination", role: "menu" },
         React.createElement(PageLink, { label: "First", page: 1, isActive: false, isDisabled: currentPage === 1, onPage: pageClicked }),
         React.createElement(PageLink, { label: "Previous", page: currentPage - 1, isActive: false, isDisabled: currentPage === 1, onPage: pageClicked }),
         paginationRange.map(function (page) { return (React.createElement(PageLink, { label: "".concat(page), page: page, isActive: currentPage === page, isDisabled: false, onPage: pageClicked })); }),
         React.createElement(PageLink, { label: "Next", page: currentPage + 1, isActive: false, isDisabled: currentPage === pageCount, onPage: pageClicked }),
-        React.createElement(PageLink, { label: "Last", page: pageCount, isActive: false, isDisabled: currentPage === pageCount, onPage: pageClicked }))));
+        React.createElement(PageLink, { label: "Last", page: pageCount, isActive: false, isDisabled: currentPage === pageCount, onPage: pageClicked })))));
 };
 
 var Portal = function (_a) {

@@ -118,10 +118,6 @@ function getAugmentedNamespace(n) {
 	return a;
 }
 
-var reactDom = {exports: {}};
-
-var reactDom_development = {};
-
 var react = {exports: {}};
 
 var react_development = {exports: {}};
@@ -2874,6 +2870,10 @@ var react_developmentExports = react_development.exports;
 
 var reactExports = react.exports;
 var React = /*@__PURE__*/getDefaultExportFromCjs(reactExports);
+
+var reactDom = {exports: {}};
+
+var reactDom_development = {};
 
 var scheduler = {exports: {}};
 
@@ -33369,103 +33369,6 @@ var m = reactDomExports;
   };
 }
 
-var headers = function (api) {
-    return {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-XSRF-TOKEN': api.CSRFToken,
-    };
-};
-var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, res, _a, _b, _c, _d, _e, _f, _g;
-    return __generator(this, function (_h) {
-        switch (_h.label) {
-            case 0:
-                // XXX: Workaround a possible bug where engine api has been parsed wrong
-                if (api.engine.match(/\/#\//)) {
-                    api.engine = api.engine.split('/#/')[0].replace(/.*\//g, '');
-                    api.engineApi = api.baseApi + '/engine/' + api.engine;
-                }
-                params = params || {};
-                if (['/history/activity-instance', '/history/variable-instance', '/history/decision-instance'].includes(path) &&
-                    !(params === null || params === void 0 ? void 0 : params.maxResults)) {
-                    params.maxResults = '1000';
-                }
-                query = new URLSearchParams(params).toString();
-                if (!query) return [3 /*break*/, 2];
-                return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
-                        method: 'get',
-                        headers: headers(api),
-                    })];
-            case 1:
-                _a = _h.sent();
-                return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
-                    method: 'get',
-                    headers: headers(api),
-                })];
-            case 3:
-                _a = _h.sent();
-                _h.label = 4;
-            case 4:
-                res = _a;
-                if (!(res.status === 200 && (res.headers.get('Content-Type') || '').startsWith('application/json'))) return [3 /*break*/, 6];
-                return [4 /*yield*/, res.json()];
-            case 5: return [2 /*return*/, _h.sent()];
-            case 6:
-                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 8];
-                _c = (_b = console).debug;
-                _d = [res.status, path];
-                return [4 /*yield*/, res.json()];
-            case 7:
-                _c.apply(_b, _d.concat([_h.sent()]));
-                return [3 /*break*/, 10];
-            case 8:
-                _f = (_e = console).debug;
-                _g = [res.status, path];
-                return [4 /*yield*/, res.text()];
-            case 9:
-                _f.apply(_e, _g.concat([_h.sent()]));
-                _h.label = 10;
-            case 10: return [2 /*return*/, []];
-        }
-    });
-}); };
-var put = function (api, path, params, payload) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, res, _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                params = params || {};
-                query = new URLSearchParams(params).toString();
-                if (!query) return [3 /*break*/, 2];
-                return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
-                        method: 'put',
-                        headers: headers(api),
-                        body: payload,
-                    })];
-            case 1:
-                _a = _b.sent();
-                return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
-                    method: 'put',
-                    headers: headers(api),
-                    body: payload,
-                })];
-            case 3:
-                _a = _b.sent();
-                _b.label = 4;
-            case 4:
-                res = _a;
-                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 6];
-                return [4 /*yield*/, res.json()];
-            case 5: return [2 /*return*/, _b.sent()];
-            case 6: return [4 /*yield*/, res.text()];
-            case 7: return [2 /*return*/, _b.sent()];
-        }
-    });
-}); };
-
 var lib = {exports: {}};
 
 var Modal$1 = {};
@@ -36297,6 +36200,103 @@ Modal$1.default = Modal;
 var libExports = lib.exports;
 var ReactModal = /*@__PURE__*/getDefaultExportFromCjs(libExports);
 
+var headers = function (api) {
+    return {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': api.CSRFToken,
+    };
+};
+var get = function (api, path, params) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, res, _a, _b, _c, _d, _e, _f, _g;
+    return __generator(this, function (_h) {
+        switch (_h.label) {
+            case 0:
+                // XXX: Workaround a possible bug where engine api has been parsed wrong
+                if (api.engine.match(/\/#\//)) {
+                    api.engine = api.engine.split('/#/')[0].replace(/.*\//g, '');
+                    api.engineApi = api.baseApi + '/engine/' + api.engine;
+                }
+                params = params || {};
+                if (['/history/activity-instance', '/history/variable-instance', '/history/decision-instance'].includes(path) &&
+                    !(params === null || params === void 0 ? void 0 : params.maxResults)) {
+                    params.maxResults = '1000';
+                }
+                query = new URLSearchParams(params).toString();
+                if (!query) return [3 /*break*/, 2];
+                return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
+                        method: 'get',
+                        headers: headers(api),
+                    })];
+            case 1:
+                _a = _h.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
+                    method: 'get',
+                    headers: headers(api),
+                })];
+            case 3:
+                _a = _h.sent();
+                _h.label = 4;
+            case 4:
+                res = _a;
+                if (!(res.status === 200 && (res.headers.get('Content-Type') || '').startsWith('application/json'))) return [3 /*break*/, 6];
+                return [4 /*yield*/, res.json()];
+            case 5: return [2 /*return*/, _h.sent()];
+            case 6:
+                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 8];
+                _c = (_b = console).debug;
+                _d = [res.status, path];
+                return [4 /*yield*/, res.json()];
+            case 7:
+                _c.apply(_b, _d.concat([_h.sent()]));
+                return [3 /*break*/, 10];
+            case 8:
+                _f = (_e = console).debug;
+                _g = [res.status, path];
+                return [4 /*yield*/, res.text()];
+            case 9:
+                _f.apply(_e, _g.concat([_h.sent()]));
+                _h.label = 10;
+            case 10: return [2 /*return*/, []];
+        }
+    });
+}); };
+var put = function (api, path, params, payload) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, res, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                params = params || {};
+                query = new URLSearchParams(params).toString();
+                if (!query) return [3 /*break*/, 2];
+                return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path, "?").concat(query), {
+                        method: 'put',
+                        headers: headers(api),
+                        body: payload,
+                    })];
+            case 1:
+                _a = _b.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, fetch("".concat(api.engineApi).concat(path), {
+                    method: 'put',
+                    headers: headers(api),
+                    body: payload,
+                })];
+            case 3:
+                _a = _b.sent();
+                _b.label = 4;
+            case 4:
+                res = _a;
+                if (!(res.headers.get('Content-Type') || '').startsWith('application/json')) return [3 /*break*/, 6];
+                return [4 /*yield*/, res.json()];
+            case 5: return [2 /*return*/, _b.sent()];
+            case 6: return [4 /*yield*/, res.text()];
+            case 7: return [2 /*return*/, _b.sent()];
+        }
+    });
+}); };
+
 var BatchRetryConfirmationModal = function (_a) {
     var setShowModal = _a.setShowModal, showModal = _a.showModal, incidents = _a.incidents, api = _a.api, onExecuted = _a.onExecuted;
     var _b = reactExports.useState(false), showLoading = _b[0], setShowLoading = _b[1];
@@ -36360,9 +36360,9 @@ var BatchRetryConfirmationModal = function (_a) {
                 React.createElement("button", { className: "btn btn-default", onClick: function () { return setShowModal(false); } }, "Cancel"),
                 React.createElement("button", { className: "btn btn-danger", style: { marginLeft: '1em' }, disabled: showLoading, onClick: executeRetry },
                     "Retry (",
-                    showLoading && (React.createElement(React.Fragment, null,
+                    showLoading && React.createElement(React.Fragment, null,
                         retriedCount,
-                        "/")),
+                        "/"),
                     incidents.length,
                     ") ",
                     showLoading && React.createElement("span", { className: "loader", style: { marginLeft: '0.7em' } }))))));
@@ -36385,17 +36385,21 @@ var Plugin = function (_a) {
                     case 0: return [4 /*yield*/, get(api, '/job', { noRetriesLeft: 'true', processDefinitionId: processDefinitionId })];
                     case 1:
                         jobs = _a.sent();
-                        newJobs = jobs.map(function (job) { return ({
-                            type: IncidentType.JOB,
-                            id: job.id
-                        }); });
+                        newJobs = jobs.map(function (job) {
+                            return ({
+                                type: IncidentType.JOB,
+                                id: job.id,
+                            });
+                        });
                         return [4 /*yield*/, get(api, '/external-task', { noRetriesLeft: 'true', processDefinitionId: processDefinitionId })];
                     case 2:
                         externalTasks = _a.sent();
-                        newExternalTasks = externalTasks.map(function (externalTask) { return ({
-                            type: IncidentType.EXTERNAL_TASK,
-                            id: externalTask.id
-                        }); });
+                        newExternalTasks = externalTasks.map(function (externalTask) {
+                            return ({
+                                type: IncidentType.EXTERNAL_TASK,
+                                id: externalTask.id,
+                            });
+                        });
                         setIncidents(__spreadArray(__spreadArray([], newJobs, true), newExternalTasks, true));
                         return [2 /*return*/];
                 }

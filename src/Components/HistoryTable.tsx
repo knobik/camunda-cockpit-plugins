@@ -95,11 +95,7 @@ const HistoryTable: React.FC<Props> = ({ instances, selectedInstances, setSelect
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             <th>
-              <input
-                type="checkbox"
-                checked={selectedInstances.length === instances.length}
-                onChange={toggleAll}
-              />
+              <input type="checkbox" checked={selectedInstances.length === instances.length} onChange={toggleAll} />
             </th>
             {headerGroup.headers.map(column => (
               /* @ts-ignore */

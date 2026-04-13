@@ -9,12 +9,7 @@ export interface Props {
   openEditing?: boolean;
 }
 
-const CamundaFilterBoxTextValue: React.FC<Props> = ({
-  expression,
-  field,
-  updateExpression,
-  openEditing,
-}) => {
+const CamundaFilterBoxTextValue: React.FC<Props> = ({ expression, field, updateExpression, openEditing }) => {
   const [isEditing, setIsEditing] = useState(openEditing ?? true);
   const value = (expression as any)[field];
   const [newValue, setNewValue] = useState('');

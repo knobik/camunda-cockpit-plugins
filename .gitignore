@@ -3,3 +3,4 @@ node_modules/
 camunda-cockpit-ui.js
 *.map
 .playwright-mcp/
+docs/superpowers/

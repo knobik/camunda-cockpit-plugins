@@ -1,8 +1,8 @@
+import moment from 'moment';
 import React, { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 
 import { Expression } from './CamundaFilterBox';
-import moment from 'moment';
 
 export interface Props {
   field: string;
@@ -11,13 +11,7 @@ export interface Props {
   openEditing?: boolean;
 }
 
-
-const CamundaFilterBoxDatetimeValue: React.FC<Props> = ({
-  expression,
-  field,
-  updateExpression,
-  openEditing,
-}) => {
+const CamundaFilterBoxDatetimeValue: React.FC<Props> = ({ expression, field, updateExpression, openEditing }) => {
   const [isEditing, setIsEditing] = useState(openEditing ?? true);
   const initialValue = (expression as any)[field];
   const [value, setValue] = useState(initialValue);

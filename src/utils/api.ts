@@ -9,7 +9,6 @@ export const headers = (api: API) => {
 };
 
 export const get = async (api: API, path: string, params?: Record<string, string>) => {
-
   // XXX: Workaround a possible bug where engine api has been parsed wrong
   if (api.engine.match(/\/#\//)) {
     api.engine = api.engine.split('/#/')[0].replace(/.*\//g, '');
@@ -80,15 +79,15 @@ export const put = async (api: API, path: string, params?: Record<string, string
   const query = new URLSearchParams(params).toString();
   const res = query
     ? await fetch(`${api.engineApi}${path}?${query}`, {
-      method: 'put',
-      headers: headers(api),
-      body: payload,
-    })
+        method: 'put',
+        headers: headers(api),
+        body: payload,
+      })
     : await fetch(`${api.engineApi}${path}`, {
-      method: 'put',
-      headers: headers(api),
-      body: payload,
-    });
+        method: 'put',
+        headers: headers(api),
+        body: payload,
+      });
   if ((res.headers.get('Content-Type') || '').startsWith('application/json')) {
     return await res.json();
   } else {

@@ -141,7 +141,8 @@ const BatchModificationConfirmationModal: React.FC<Props> = ({
           <div className="row">
             <div className="col-md-12">
               <div style={{ textAlign: 'center' }}>
-                You are playing with <span className="glyphicon glyphicon-fire"></span>. Please, carefully review the modification being performed.
+                You are playing with <span className="glyphicon glyphicon-fire"></span>. Please, carefully review the
+                modification being performed.
               </div>
               <h3>Options</h3>
               <div className="row">
